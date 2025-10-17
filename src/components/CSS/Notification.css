@@ -1,0 +1,106 @@
+:root {
+  --notify-bg: #0f172a;
+  --notify-text: #e2e8f0;
+  --notify-success: #22c55e;
+  --notify-error: #ef4444;
+  --notify-info: #3b82f6;
+  --notify-warning: #facc15;
+}
+
+/* Container (optional if stacking multiple) */
+.notify-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000;
+}
+
+/* Card base */
+.notify-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--notify-bg);
+  color: var(--notify-text);
+  border-radius: 12px;
+  padding: 14px 18px;
+  min-width: 280px;
+  max-width: 400px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card exit (optional if you want fade out manually) */
+.notify-card.exit {
+  animation: slideOut 0.4s ease forwards;
+}
+
+.notify-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+/* Colors per type */
+.notify-card.success .notify-icon { color: var(--notify-success); }
+.notify-card.error .notify-icon { color: var(--notify-error); }
+.notify-card.info .notify-icon { color: var(--notify-info); }
+.notify-card.warning .notify-icon { color: var(--notify-warning); }
+
+.notify-content {
+  flex: 1;
+}
+
+.notify-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--notify-text);
+}
+
+.notify-close {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.notify-close:hover {
+  color: #fff;
+}
+
+/* bottom progress animation */
+.notify-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--notify-info);
+  animation: progress linear forwards;
+}
+
+.notify-card.success .notify-progress { background: var(--notify-success); }
+.notify-card.error .notify-progress { background: var(--notify-error); }
+.notify-card.warning .notify-progress { background: var(--notify-warning); }
+
+/* animations */
+@keyframes slideIn {
+  0% { transform: translateY(-20px) scale(0.95); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes slideOut {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-20px) scale(0.9); opacity: 0; }
+}
+
+@keyframes progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}

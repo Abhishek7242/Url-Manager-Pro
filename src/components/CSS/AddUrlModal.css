@@ -1,0 +1,361 @@
+/* overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 12, 0);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 60px;
+  z-index: 1000;
+  backdrop-filter: blur(0px);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    background: rgba(5, 8, 12, 0);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    background: rgba(5, 8, 12, 0.55);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.modal-overlay.closing {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    background: rgba(5, 8, 12, 0.55);
+    backdrop-filter: blur(8px);
+    opacity: 1;
+  }
+  to {
+    background: rgba(5, 8, 12, 0);
+    backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+}
+
+/* modal card */
+.modal-card {
+  width: 520px;
+  max-width: calc(100% - 32px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.01),
+    rgba(255, 255, 255, 0)
+  );
+  border: 1px solid var(--border);
+  padding: 22px;
+  border-radius: 10px;
+  color: var(--text);
+  position: relative;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.6);
+  transform-origin: center top;
+  animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-card.closing {
+  animation: modalExit 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalExit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+}
+
+/* close */
+.modal-close {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 1.05rem;
+  cursor: pointer;
+  z-index: 11111111;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text);
+  transform: rotate(90deg);
+}
+
+/* heading */
+.modal-heading {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.4s 0.1s forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* form fields */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-link-field.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: start;
+  background: transparent;
+  border: none;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.4s forwards;
+}
+
+.add-link-field.field:nth-child(1) {
+  animation-delay: 0.15s;
+}
+
+.add-link-field.field:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.add-link-field.field:nth-child(3) {
+  animation-delay: 0.25s;
+}
+
+.add-link-field.field:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.field-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.add-link-field.field input,
+.add-link-field.field textarea {
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+  background: transparent;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--n);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.12);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* date row */
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.date-icon {
+  color: var(--muted);
+  font-size: 1rem;
+}
+.date-input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  padding: 8px 10px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+/* actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 6px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.4s 0.35s forwards;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn.cancel {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.addbtn.btn.primary {
+  background: white;
+  color: #0b1220;
+  box-shadow: 0 8px 22px rgba(11, 18, 32, 0.18);
+}
+
+.addbtn.btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(11, 18, 32, 0.25);
+}
+
+/* responsive */
+@media (max-width: 640px) {
+  .modal-card {
+    width: 92%;
+    padding: 16px;
+  }
+  .modal-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  .btn {
+    width: 100%;
+  }
+}
+
+/* make entire row clickable */
+.date-row.clickable {
+  background: #0b111600;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.date-row.clickable:hover {
+  border-color: var(--n);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* dark style for input inside */
+.date-input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  width: 100%;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+/* hide default calendar icon (Chrome) and use our FiCalendar icon */
+.date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.7);
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+.add-link-field.field .reminder-date-input {
+  border: none;
+  outline: none;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border: none;
+  user-select: none;
+  outline: none;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.12);
+}
+
+/* dark theme pop-up (works on browsers supporting color-scheme) */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Error states */
+.field input.error,
+.field textarea.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Loading animation */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled button states */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn:disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}

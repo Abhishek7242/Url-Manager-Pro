@@ -1,0 +1,195 @@
+:root {
+  --bg: #07101a;
+  --card: #0f1726;
+  --muted: #9aa6b1;
+  --text: #e6eefc;
+  --border: rgba(255,255,255,0.04);
+  --high: #f87171;
+  --medium: #facc15;
+  --accent: #3b82f6;
+  --success: #22c55e;
+}
+
+/* Loading animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-icon svg {
+  animation: spin 1.5s linear infinite;
+}
+
+/* container */
+.sugg-root-container {
+  padding: 24px;
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
+}
+.sugg-root {
+  padding: 24px;
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
+}
+
+/* header */
+.sugg-header {
+  margin-bottom: 20px;
+}
+.loading-icon-broken-links{
+height: 20px;
+width: 20px;
+animation: spin 1.5s linear infinite;
+}
+.sugg-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.bulb-icon {
+  color: #facc15;
+  font-size: 20px;
+}
+
+.sugg-title .count {
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* suggestion grid */
+.sugg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+/* each suggestion card */
+.sugg-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 6px 25px rgba(2,6,23,0.4);
+}
+
+.sugg-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sugg-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.sugg-card-title svg {
+  color: var(--accent);
+}
+
+.badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+.badge.high {
+  background: rgba(248,113,113,0.2);
+  color: var(--high);
+}
+.badge.medium {
+  background: rgba(250,204,21,0.2);
+  color: var(--medium);
+}
+
+.sugg-desc {
+  margin: 12px 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* bottom meta */
+.sugg-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.affected {
+  font-size: 0.85rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: var(--muted);
+}
+
+.sugg-btn {
+  background: #0b1220;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sugg-btn:hover {
+  background: #162338;
+}
+
+/* optimized banner (no suggestions) */
+.sugg-clean {
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 36px;
+  text-align: center;
+  color: var(--muted);
+  box-shadow: 0 8px 40px rgba(2,6,23,0.6);
+}
+
+.sugg-clean .sugg-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--success);
+  background: rgba(34,197,94,0.08);
+  font-size: 22px;
+  border: 1px solid rgba(34,197,94,0.12);
+}
+
+.sugg-clean h3 {
+  margin: 6px 0 8px;
+  color: var(--success);
+  font-size: 1.1rem;
+}
+
+.sugg-clean p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* responsive tweaks */
+@media (max-width: 640px) {
+  .sugg-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

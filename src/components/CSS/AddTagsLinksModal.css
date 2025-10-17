@@ -1,0 +1,236 @@
+/* Overlay */
+.atl-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 12, 16, 0.6);
+  z-index: 60;
+  padding: 24px;
+  backdrop-filter: blur(6px);
+}
+
+/* Modal container */
+.atl-container {
+  width: 100%;
+  max-width: 980px;
+  background: #00000000;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.315);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.411);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0);
+  animation: atl-pop .18s ease-out;
+      padding-bottom: 54px;
+}
+
+/* Header */
+.atl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.atl-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.atl-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #aeaeae;
+}
+
+/* Close button */
+.atl-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+  line-height: 1;
+  color: #c6c9ce;
+  border-radius: 8px;
+}
+.atl-close:hover {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+/* Body */
+.atl-body {
+  padding: 18px 22px;
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+/* Grid of cards */
+.atl-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Empty state */
+.atl-empty {
+  grid-column: 1 / -1;
+  padding: 28px;
+  text-align: center;
+  color: #64748b;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(99,102,241,0.04), rgba(34,197,94,0.02));
+}
+
+/* Card */
+.atl-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: transparent;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.354);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.atl-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.08);
+}
+
+/* Card head */
+.atl-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.atl-card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.atl-card-date {
+  font-size: 12px;
+  color: #c4c9cf;
+}
+
+/* Description */
+.atl-card-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #c2c6cb;
+  line-height: 1.35;
+  max-height: 3.6em; /* clamp to ~3 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Footer row inside card */
+.atl-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+/* Link display (left) */
+.atl-link {
+  display: inline-block;
+  font-size: 13px;
+  color: #0369a1;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.atl-link:hover {
+  text-decoration: underline;
+}
+
+/* Actions */
+.atl-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.atl-action-btn {
+  background: transparent;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.atl-action-btn:hover {
+  background: rgba(2, 6, 23, 0.04);
+}
+.atl-action-muted {
+  font-size: 13px;
+  color: #6b7280;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.atl-action-muted:hover {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+/* Footer buttons */
+.atl-footer {
+  padding: 14px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.atl-btn {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.atl-btn-secondary {
+background: transparent;
+    color: #ffffff;
+    border: 1px solid rgb(255 255 255 / 52%);
+
+}
+.atl-btn-primary {
+  background: #0ea5a1;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+  .atl-grid { grid-template-columns: 1fr; }
+  .atl-link { max-width: 50%; }
+}
+@media (max-width: 480px) {
+  .atl-container { border-radius: 10px; margin: 0 8px; }
+  .atl-header, .atl-body, .atl-footer { padding-left: 14px; padding-right: 14px; }
+  .atl-title { font-size: 16px; }
+  .atl-grid { gap: 10px; }
+}
+
+/* subtle pop animation */
+@keyframes atl-pop {
+  from { transform: translateY(6px) scale(.995); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}

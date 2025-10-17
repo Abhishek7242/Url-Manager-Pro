@@ -1,0 +1,200 @@
+.link-card {
+  /* background: #0f1720; */
+  border: 2px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #c7d2da;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.link-card.grid {
+  max-width: 320px;
+}
+.link-card.list {
+  max-width: 100%;
+}
+
+.link-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+}
+
+.link-card.selected {
+  border-color: #2b6df6;
+  box-shadow: 0 6px 20px rgba(43,109,246,0.12);
+}
+
+.card-top {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.card-top input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  accent-color:#2563eb;
+}
+
+.card-title{
+  margin:0;
+  font-size:1.05rem;
+  color:#ffffff;
+  font-weight:600;
+}
+
+/* body */
+.card-body{
+  margin-top:6px;
+}
+
+.card-url{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:#60a5fa;
+  text-decoration:none;
+  font-size:0.95rem;
+  margin-bottom:8px;
+}
+
+.card-url .dot{
+  width:8px;height:8px;border-radius:50%;background:#2b6df6;display:inline-block;margin-right:6px;
+}
+
+.card-note{
+  margin:6px 0;
+  color:#9aa6b1;
+  font-size:0.92rem;
+}
+
+/* meta */
+.card-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:12px;
+  color:#94a3b8;
+  font-size:0.85rem;
+}
+
+.tags .tag{
+  display:inline-block;
+  background:#0b1722;
+  border:1px solid rgba(255,255,255,0.02);
+  padding:4px 8px;
+  border-radius:999px;
+  margin-right:6px;
+  color:#cbd5e1;
+  font-weight:500;
+  font-size:0.8rem;
+}
+/* ---------- Hover Actions (3-dot & Share) ---------- */
+.card-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+/* show actions on hover or when menu is open */
+.link-card:hover .card-actions,
+.card-actions[aria-hidden="false"] {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* small wrapper for more button + menu */
+.more-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* icon buttons */
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #9aa6b1;
+  cursor: pointer;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: color 0.18s ease, background 0.18s ease, transform 0.08s ease;
+}
+
+.icon-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+/* more menu */
+.more-menu {
+  position: absolute;
+  right: 0;
+  top: 36px;
+  min-width: 160px;
+  background:var(--theme-color);
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+  border-radius: 10px;
+  padding: 8px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: pop 0.12s ease;
+}
+
+/* small pop animation */
+@keyframes pop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* menu items */
+.menu-item {
+  background: transparent;
+  border: none;
+  color: #e6eefc;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: left;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.menu-item .mi-icon { font-size:1rem; color: #9fb9ff; }
+
+/* danger style for delete */
+.menu-item.danger { color: #fda4af; }
+.menu-item.danger .mi-icon { color: #f87171; }
+
+/* ensure card has relative for absolute menu */
+.link-card { position: relative; }
+
+/* on small screens position menu slightly different */
+@media (max-width: 720px) {
+  .more-menu { right: 8px; top: 40px; min-width: 140px; }
+}
+
+/* small responsive tweak */
+@media (max-width: 720px){
+  .card-meta{flex-direction:column;align-items:flex-start;gap:8px}
+}

@@ -1,0 +1,56 @@
+
+.top-tags-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #e6eefc;
+  box-sizing: border-box;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* header */
+.top-tags-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.tag-title{ font-weight:700; color:#f0f7ff; font-size:1rem; }
+
+/* body (chart area) */
+.top-tags-body{
+  width:100%;
+  height: calc(100% - 34px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* legend items (when recharts places them to right) */
+.legend-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#9aa6b1;
+  font-size:0.95rem;
+}
+.legend-name{ color:#7fb0ff; font-weight:600; }
+.legend-pct{ color:#3ee6c3; font-weight:700; margin-left:6px; }
+
+/* small screens: stack chart above legend */
+@media (max-width: 800px){
+  .top-tags-card{ padding:10px; }
+  .top-tags-body{ align-items:flex-start; }
+  .recharts-legend-wrapper{ display:none !important; } /* hide right legend on small screens */
+}
+
+/* empty state */
+.empty-tags {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.empty-tags-message {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}

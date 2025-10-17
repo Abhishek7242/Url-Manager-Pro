@@ -1,0 +1,90 @@
+.sort-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+/* Buttons base */
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--theme-color);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+  background: white;
+  color: var(--theme-color);
+}
+
+/* Active (left filter button) */
+.sort-btn.active {
+  background: #ffffff;
+  color: var(--theme-color);}
+
+.sort-btn.active .icon {
+  color: var(--theme-color);
+}
+
+/* Icons */
+.icon {
+  font-size: 16px;
+  color: #ffffff;
+}
+
+/* Dropdown wrapper */
+.dropdown {
+  position: relative;
+}
+
+/* Dropdown toggle (right button) */
+
+
+/* Dropdown menu */
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: var(--theme-color);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+  width: 180px;
+  overflow: hidden;
+  z-index: 30;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.dropdown-menu li {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #d0d0d0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dropdown-menu li:hover {
+  background: #01054572;
+  color: #ffffff;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
