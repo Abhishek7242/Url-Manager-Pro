@@ -50,10 +50,13 @@ export default function Signup() {
     // Send OTP then navigate to verify page
     try {
       // Step 1: Get CSRF cookie first (this is crucial!)
-      await fetch("http://localhost:8000/sanctum/csrf-cookie", {
-        method: "GET",
-        credentials: "include",
-      });
+      // await fetch(
+      //   "http://127.0.0.1:8000/sanctum/csrf-cookie",
+      //   {
+      //     method: "GET",
+      //     credentials: "include",
+      //   }
+      // );
 
       if (isSubmitting) return;
       setIsSubmitting(true);
@@ -192,12 +195,13 @@ export default function Signup() {
           <button
             type="submit"
             className="submit-btn"
-           disabled={ !(nameValid && emailValid && passwordValid) || isSubmitting }
-
+            disabled={
+              !(nameValid && emailValid && passwordValid) || isSubmitting
+            }
           >
             {isSubmitting ? (
               <div className="flex justify-center items-center">
-                <FiLoader className="animate-spin" /> 
+                <FiLoader className="animate-spin" />
               </div>
             ) : (
               "Create account"

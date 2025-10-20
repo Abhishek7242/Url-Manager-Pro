@@ -34,6 +34,8 @@ export default function Navbar() {
 
   const location = useLocation();
   const navigate = useNavigate();
+ 
+
   useEffect(() => {
     async function getUser() {
       const fetchedUser = await fetchAndLogUser();
@@ -113,10 +115,12 @@ const handleLogout = async () => {
 
   try {
     const result = await logout();
+    if (!result.ok) {
+      showNotify("error", "Logout failed");
+    }
     // console.log("Logout successful:", result);
-
-    navigate("/", { replace: true });
-    alert(result.message || "Logged out successfully!");
+    showNotify("success", "Logged out successfully!");
+  
   } catch (e) {
     // add later
   } finally {

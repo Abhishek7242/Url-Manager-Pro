@@ -30,10 +30,10 @@ export default function Login() {
     // Send OTP then navigate to verify page
     try {
       // Step 1: Get CSRF cookie first (this is crucial!)
-      await fetch("http://localhost:8000/sanctum/csrf-cookie", {
-        method: "GET",
-        credentials: "include",
-      });
+      // await fetch("http://localhost:8000/sanctum/csrf-cookie", {
+      //   method: "GET",
+      //   credentials: "include",
+      // });
 
       if (isSubmitting) return;
       setIsSubmitting(true);

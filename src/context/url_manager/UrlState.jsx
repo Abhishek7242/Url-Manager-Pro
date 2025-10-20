@@ -19,8 +19,7 @@ const UrlState = (props) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [exportLoading, setExportLoading] = useState(false);
-    const [activeSort, setActiveSort] = useState("date");
-  
+  const [activeSort, setActiveSort] = useState("date");
 
   const [user, setUser] = useState(null);
   async function fetchAndLogUser() {
@@ -41,7 +40,7 @@ const UrlState = (props) => {
       // console.log(res.status, bodyText);
       return JSON.parse(bodyText);
     } catch (err) {
-      console.log('gestuser');
+      console.log("gestuser");
     }
   }
 
@@ -219,9 +218,7 @@ const UrlState = (props) => {
       const result = await res.json();
       // console.log("aDDDDDDDDED", result);
       return result;
-    } catch (err) {
-    
-    }
+    } catch (err) {}
   };
 
   // ✅ Update URL (PUT)
@@ -296,7 +293,6 @@ const UrlState = (props) => {
     // Add CSRF token if available
     if (csrfToken) {
       defaultOptions.headers["X-XSRF-TOKEN"] = csrfToken;
-     
     } else {
       // console.warn("No CSRF token found in cookies");
     }
@@ -465,51 +461,50 @@ const UrlState = (props) => {
       // throw err;
     }
   }
-const filtered = useMemo(() => {
-  const q = search.trim().toLowerCase();
-  const d = activeSort.trim().toLowerCase();
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const d = activeSort.trim().toLowerCase();
 
-  // 1) Always apply archive logic first
-  const base = archive
-    ? urls.filter((l) => l.status === "archived")
-    : urls.filter((l) => l.status === "active");
+    // 1) Always apply archive logic first
+    const base = archive
+      ? urls.filter((l) => l.status === "archived")
+      : urls.filter((l) => l.status === "active");
 
-  // 2) Then apply search (if present) on the base set
-  let result;
-  if (!q) {
-    result = base;
-  } else {
-    result = base.filter((l) =>
-      [l.title, l.url, l.note, ...(l.tags || [])]
-        .join(" ")
-        .toLowerCase()
-        .includes(q)
-    );
-  }
+    // 2) Then apply search (if present) on the base set
+    let result;
+    if (!q) {
+      result = base;
+    } else {
+      result = base.filter((l) =>
+        [l.title, l.url, l.note, ...(l.tags || [])]
+          .join(" ")
+          .toLowerCase()
+          .includes(q)
+      );
+    }
 
-  // 3) Sorting logic (date/title/clicks)
-  if (d === "date" || d === "date added" || d === "newest") {
-    result = result.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    );
-  } else if (d === "oldest") {
-    result = result.sort(
-      (a, b) => new Date(a.created_at) - new Date(b.created_at)
-    );
-  } else if (d === "title") {
-    result = result.sort((a, b) =>
-      (a.title || "").localeCompare(b.title || "", undefined, {
-        sensitivity: "base",
-      })
-    );
-  } else if (d === "clicks" || d === "count") {
-    result = result.sort((a, b) => (b.url_clicks || 0) - (a.url_clicks || 0));
-  }
+    // 3) Sorting logic (date/title/clicks)
+    if (d === "date" || d === "date added" || d === "newest") {
+      result = result.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+    } else if (d === "oldest") {
+      result = result.sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      );
+    } else if (d === "title") {
+      result = result.sort((a, b) =>
+        (a.title || "").localeCompare(b.title || "", undefined, {
+          sensitivity: "base",
+        })
+      );
+    } else if (d === "clicks" || d === "count") {
+      result = result.sort((a, b) => (b.url_clicks || 0) - (a.url_clicks || 0));
+    }
 
-  return result;
-}, [urls, search, archive, activeSort]);
+    return result;
+  }, [urls, search, archive, activeSort]);
 
-  
   const updateClickCount = async (id) => {
     try {
       let url = await buildGetUrlsUrl(
@@ -632,13 +627,13 @@ const filtered = useMemo(() => {
     if (ids.length === 0) return;
 
     try {
-    setExportLoading(true);
+      setExportLoading(true);
       const results = await Promise.all(
         ids.map(async (id) => {
-              let url = await buildGetUrlsUrl(
-                `${API_BASE}/guest/url/get-data/${id}`,
-                `${API_BASE}/user/url/get-data/${id}`
-              );
+          let url = await buildGetUrlsUrl(
+            `${API_BASE}/guest/url/get-data/${id}`,
+            `${API_BASE}/user/url/get-data/${id}`
+          );
           const res = await fetch(url.toString(), {
             method: "GET",
             headers: {
