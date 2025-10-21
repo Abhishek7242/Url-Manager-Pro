@@ -16,6 +16,12 @@ import {
 } from "react-icons/fi";
 import "./CSS/Navbar.css";
 import UrlContext from "../context/url_manager/UrlContext";
+import ProfileDropdown from "./navbar/ProfileDropdown";
+import ProfileCard from "./navbar/ProfileCard";
+import Login from "./auth/Login";
+import Signup from "./auth/Signup";
+import VerifyOtp from "./auth/VerifyOtp";
+
 
 export default function Navbar() {
   const context = React.useContext(UrlContext);
@@ -30,6 +36,8 @@ export default function Navbar() {
     logout,
     user,
     setUser,
+    userInfoData,
+    setUserInfoData,
   } = context;
 
   const location = useLocation();
@@ -39,6 +47,7 @@ export default function Navbar() {
   useEffect(() => {
     async function getUser() {
       const fetchedUser = await fetchAndLogUser();
+setUserInfoData(fetchedUser);
       // console.log("Fetched user in Navbar:", fetchedUser);
       if (fetchedUser) setUser(fetchedUser); // 👈 Set user here
     }
@@ -46,9 +55,14 @@ export default function Navbar() {
     getUser();
   }, []);
   const [url, setUrl] = useState("");
+  const [openProfileModel, setOpenProfileModel] = useState(false);
+  const [openLoginModel, setOpenLoginModel] = useState(false);
+  const [openSignupModel, setOpenSignupModel] = useState(false);
+  const [openverifyOTPModel, setOpenVerifyOTPModel] = useState(false);
   const [isQuickAddLoading, setIsQuickAddLoading] = useState(false);
      const [isLoggingOut, setIsLoggingOut] = useState(false);
   const totalClicks = filtered.reduce((sum, u) => sum + (u.url_clicks || 0), 0);
+  
   const remindersCount = React.useMemo(() => {
     try {
       return (filtered || []).filter((u) => !!u.reminder_at).length;
@@ -127,9 +141,39 @@ const handleLogout = async () => {
     setIsLoggingOut(false);
   }
 };
+ const handleThemeChange = () => {
+   const root = document.documentElement;
+   
+   root.style.setProperty("--theme-color", "#ef7faff"); // bluish white
+  //  root.style.setProperty("--secondary-color", "#8fa8d6"); // soft blue-gray
+  document.body.classList.toggle("dark-mode");
 
+ };
   return (
     <header className="navbar-pro">
+      {/* Login Modal */}
+      {openLoginModel && (
+        <Login
+          isOpen={openLoginModel}
+          onClose={() => setOpenLoginModel(false)}
+        />
+      )}
+      {openSignupModel && (
+        <Signup
+          isOpen={openSignupModel}
+          onClose={() => setOpenSignupModel(false)}
+          setOpenSignupModel={setOpenSignupModel}
+          setOpenVerifyOTPModel={setOpenVerifyOTPModel}
+        />
+      )}
+      {openverifyOTPModel && (
+        <VerifyOtp
+          isOpen={openverifyOTPModel}
+          onClose={() => setOpenVerifyOTPModel(false)}
+          setOpenVerifyOTPModel={setOpenVerifyOTPModel}
+        />
+      )}
+
       {/* Top Row */}
       <div className="navbar-top">
         <div className="nav-left">
@@ -154,29 +198,33 @@ const handleLogout = async () => {
           {/* <button className="nav-btn">
             <FiCommand /> Shortcuts
           </button> */}
-          {user !== null ? (
-            <button
-              onClick={() => {
-                handleLogout()
-                setUser(null);
-              }}
-              className="nav-btn auth-btn login-btn"
-            >
-              Logout
-            </button>
-          ) : (
-            <>
-              <Link to="/login" className="nav-btn auth-btn login-btn">
-                Login
-              </Link>
-              <Link to="/signup" className="nav-btn auth-btn signup-btn">
-                Sign Up
-              </Link>
-            </>
-          )}
-          <button className="nav-icon-btn">
+          <button onClick={handleThemeChange} className="nav-icon-btn">
             <FiMoon />
           </button>
+          {user !== null ? (
+            <>
+              <ProfileDropdown
+                onLogout={handleLogout}
+                user={user}
+                isLoggedIn={true}
+                onProfile={() => setOpenProfileModel(true)}
+              />
+              {openProfileModel ? (
+                <ProfileCard
+                  isOpen={openProfileModel}
+                  onClose={() => setOpenProfileModel(false)}
+                  user={user}
+                />
+              ) : null}
+            </>
+          ) : (
+            <ProfileDropdown
+              isLoggedIn={false}
+              setOpenLoginModel={setOpenLoginModel}
+              setOpenSignupModel={setOpenSignupModel}
+              setOpenVerifyOTPModel={setOpenVerifyOTPModel}
+            />
+          )}
         </div>
       </div>
 

@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FiBell, FiLink, FiLoader } from "react-icons/fi";
 import UrlContext from "../context/url_manager/UrlContext";
 import "./CSS/Reminders.css";
+import NeonOrbitalLoader from "./NeonOrbitalLoader";
+import ReminderEmptyCard from "./reminder/ReminderEmptyCard";
 
 const Reminders = () => {
   const context = React.useContext(UrlContext);
@@ -11,14 +13,19 @@ const Reminders = () => {
     setUrls,
     filtered,
     updateClickCount,
+    setScreenLoading,
   } = context || {};
 
-  const [loading, setLoading] = React.useState(filtered.length === 0);
+  const [loading, setLoading] =useState(true);
 
   useEffect(() => {
     // If URLs already present (e.g., loaded by Dashboard), stop loading
     if ((filtered || []).length > 0) {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+        
+      }, 800);
+      setScreenLoading(false)
       return;
     }
 
@@ -32,6 +39,8 @@ const Reminders = () => {
         console.error("❌ Error fetching URLs for reminders:", err);
       } finally {
         if (isMounted) setLoading(false);
+setScreenLoading(false);
+
       }
     };
 
@@ -40,7 +49,7 @@ const Reminders = () => {
     return () => {
       isMounted = false;
     };
-  }, [filtered, getAllUrls, setUrls]);
+  }, []);
 
   const reminders = useMemo(() => {
     const withReminder = (filtered || []).filter((u) => !!u.reminder_at);
@@ -80,13 +89,8 @@ const Reminders = () => {
   // Show loading state while fetching data (same style as Dashboard)
   if (loading) {
     return (
-      <div className="sugg-root">
-        <div className="sugg-clean">
-          <div className="sugg-icon loading-icon">
-            <FiLoader />
-          </div>
-          <h3>Loading Reminders...</h3>
-        </div>
+      <div className="relative h-full pt-32 w-full flex items-center justify-center">
+        <NeonOrbitalLoader />
       </div>
     );
   }
@@ -94,16 +98,7 @@ const Reminders = () => {
   return (
     <div className="reminders-page">
       {reminders.length === 0 ? (
-        <div className="reminder-empty modern-empty">
-          <div className="reminder-icon-container flex flex-col items-center justify-center">
-            <FiBell className="reminder-icon" />
-            <h2 className="reminder-title font-bold text-4xl text-center">
-              All Caught Up
-            </h2>
-          </div>
-          <p className="reminders-empty-text">No active reminders</p>
-          <p>Set reminders when adding or editing URLs to see them here.</p>
-        </div>
+       <ReminderEmptyCard/>
       ) : (
         <div className="reminders-list">
           <div className="reminders-header">

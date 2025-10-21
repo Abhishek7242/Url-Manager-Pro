@@ -4,10 +4,18 @@ import "./CSS/Suggestions.css";
 import UrlContext from "../context/url_manager/UrlContext";
 import AddTagsLinksModal from "./suggestion/AddTagsLinksModel";
 import EditUrlModal from "./dashboard/EditUrlModal";
+import NeonOrbitalLoader from "./NeonOrbitalLoader";
+import OptimizedCard from "./suggestion/OptimizedCard";
 
 export default function Suggestions() {
-  const { getAllUrls, setUrls, filtered, isEditOpen, setIsEditOpen } =
-    useContext(UrlContext);
+  const {
+    getAllUrls,
+    setUrls,
+    filtered,
+    isEditOpen,
+    setIsEditOpen,
+    setScreenLoading,
+  } = useContext(UrlContext);
 
   // Separate loading states
   const [initialLoading, setInitialLoading] = useState(true); // for getAllUrls
@@ -35,6 +43,7 @@ export default function Suggestions() {
         // console.error("❌ Error fetching URLs:", err);
       } finally {
         if (mounted) setInitialLoading(false);
+        setScreenLoading(false)
       }
     };
 
@@ -184,13 +193,8 @@ export default function Suggestions() {
   // If we're still fetching initial data, show the full page loader (no flicker from checking)
   if (initialLoading) {
     return (
-      <div className="sugg-root">
-        <div className="sugg-clean">
-          <div className="sugg-icon loading-icon">
-            <FiLoader />
-          </div>
-          <h3>Loading suggestions...</h3>
-        </div>
+      <div className="relative h-full pt-32 w-full flex items-center justify-center">
+        <NeonOrbitalLoader />
       </div>
     );
   }
@@ -211,28 +215,12 @@ export default function Suggestions() {
         }}
         links={selectedLinks}
       />
-      <div className="sugg-header">
-        <div className="sugg-title">
-          <FiTag className="bulb-icon" />
-          <h3>Smart Suggestions</h3>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {checking && <FiLoader className="loading-icon-broken-links" />}
-            <span className="count">{suggestions.length} suggestions</span>
-          </div>
-        </div>
-      </div>
+   
 
       {!suggestions || (suggestions.length === 0 && !checking) ? (
-        <div className="sugg-clean">
-          <div className="sugg-icon">
-            <FiTrendingUp />
-          </div>
-          <h3>All Optimized!</h3>
-          <p>
-            Your URL collection is well-organized. No suggestions at the moment.
-          </p>
-        </div>
+        <OptimizedCard/>
       ) : (
+          
         <div className="sugg-grid">
           {suggestions.map((s) => (
             <div key={s.id} className="sugg-card">

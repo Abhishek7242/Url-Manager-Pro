@@ -12,14 +12,11 @@ import TopTags from "./analytics/TopTags";
 import MostVisited from "./analytics/MostVisited";
 import RecentlyAdded from "./analytics/RecentlyAdded";
 import UrlContext from "../context/url_manager/UrlContext";
+import NeonOrbitalLoader from "./NeonOrbitalLoader";
 
 export default function Analytics() {
     const context = React.useContext(UrlContext);
-    const {
-      getAllUrls,
-      setUrls,
-      filtered,
-    } = context;
+    const { getAllUrls, setUrls, filtered, setScreenLoading } = context;
     
     const [initialLoading, setInitialLoading] = useState(true);
     
@@ -34,6 +31,7 @@ export default function Analytics() {
           // console.error("❌ Error fetching URLs:", err);
         } finally {
           setInitialLoading(false);
+          setScreenLoading(false)
         }
       };
   
@@ -131,13 +129,8 @@ export default function Analytics() {
   // If we're still loading initial data, show loading animation
   if (initialLoading) {
     return (
-      <div className="sugg-root">
-        <div className="sugg-clean">
-          <div className="sugg-icon loading-icon">
-            <FiLoader />
-          </div>
-          <h3>Loading suggestions...</h3>
-        </div>
+      <div className="relative h-full pt-32 w-full flex items-center justify-center">
+        <NeonOrbitalLoader />
       </div>
     );
   }

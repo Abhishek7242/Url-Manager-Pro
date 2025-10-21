@@ -5,6 +5,10 @@
 }
 
 /* search card */
+.search-card-container{
+ backdrop-filter: blur(10px);
+ z-index: 1;
+}
 .search-card {
   background: linear-gradient(180deg, rgba(1, 0, 29, 0.555), rgb(0, 0, 26));
   border: 2px solid rgba(255, 255, 255, 0.05);
@@ -66,6 +70,8 @@
   align-items: center;
   gap: 18px;
   margin: 12px 0 18px;
+  z-index: 11;
+  position: relative;
 }
 
 .add-btn {
@@ -340,6 +346,7 @@
   width: 100%;
   text-align: center;
   padding: 20px;
+  z-index: 11;
   background: linear-gradient(180deg, rgba(1, 0, 29, 0.2), rgba(0, 0, 26, 0.1));
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.03);

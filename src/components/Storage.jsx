@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FiDownload, FiUpload, FiDatabase, FiCloud, FiSave, FiLoader, FiX } from "react-icons/fi";
 import "./CSS/Storage.css";
 import UrlContext from "../context/url_manager/UrlContext";
+import NeonOrbitalLoader from "./NeonOrbitalLoader";
 
 export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,8 @@ export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
     search,
     setSearch,
     filtered,
-    showNotify
+    showNotify,
+    setScreenLoading,
   } = context;
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
         showNotify("Error loading URLs", "error");
       } finally {
         setLoading(false);
+        setScreenLoading(false)
       }
     };
 
@@ -104,13 +107,8 @@ export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
 
   if (loading) {
     return (
-      <div className="storage-wrapper">
-        <div className="storage-loading">
-          <div className="loading-icon">
-            <FiLoader />
-          </div>
-          <p>Loading storage data...</p>
-        </div>
+      <div className="relative h-full pt-32 w-full flex items-center justify-center">
+        <NeonOrbitalLoader />
       </div>
     );
   }

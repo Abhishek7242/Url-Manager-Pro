@@ -18,6 +18,8 @@ import React, { useState } from "react";
 import Notification from "./components/Notification";
 import UrlContext from "./context/url_manager/UrlContext";
 import AddTagsLinksModel from "./components/suggestion/AddTagsLinksModel";
+import ProfileCard from "./components/navbar/ProfileCard";
+import FullscreenLoader from "./components/FullscreenLoader";
 
 function App() {
   const context = React.useContext(UrlContext);
@@ -36,6 +38,9 @@ function App() {
     notify,
     setNotify,
     showNotify,
+    screenLoading,
+    setScreenLoading,
+   
   } = context;
   const handleExport = () => {
     const data = JSON.parse(localStorage.getItem("lynkr_urls") || "[]");
@@ -68,12 +73,11 @@ function App() {
   const location = useLocation();
 
   // paths where we DON'T want the navbar
-  const noNavPaths = ["/signup", "/signup/verifyotp", "/login"]; // add more if needed
-  const hideNavbar = noNavPaths.includes(location.pathname);
 
   return (
     <>
-      {!hideNavbar && <Navbar />}
+          {/* { screenLoading ? <FullscreenLoader/> : null } */}
+     <Navbar />
       <div className="app">
 
         <div className="notify-container">
@@ -87,7 +91,9 @@ function App() {
           )}
         </div>
       </div>
+
       <Routes>
+        
         <Route path="/" element={<Dashboard />} />
         <Route path="/storage" element={<Storage />} />
         <Route path="/reminders" element={<Reminders />} />
@@ -95,9 +101,7 @@ function App() {
         <Route path="/duplicates" element={<Duplicates />} />
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/tags" element={<Tags />} />
-        <Route path="/signup" element={<Signup />} />
         <Route path="/signup/verifyotp" element={<VerifyOtp />} />
-        <Route path="/login" element={<Login />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

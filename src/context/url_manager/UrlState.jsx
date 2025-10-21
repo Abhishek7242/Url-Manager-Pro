@@ -12,6 +12,7 @@ const UrlState = (props) => {
     status: "active",
   });
   const [urls, setUrls] = useState([]);
+  const [userInfoData, setUserInfoData] = useState([]);
   const [archive, setArchive] = useState(false);
   const [notify, setNotify] = useState(null);
   const [search, setSearch] = useState("");
@@ -20,6 +21,12 @@ const UrlState = (props) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [exportLoading, setExportLoading] = useState(false);
   const [activeSort, setActiveSort] = useState("date");
+  const [screenLoading, setScreenLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [otp_token, setOtpToken] = useState("");
 
   const [user, setUser] = useState(null);
   async function fetchAndLogUser() {
@@ -667,6 +674,8 @@ const UrlState = (props) => {
     <UrlContext.Provider
       value={{
         API_BASE,
+        userInfoData,
+        setUserInfoData,
         addUrl,
         updateUrl,
         getAllUrls,
@@ -703,6 +712,18 @@ const UrlState = (props) => {
         exportLoading,
         activeSort,
         setActiveSort,
+        setScreenLoading,
+        screenLoading,
+        isLoggedIn,
+        setIsLoggedIn,
+        name,
+        setName,
+        email,
+        setEmail,
+        password,
+        setPassword,
+        otp_token,
+        setOtpToken,
       }}
     >
       {props.children}

@@ -8,6 +8,8 @@ import {
 } from "react-icons/fi";
 import "./CSS/Duplicates.css";
 import UrlContext from "../context/url_manager/UrlContext";
+import NeonOrbitalLoader from "./NeonOrbitalLoader";
+import NoDuplicates from "./duplicates/NoDuplicates";
 
 export default function Duplicates() {
   const {
@@ -17,6 +19,7 @@ export default function Duplicates() {
     onKeep,
     showNotify,
     updateClickCount,
+    setScreenLoading,
   } = useContext(UrlContext);
 
   const [loading, setLoading] = useState(true);
@@ -37,6 +40,7 @@ export default function Duplicates() {
         // console.error("❌ Error fetching URLs:", err);
       } finally {
         if (mounted) setLoading(false);
+        setScreenLoading(false)
       }
     };
 
@@ -91,13 +95,8 @@ export default function Duplicates() {
   // LOADING VIEW: uses FiLoader + .loading-icon (your CSS spin rule targets .loading-icon svg)
   if (loading) {
     return (
-      <div className="dups-root">
-        <div className="dups-clean">
-          <div className="dups-icon loading-icon">
-            <FiLoader />
-          </div>
-          <h3>Loading Duplicate URLs...</h3>
-        </div>
+      <div className="relative h-full pt-32 w-full flex items-center justify-center">
+        <NeonOrbitalLoader />
       </div>
     );
   }
@@ -105,15 +104,7 @@ export default function Duplicates() {
   // NO DUPLICATES VIEW
   if (!data || data.length === 0) {
     return (
-      <div className="dups-root">
-        <div className="dups-no">
-          <div className="dups-no-icon">
-            <FiAlertTriangle />
-          </div>
-          <h3>No Duplicates Found</h3>
-          <p>Your URL collection is clean and organized!</p>
-        </div>
-      </div>
+    <NoDuplicates/>
     );
   }
 

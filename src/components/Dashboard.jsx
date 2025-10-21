@@ -11,6 +11,7 @@ import {
   FiList,
   FiLoader,
   FiLink,
+  FiX,
 } from "react-icons/fi";
 
 import "./CSS/Dashboard.css";
@@ -19,6 +20,10 @@ import AddUrlModal from "./dashboard/AddUrlModal";
 import EditUrlModal from "./dashboard/EditUrlModal";
 import UrlContext from "../context/url_manager/UrlContext";
 import SortButtons from "./dashboard/SortButtons";
+import SearchFilter from "./dashboard/SearchFilter";
+import NeonOrbitalLoader from "./NeonOrbitalLoader";
+import { div } from "framer-motion/client";
+import EmptyURLsCard from "./dashboard/EmptyURLsCard";
 
 export default function Dashboard() {
   const context = useContext(UrlContext);
@@ -39,9 +44,12 @@ export default function Dashboard() {
     deleteUrlPost,
     handleExport,
     exportLoading,
+    screenLoading,
+    setScreenLoading,
   } = context;
 
   const [loading, setLoading] = useState(true);
+  const [openSerch, setOpenSerch] = useState(false);
 
   useEffect(() => {
     // define async function inside useEffect
@@ -55,6 +63,7 @@ export default function Dashboard() {
         console.error("❌ Error fetching URLs:", err);
       } finally {
         setLoading(false);
+        setScreenLoading(false);
       }
     };
 
@@ -142,8 +151,6 @@ export default function Dashboard() {
     }
   }
 
-
-
   async function handleDelete() {
     const ids = Object.keys(selectedIds);
     if (ids.length === 0) return;
@@ -178,171 +185,146 @@ export default function Dashboard() {
   // Show loading state while fetching data
   if (loading) {
     return (
-      <div className="sugg-root">
-        <div className="sugg-clean">
-          <div className="sugg-icon loading-icon">
-            <FiLoader />
-          </div>
-          <h3>Loading Urls...</h3>
-        </div>
+      <div className="relative h-full pt-32 w-full flex items-center justify-center">
+      <NeonOrbitalLoader/>
       </div>
     );
   }
 
   return (
-    <div className="dashboard">
-      <AddUrlModal
-        isOpen={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
-        onAdd={(link) => handleAddUrl(link)}
-      />
-      <EditUrlModal
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-        onAdd={(link) => handleAddUrl(link)}
-      />
-      {filtered.length > 0 && (
-        <section className="search-card">
-          <div className="search-header">
-            <div className="search-left">
-              <FiSearch /> <h4 className=" text-3xl">Search & Filter</h4>
-            </div>
+    <>
+      {openSerch && (
+        <SearchFilter
+          search={search}
+          setSearch={setSearch}
+          setOpenSerch={setOpenSerch}
+        />
+      )}
+      <div className="dashboard">
+        <AddUrlModal
+          isOpen={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
+          onAdd={(link) => handleAddUrl(link)}
+        />
+        <EditUrlModal
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+          onAdd={(link) => handleAddUrl(link)}
+        />
 
+        <div className="controls">
+          <button className="add-btn" onClick={() => setIsAddOpen(true)}>
+            <FiPlus /> Add URL
+          </button>
+          <div className="active-toggle">
+            <label className="switch">
+              <input
+                checked={archive}
+                type="checkbox"
+                onChange={(e) => setArchive(e.target.checked)}
+              />
+              <span className="slider" />
+            </label>
+
+            {/* 👇 Dynamic icon */}
+            {archive ? (
+              <FiEye className="icon active-icon" />
+            ) : (
+              <FiEyeOff className="icon inactive-icon" />
+            )}
+
+            <span className="">{archive ? "InActive" : "Active"}</span>
+          </div>
+
+          <div className="view-toggle" role="tablist" aria-label="View toggle">
+            <button
+              className={`vt-btn ${activeMode === "grid" ? "active" : ""}`}
+              role="tab"
+              aria-selected={activeMode === "grid"}
+              title="Grid view"
+              onClick={() => handleClick("grid")}
+            >
+              <FiGrid />
+            </button>
+
+            <button
+              className={`vt-btn ${activeMode === "list" ? "active" : ""}`}
+              role="tab"
+              aria-selected={activeMode === "list"}
+              title="List view"
+              onClick={() => handleClick("list")}
+            >
+              <FiList />
+            </button>
+            {/* 
+          <button
+          className={`vt-btn ${activeMode === "eye" ? "active" : ""}`}
+          role="tab"
+          aria-selected={activeMode === "eye"}
+          title="Show / Hide"
+          onClick={() => handleClick("eye")}
+          >
+          <FiEye />
+          </button> */}
+          </div>
+          <div className="right-info">
+            {filtered.length > 0 && (
+              <div className="select-all">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={toggleSelectAll}
+                />
+                <span>Select all</span>
+              </div>
+            )}
+            <div className="count">{filtered.length} URLs</div>
             <div className="search-right">
-              <button className="filter-btn">
+              <button onClick={() => setOpenSerch(true)} className="filter-btn">
                 <FiFilter /> Filters
               </button>
             </div>
           </div>
+        </div>
+        {/* Selection toolbar */}
+        <SelectionToolbar
+          selectedCount={selectedCount}
+          onTag={handleTag}
+          onArchive={handleArchive}
+          onExport={handleExport}
+          onDelete={handleDelete}
+          isArchiving={archiveLoading}
+          isExporting={exportLoading}
+          isDeleting={deleteLoading}
+        />
 
-          <div className="search-input">
-            <FiSearch className="sicon" />
-            <input
-              placeholder="Search URLs, notes, or tags..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div>
-        <SortButtons/>
-          </div>
-        </section>
-      )}
-
-      <div className="controls">
-        <button className="add-btn" onClick={() => setIsAddOpen(true)}>
-          <FiPlus /> Add URL
-        </button>
-        <div className="active-toggle">
-          <label className="switch">
-            <input
-              checked={archive}
-              type="checkbox"
-              onChange={(e) => setArchive(e.target.checked)}
-            />
-            <span className="slider" />
-          </label>
-
-          {/* 👇 Dynamic icon */}
-          {archive ? (
-            <FiEye className="icon active-icon" />
+        <div className={`cards-wrap ${activeMode}`}>
+          {filtered.length === 0 ? (
+            <div className="w-full flex justify-center">
+              <EmptyURLsCard onAdd={setIsAddOpen} />
+            </div>
           ) : (
-            <FiEyeOff className="icon inactive-icon" />
+            filtered.map((l) => (
+              <div key={l.id} className="card-col">
+                <LinkCard
+                  link={l}
+                  activeMode={activeMode}
+                  selected={!!selectedIds[l.id]}
+                  onSelect={handleSelect}
+                  onDelete={(id) => {
+                    setUrls((prev) => prev.filter((x) => x.id !== id));
+                  }}
+                  onShare={(link) => {
+                    // example: copy to clipboard
+                    navigator.clipboard.writeText(link.url);
+                    alert("URL copied to clipboard");
+                  }}
+                />
+              </div>
+            ))
           )}
-
-          <span className="">{archive ? "InActive" : "Active"}</span>
-        </div>
-
-        <div className="view-toggle" role="tablist" aria-label="View toggle">
-          <button
-            className={`vt-btn ${activeMode === "grid" ? "active" : ""}`}
-            role="tab"
-            aria-selected={activeMode === "grid"}
-            title="Grid view"
-            onClick={() => handleClick("grid")}
-          >
-            <FiGrid />
-          </button>
-
-          <button
-            className={`vt-btn ${activeMode === "list" ? "active" : ""}`}
-            role="tab"
-            aria-selected={activeMode === "list"}
-            title="List view"
-            onClick={() => handleClick("list")}
-          >
-            <FiList />
-          </button>
-          {/* 
-          <button
-            className={`vt-btn ${activeMode === "eye" ? "active" : ""}`}
-            role="tab"
-            aria-selected={activeMode === "eye"}
-            title="Show / Hide"
-            onClick={() => handleClick("eye")}
-          >
-            <FiEye />
-          </button> */}
-        </div>
-        <div className="right-info">
-          {filtered.length > 0 && (
-            <div className="select-all">
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={toggleSelectAll}
-              />
-              <span>Select all</span>
-            </div>
-          )}
-          <div className="count">{filtered.length} URLs</div>
         </div>
       </div>
-      {/* Selection toolbar */}
-      <SelectionToolbar
-        selectedCount={selectedCount}
-        onTag={handleTag}
-        onArchive={handleArchive}
-        onExport={handleExport}
-        onDelete={handleDelete}
-        isArchiving={archiveLoading}
-        isExporting={exportLoading}
-        isDeleting={deleteLoading}
-      />
-
-      <div className={`cards-wrap ${activeMode}`}>
-        {filtered.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">
-              <FiLink />
-            </div>
-            <h3>No URLs saved yet</h3>
-            <p>Start by adding your first URL with notes and reminders</p>
-            <button className="add-url-btn" onClick={() => setIsAddOpen(true)}>
-              <FiPlus /> Add URL
-            </button>
-          </div>
-        ) : (
-          filtered.map((l) => (
-            <div key={l.id} className="card-col">
-              <LinkCard
-                link={l}
-                activeMode={activeMode}
-                selected={!!selectedIds[l.id]}
-                onSelect={handleSelect}
-                onDelete={(id) => {
-                  setUrls((prev) => prev.filter((x) => x.id !== id));
-                }}
-                onShare={(link) => {
-                  // example: copy to clipboard
-                  navigator.clipboard.writeText(link.url);
-                  alert("URL copied to clipboard");
-                }}
-              />
-            </div>
-          ))
-        )}
-      </div>
-    </div>
+    </>
   );
 }

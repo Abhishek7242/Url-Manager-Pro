@@ -6,6 +6,7 @@
   width: 100%;
   box-sizing: border-box;
   color: #c7d2da;
+  z-index: 11;
   transition: transform .12s ease, box-shadow .12s ease;
 }
 .link-card.grid {

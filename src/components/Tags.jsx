@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { FiHash, FiClock, FiTag, FiLoader } from "react-icons/fi";
 import "./CSS/Tags.css";
 import UrlContext from "../context/url_manager/UrlContext";
+import NeonOrbitalLoader from "./NeonOrbitalLoader";
 
 export default function Tags() {
   const context = React.useContext(UrlContext);
-  const { filtered, setUrls, getAllUrls } = context;
+  const { filtered, setUrls, getAllUrls, setScreenLoading } = context;
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     // define async function inside useEffect
@@ -19,6 +20,8 @@ export default function Tags() {
         console.error("❌ Error fetching URLs:", err);
       } finally {
         setLoading(false);
+setScreenLoading(false);
+
       }
     };
 
@@ -48,6 +51,9 @@ export default function Tags() {
           });
         }
       });
+      setTimeout(() => {
+        
+      }, 400);
       setLoading(false);
       return Object.values(tagMap);
     } catch (err) {
@@ -85,13 +91,8 @@ export default function Tags() {
   // Show loading state while processing tags
   if (loading) {
     return (
-      <div className="sugg-root">
-        <div className="sugg-clean">
-          <div className="sugg-icon loading-icon">
-            <FiLoader />
-          </div>
-          <h3>Loading Tags...</h3>
-        </div>
+      <div className="relative h-full pt-32 w-full flex items-center justify-center">
+        <NeonOrbitalLoader/>
       </div>
     );
   }
