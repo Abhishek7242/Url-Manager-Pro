@@ -274,3 +274,151 @@
     justify-content: center;
   }
 }
+/* =========================================================
+   🌤️ LIGHT MODE STYLES (Tags & Suggestions)
+   ========================================================= */
+.light-mode {
+  --bg: #FAFBFD;
+  --card: #ffffff;
+  --muted: #64748b;
+  --text: #0f172a;
+  --border: rgba(0, 0, 0, 0.08);
+  --accent: #2563eb;
+}
+
+/* Root / Wrapper */
+.light-mode .tags-root {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Header */
+.light-mode .tags-header { color: #0f172a; }
+
+.light-mode .tags-icon {
+  background: linear-gradient(135deg, var(--accent), #9e8bff);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+
+.light-mode .tags-title h3 {
+  color: #0f172a;
+}
+
+.light-mode .tag-count {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+/* Card container */
+.light-mode .tags-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Section Titles */
+.light-mode .section-title {
+  color: #0f172a;
+}
+
+/* Empty state */
+.light-mode .tag-cloud-empty {
+  color: #64748b;
+}
+
+.light-mode .empty-hash {
+  color: rgba(15, 23, 42, 0.08);
+}
+
+/* Tag Cloud */
+.light-mode .tag-cloud {
+  background: transparent;
+}
+
+.light-mode .tag-pill {
+  background: #f8fafc;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+  box-shadow: none;
+}
+
+.light-mode .tag-pill:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+}
+
+.light-mode .tag-bubble {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+/* Bottom sections */
+.light-mode .tags-bottom {
+  color: #0f172a;
+}
+
+/* Most used & Recent active lists */
+.light-mode .most-item,
+.light-mode .recent-item {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.light-mode .rank {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+.light-mode .tag-name,
+.light-mode .ra-tag {
+  color: #0f172a;
+}
+
+.light-mode .tag-meta,
+.light-mode .ra-date,
+.light-mode .ra-count {
+  color: #64748b;
+}
+
+.light-mode .right-badge {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+/* Recently active */
+.light-mode .ra-left {
+  color: #0f172a;
+}
+
+.light-mode .ra-icon {
+  color: #64748b;
+}
+
+/* Suggestions clean view */
+.light-mode .sugg-root {
+  background: #FAFBFD;
+  color: #0f172a;
+}
+
+.light-mode .sugg-icon {
+  color: #2563eb;
+}
+
+/* Lists */
+.light-mode .most-list li,
+.light-mode .recent-list li {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive tweaks (unchanged structure) */
+@media (max-width: 900px) {
+  .light-mode .tags-bottom {
+    grid-template-columns: 1fr;
+  }
+  .light-mode .tag-cloud {
+    justify-content: center;
+  }
+}

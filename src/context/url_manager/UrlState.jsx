@@ -2,7 +2,11 @@ import { useMemo, useState, useEffect } from "react";
 import AuthLimitModal from "../../components/AuthLimitModal.jsx";
 import UrlContext from "./UrlContext";
 const UrlState = (props) => {
+  // http://localhost:8000/
   const API_BASE = "http://localhost:8000/api"; // Laravel backend
+  const BASE = "http://localhost:8000/"; // Laravel backend
+  // const API_BASE = "https://rosybrown-frog-380446.hostingersite.com/api"; // Laravel backend
+  // const BASE = "https://rosybrown-frog-380446.hostingersite.com/"; // Laravel backend
   const [formData, setFormData] = useState({
     id: "",
     title: "",
@@ -13,6 +17,8 @@ const UrlState = (props) => {
   });
   const [urls, setUrls] = useState([]);
   const [userInfoData, setUserInfoData] = useState([]);
+  const [themeImage, setThemeImage] = useState("");
+
   const [archive, setArchive] = useState(false);
   const [notify, setNotify] = useState(null);
   const [search, setSearch] = useState("");
@@ -23,10 +29,10 @@ const UrlState = (props) => {
   const [activeSort, setActiveSort] = useState("date");
   const [screenLoading, setScreenLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [otp_token, setOtpToken] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [otp_token, setOtpToken] = useState("");
 
   const [user, setUser] = useState(null);
   async function fetchAndLogUser() {
@@ -276,7 +282,7 @@ const UrlState = (props) => {
   // Helper function to make authenticated requests
   async function makeAuthenticatedRequest(url, options = {}) {
     // Step 1: Get CSRF cookie first
-    await fetch("http://localhost:8000/sanctum/csrf-cookie", {
+    await fetch(`${BASE}/sanctum/csrf-cookie`, {
       method: "GET",
       credentials: "include",
     });
@@ -472,10 +478,13 @@ const UrlState = (props) => {
     const q = search.trim().toLowerCase();
     const d = activeSort.trim().toLowerCase();
 
+    // Ensure urls is always an array
+    const urlsArray = Array.isArray(urls) ? urls : [];
+
     // 1) Always apply archive logic first
     const base = archive
-      ? urls.filter((l) => l.status === "archived")
-      : urls.filter((l) => l.status === "active");
+      ? urlsArray.filter((l) => l.status === "archived")
+      : urlsArray.filter((l) => l.status === "active");
 
     // 2) Then apply search (if present) on the base set
     let result;
@@ -724,6 +733,8 @@ const UrlState = (props) => {
         setPassword,
         otp_token,
         setOtpToken,
+        themeImage,
+        setThemeImage,
       }}
     >
       {props.children}

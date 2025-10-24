@@ -1,0 +1,130 @@
+/* =========================================================
+   LIGHT MODE — NoDuplicates (nd-*)
+   Append this at end of stylesheet or inside .light-mode
+   ========================================================= */
+
+.light-mode .nd-root {
+  background: transparent;
+  color: #0f172a;
+  position: relative;
+}
+
+/* subtle white plate instead of dark glass */
+.light-mode .nd-bg-ring {
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.95),
+    rgba(250,250,251,0.98)
+  );
+  border: 1px solid rgba(15,23,42,0.06);
+  box-shadow: 0 12px 30px rgba(15,23,42,0.05);
+  mix-blend-mode: normal;
+  /* keep the rounded shape */
+  border-radius: 1rem;
+}
+
+/* rotating conic glow: soften and use colored tints visible on white */
+.light-mode .nd-rotating-glow {
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(37,99,235,0.08),
+      rgba(168,85,247,0.06),
+      rgba(37,99,235,0.08)
+    );
+  mask-image: radial-gradient(circle, transparent 50%, black 51%);
+  -webkit-mask-image: radial-gradient(circle, transparent 50%, black 51%);
+  opacity: 0.95;
+  filter: blur(0.6px) contrast(1.02);
+}
+
+/* content container: readable text on white */
+.light-mode .nd-content {
+  color: #0f172a;
+  padding: 24px; /* keep spacing */
+}
+
+/* icon wrapper: soft pastel plate with gentle shadow */
+.light-mode .nd-icon-wrapper {
+  background: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(168,85,247,0.08));
+  border: 1px solid rgba(15,23,42,0.04);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.04);
+  backdrop-filter: none;
+}
+
+/* icon color: stronger contrast on white */
+.light-mode .nd-icon {
+  color: #2563eb; /* vivid blue */
+}
+
+/* title and description */
+.light-mode .nd-title {
+  color: #0b1220;
+  font-weight: 700;
+}
+
+.light-mode .nd-description {
+  color: #475569;
+}
+
+/* highlighted words */
+.light-mode .nd-highlight-clean {
+  color: #16a34a; /* green-600 */
+  font-weight: 600;
+}
+
+.light-mode .nd-highlight-organized {
+  color: #2563eb; /* blue-600 */
+  font-weight: 600;
+}
+
+/* glowing divider — more subtle on white */
+.light-mode .nd-glow-line {
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(37,99,235,0.14),
+    transparent
+  );
+  opacity: 1;
+}
+
+/* rounded container edge visibility on white (ensure ring isn't overpowering) */
+.light-mode .nd-root::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  pointer-events: none;
+  /* very thin outer highlight to separate from page on white backgrounds */
+  box-shadow: 0 1px 0 rgba(15,23,42,0.02) inset;
+}
+
+/* hover/interaction (keeps subtle lift if user hovers whole block) */
+.light-mode .nd-root:hover .nd-icon-wrapper {
+  transform: translateY(-3px);
+  transition: transform 180ms ease;
+  box-shadow: 0 14px 36px rgba(15,23,42,0.06);
+}
+
+/* ensure rotating glow doesn't wash out content */
+.light-mode .nd-rotating-glow,
+.light-mode .nd-bg-ring {
+  mix-blend-mode: normal;
+}
+
+/* Accessibility: visible focus ring */
+.light-mode .nd-root :focus {
+  outline: 3px solid rgba(37,99,235,0.18);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* responsive adjustments */
+@media (max-width: 640px) {
+  .light-mode .nd-content { padding: 18px; }
+  .light-mode .nd-title { font-size: 1.05rem; }
+  .light-mode .nd-description { font-size: 0.9rem; max-width: 18ch; }
+  .light-mode .nd-icon-wrapper { width: 72px; height: 72px; }
+  .light-mode .nd-glow-line { width: 56px; }
+}

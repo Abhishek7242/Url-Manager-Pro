@@ -6,8 +6,9 @@ import ForgotPasswordModal from "./ForgotPasswordModal";
 import "../CSS/Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import UrlContext from "../../context/url_manager/UrlContext";
+import Buttons from "./Buttons";
 
-export default function Login({ onClose }) {
+export default function Login({isOpen,isSignUp, onClose, setOpenSignupModel }) {
   const context = React.useContext(UrlContext);
   const {
     API_BASE,
@@ -58,17 +59,16 @@ export default function Login({ onClose }) {
         throw new Error(data.message);
       }
       setScreenLoading(true);
-    
-        onClose();
-        
+
+      onClose();
+
       setTimeout(() => {
-      setScreenLoading(false);
-        
-      }, 3000)
-         const refreshedUrls = await getAllUrls();
-         if (refreshedUrls && refreshedUrls.data) {
-           setUrls(refreshedUrls.data);
-         }
+        setScreenLoading(false);
+      }, 3000);
+      const refreshedUrls = await getAllUrls();
+      if (refreshedUrls && refreshedUrls.data) {
+        setUrls(refreshedUrls.data);
+      }
     } catch (err) {
       console.error("Error sending OTP:", err);
       alert(`Error: ${err.message}`);
@@ -96,23 +96,28 @@ export default function Login({ onClose }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="login-page"
+          className="login-page flex items-center justify-center flex-col"
         >
+          {" "}
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="cut-btn"
+          >
+            ✕
+          </button>
+          <Buttons
+            setOpenSignupModel={setOpenSignupModel}
+            onClose={onClose}
+            isSignUp={isSignUp}
+            isLogin={isOpen}
+          />
           <div className="login-card">
             {/* Cut / Close button (top-right) */}
-            <button
-              type="button"
-              aria-label="Close"
-              onClick={onClose}
-              className="cut-btn"
-             
-            >
-              ✕
-            </button>
 
             <div className="login-top">
               <div className="login-head">
-                <h2>Welcome back</h2>
                 <p className="sub">Sign in to manage your links</p>
               </div>
             </div>
@@ -213,13 +218,8 @@ export default function Login({ onClose }) {
                   "Sign In"
                 )}
               </button>
-
-              <div className="alt">
-                Don't have an account? <a href="/signup">Sign up</a>
-              </div>
             </form>
           </div>
-
           <ForgotPasswordModal
             isOpen={forgotOpen}
             onClose={() => setForgotOpen(false)}

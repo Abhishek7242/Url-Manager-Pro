@@ -21,6 +21,7 @@ import ProfileCard from "./navbar/ProfileCard";
 import Login from "./auth/Login";
 import Signup from "./auth/Signup";
 import VerifyOtp from "./auth/VerifyOtp";
+import ThemeDropdown from "./navbar/ThemeDropdown";
 
 
 export default function Navbar() {
@@ -144,9 +145,9 @@ const handleLogout = async () => {
  const handleThemeChange = () => {
    const root = document.documentElement;
    
-   root.style.setProperty("--theme-color", "#ef7faff"); // bluish white
+  //  root.style.setProperty("--theme-color", "#ef7faff"); // bluish white
   //  root.style.setProperty("--secondary-color", "#8fa8d6"); // soft blue-gray
-  document.body.classList.toggle("dark-mode");
+  document.body.classList.toggle("light-mode");
 
  };
   return (
@@ -155,14 +156,17 @@ const handleLogout = async () => {
       {openLoginModel && (
         <Login
           isOpen={openLoginModel}
+          setOpenSignupModel={setOpenSignupModel}
+          isSignUp={openSignupModel}
           onClose={() => setOpenLoginModel(false)}
         />
       )}
       {openSignupModel && (
         <Signup
-          isOpen={openSignupModel}
+          isLogin={openLoginModel}
+          isSignUp={openSignupModel}
           onClose={() => setOpenSignupModel(false)}
-          setOpenSignupModel={setOpenSignupModel}
+          setOpenLoginModel={setOpenLoginModel}
           setOpenVerifyOTPModel={setOpenVerifyOTPModel}
         />
       )}
@@ -198,9 +202,7 @@ const handleLogout = async () => {
           {/* <button className="nav-btn">
             <FiCommand /> Shortcuts
           </button> */}
-          <button onClick={handleThemeChange} className="nav-icon-btn">
-            <FiMoon />
-          </button>
+          <ThemeDropdown />
           {user !== null ? (
             <>
               <ProfileDropdown
@@ -266,8 +268,10 @@ const handleLogout = async () => {
       <div className="flex justify-center">
         <div className="nav-tabs">
           <Link
-            to="/"
-            className={`tab ${location.pathname === "/" ? "active" : ""}`}
+            to="/dashboard"
+            className={`tab ${
+              location.pathname === "/dashboard" ? "active" : ""
+            }`}
           >
             <FiLink /> URLs <span className="count">{filtered.length} </span>
           </Link>

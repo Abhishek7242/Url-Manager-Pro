@@ -20,6 +20,7 @@ import UrlContext from "./context/url_manager/UrlContext";
 import AddTagsLinksModel from "./components/suggestion/AddTagsLinksModel";
 import ProfileCard from "./components/navbar/ProfileCard";
 import FullscreenLoader from "./components/FullscreenLoader";
+import URLMgrLanding from "./components/URLMgrLanding";
 
 function App() {
   const context = React.useContext(UrlContext);
@@ -76,10 +77,9 @@ function App() {
 
   return (
     <>
-          {/* { screenLoading ? <FullscreenLoader/> : null } */}
-     <Navbar />
+      {/* { screenLoading ? <FullscreenLoader/> : null } */}
+      {location.pathname !== '/' && <Navbar />}
       <div className="app">
-
         <div className="notify-container">
           {notify && (
             <Notification
@@ -93,8 +93,8 @@ function App() {
       </div>
 
       <Routes>
-        
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<URLMgrLanding />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/storage" element={<Storage />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/analytics" element={<Analytics />} />

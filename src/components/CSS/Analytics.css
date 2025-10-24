@@ -194,3 +194,130 @@
   font-size: 0.95rem;
   margin: 0;
 }
+/* =========================================================
+   🌤️ LIGHT MODE STYLES (Analytics)
+   Append at end of stylesheet
+   ========================================================= */
+.light-mode {
+  --n: #2563eb;            /* primary gradient start */
+  --bg: #FAFBFD;
+  --card: #ffffff;
+  --muted: #64748b;
+  --text: #0f172a;
+  --border: rgba(15, 23, 42, 0.06);
+  --accent: #2563eb;
+}
+
+/* root / container */
+.light-mode .analytics-root {
+  background: var(--bg);
+  color: var(--text);
+  padding: 28px;
+}
+
+/* header */
+.light-mode .analytics-title h1 {
+  background: linear-gradient(90deg, var(--n), #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.light-mode .analytics-title p {
+  color: var(--muted);
+}
+
+/* tabs */
+.light-mode .analytics-tabs {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 6px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+/* cards grid */
+.light-mode .cards-grid { gap: 18px; }
+
+/* card base */
+.light-mode .card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  color: var(--text);
+}
+
+/* card header / title / icon */
+.light-mode .card-title {
+  color: #0b1220;
+}
+
+.light-mode .icon {
+  color: var(--muted);
+}
+
+/* value / subtext */
+.light-mode .card-value {
+  color: var(--text);
+}
+
+.light-mode .card-sub {
+  color: var(--muted);
+}
+
+/* health specifics */
+.light-mode .health-pct {
+  color: var(--text);
+}
+
+.light-mode .health-bar {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.light-mode .health-fill {
+  background: linear-gradient(90deg, var(--n), #60a5fa);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
+}
+
+/* loading */
+.light-mode .loading-container { color: var(--muted); }
+
+.light-mode .loading-icon {
+  color: var(--n);
+}
+
+.light-mode .checking-health {
+  color: var(--muted);
+}
+
+.light-mode .spin-icon {
+  color: var(--n);
+}
+
+/* health-mini */
+.light-mode .health-mini {
+  color: var(--muted);
+}
+
+/* empty analytics */
+.light-mode .empty-analytics {
+  background:none;
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.light-mode .empty-analytics p {
+  color: var(--muted);
+}
+
+/* responsive: no change needed but keep color corrections */
+@media (max-width:1100px){
+  .light-mode .cards-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width:640px){
+  .light-mode .analytics-root{ padding:18px; }
+  .light-mode .analytics-title h1{ font-size:22px; }
+  .light-mode .cards-grid{ grid-template-columns: 1fr; gap:14px;}
+  .light-mode .card-value{ font-size:20px; }
+  .light-mode .health-pct{ font-size:20px; }
+}

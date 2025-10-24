@@ -1,0 +1,145 @@
+/* =========================================================
+   🌤️ LIGHT MODE STYLES FOR PROFILE DROPDOWN COMPONENT
+   Uses the unique `pd-*` class names.
+   ========================================================= */
+
+.light-mode .pd-root {
+  color: #0f172a;
+}
+
+/* ────────────────────────────────
+   Toggle Button (Avatar + Chevron)
+──────────────────────────────── */
+.light-mode .pd-toggle-btn {
+  background: rgba(255, 255, 255, 0.85);
+  color: #0f172a;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.light-mode .pd-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.light-mode .pd-chevron {
+  color: #475569 !important;
+}
+
+/* ────────────────────────────────
+   Avatar
+──────────────────────────────── */
+.light-mode .pd-avatar {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.light-mode .pd-avatar-fallback,
+.light-mode .pd-avatar-icon {
+  color: #334155 !important;
+}
+
+/* ────────────────────────────────
+   Dropdown Menu
+──────────────────────────────── */
+.light-mode .pd-menu {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  backdrop-filter: blur(12px);
+}
+
+/* ────────────────────────────────
+   User Info Section
+──────────────────────────────── */
+.light-mode .pd-user-info {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light-mode .pd-user-name {
+  color: #0f172a !important;
+}
+
+.light-mode .pd-user-email {
+  color: #475569 !important;
+}
+
+.light-mode .pd-avatar-sm {
+  background: #f1f5f9 !important;
+  color: #0f172a;
+}
+
+/* ────────────────────────────────
+   Menu Buttons
+──────────────────────────────── */
+/* FIX: remove unintended blur or translucent white on login/signup buttons */
+.light-mode .pd-menu-item {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  color: #0f172a !important;
+
+}
+
+
+.light-mode .pd-menu-item:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb !important;
+}
+
+.light-mode .pd-menu-item:focus {
+  background: rgba(37, 99, 235, 0.12);
+}
+
+/* Icons inside buttons */
+.light-mode .pd-icon {
+  color: #334155 !important;
+}
+
+/* Divider */
+.light-mode .pd-divider {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ────────────────────────────────
+   Logout Button
+──────────────────────────────── */
+.light-mode .pd-logout-btn {
+  color: #dc2626 !important;
+}
+
+.light-mode .pd-logout-btn:hover {
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c !important;
+}
+
+/* ────────────────────────────────
+   Guest Menu Buttons (Login/Signup)
+──────────────────────────────── */
+.light-mode .pd-guest-menu .pd-menu-item {
+  color: #0f172a !important;
+}
+
+.light-mode .pd-login-btn:hover,
+.light-mode .pd-signup-btn:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb !important;
+}
+
+/* ────────────────────────────────
+   Shadows / Hover Lift
+──────────────────────────────── */
+.light-mode .pd-menu-item:hover,
+.light-mode .pd-toggle-btn:hover {
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* ────────────────────────────────
+   Animations and Transitions
+──────────────────────────────── */
+.light-mode .pd-menu {
+  transition: background 0.2s ease, border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.light-mode .pd-toggle-btn {
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}

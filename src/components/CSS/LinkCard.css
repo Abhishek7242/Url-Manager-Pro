@@ -199,3 +199,122 @@
 @media (max-width: 720px){
   .card-meta{flex-direction:column;align-items:flex-start;gap:8px}
 }
+/* ==========================
+   Light mode overrides
+   (append to end of stylesheet)
+   ========================== */
+.light-mode .link-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  color: #0f1720;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+
+.light-mode .link-card.grid { max-width: 320px; }
+.light-mode .link-card.list { max-width: 100%; }
+
+.light-mode .link-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+}
+
+.light-mode .link-card.selected {
+  border-color: #2563eb;
+  box-shadow: 0 8px 26px rgba(37, 99, 235, 0.08);
+}
+
+/* Top / title */
+.light-mode .card-top { color: #0f1720; }
+.light-mode .card-top input[type="checkbox"] {
+  accent-color: #2563eb;
+}
+
+.light-mode .card-title {
+  color: #0b1220;
+}
+
+/* body */
+.light-mode .card-body { color: #0f1720; }
+
+.light-mode .card-url {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.light-mode .card-url .dot {
+  background: #2563eb;
+}
+
+/* notes & meta */
+.light-mode .card-note {
+  color: #475569;
+}
+
+.light-mode .card-meta {
+  color: #475569;
+  background: transparent;
+}
+
+/* tags */
+.light-mode .tags .tag {
+  background: #f1f5f9;
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  color: #0f1720;
+  font-weight: 600;
+}
+
+/* Hover Actions (3-dot & Share) */
+.light-mode .card-actions {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.light-mode .link-card:hover .card-actions,
+.light-mode .card-actions[aria-hidden="false"] {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* icon buttons */
+.light-mode .icon-btn {
+  color: #475569;
+  background: transparent;
+}
+
+.light-mode .icon-btn:hover {
+  color: #0b1220;
+  background: rgba(15, 23, 42, 0.04);
+  transform: translateY(-2px);
+}
+
+/* more menu */
+.light-mode .more-menu {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  color: #0b1220;
+}
+
+/* menu items */
+.light-mode .menu-item { color: #0b1220; }
+.light-mode .menu-item:hover { background: rgba(15, 23, 42, 0.04); }
+
+.light-mode .menu-item .mi-icon { color: #2563eb; }
+
+/* danger style for delete */
+.light-mode .menu-item.danger { color: #b91c1c; }
+.light-mode .menu-item.danger .mi-icon { color: #ef4444; }
+
+/* small responsive tweaks (keep existing behavior) */
+@media (max-width: 720px) {
+  .light-mode .more-menu { right: 8px; top: 40px; min-width: 140px; }
+  .light-mode .card-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+/* inputs inside card (if any) */
+.light-mode .link-card input,
+.light-mode .link-card textarea {
+  background: #ffffff;
+  color: #0f1720;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}

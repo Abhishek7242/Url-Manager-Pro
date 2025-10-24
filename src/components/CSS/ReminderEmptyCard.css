@@ -1,0 +1,103 @@
+/* =========================================================
+   LIGHT MODE — ReminderEmptyCard (rec-*)
+   Append this at the end of your stylesheet (or inside .light-mode)
+   ========================================================= */
+
+.light-mode .rec-root {
+  color: #0f172a;
+  position: relative;
+}
+
+/* Card: keep it light and airy — no heavy dark glass */
+.light-mode .rec-card {
+  background: none!important; /* subtle white plate */
+  border: none!important;
+  box-shadow:none!important;
+  backdrop-filter: blur(6px)!important;
+  -webkit-backdrop-filter: blur(6px)!important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Halo: softened, visible on white without washing content */
+.light-mode .rec-halo {
+  background: conic-gradient(
+    from 90deg,
+    rgba(37,99,235,0.06),
+    rgba(167,139,250,0.05),
+    rgba(52,211,153,0.05)
+  );
+  mask-image: radial-gradient(circle at center, rgba(0,0,0,0.85), transparent 62%);
+  -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,0.85), transparent 62%);
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* Particles: darker tints so they remain visible on white */
+.light-mode .rec-particles .rec-particle {
+  background: rgba(15, 23, 42, 0.12) !important;
+  filter: blur(0.6px) !important;
+}
+
+/* Content wrapper text colors */
+.light-mode .rec-content { color: #0f172a; }
+
+/* Icon wrapper: pastel plate, subtle border and lift */
+.light-mode .rec-icon-wrapper {
+  background: linear-gradient(135deg, rgba(96,165,250,0.10), rgba(167,139,250,0.06));
+  border: 1px solid rgba(15,23,42,0.04);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon color stronger for contrast */
+.light-mode .rec-icon {
+  color: #2563eb !important;
+}
+
+/* Heading / text */
+.light-mode .rec-title {
+  color: #0b1220;
+  font-weight: 700;
+}
+.light-mode .rec-subtitle {
+  color: #475569;
+}
+.light-mode .rec-hint {
+  color: #6b7280;
+}
+
+/* Divider glow: subtle and readable on white */
+.light-mode .rec-divider {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(37,99,235,0.12),
+    transparent
+  );
+  opacity: 1;
+}
+
+/* Hover: gentle lift of icon wrapper */
+.light-mode .rec-card:hover .rec-icon-wrapper {
+  transform: translateY(-4px);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  box-shadow: 0 14px 40px rgba(15,23,42,0.07);
+}
+
+/* Focus accessibility */
+.light-mode .rec-card :focus {
+  outline: 3px solid rgba(37,99,235,0.12);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+/* Small screens: tighten spacings */
+@media (max-width: 640px) {
+  .light-mode .rec-card { padding: 14px; }
+  .light-mode .rec-title { font-size: 1.125rem; }
+  .light-mode .rec-hint { font-size: 0.82rem; max-width: 20ch; }
+}

@@ -1,0 +1,117 @@
+.toggle-btn-container{
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  padding: 8px;
+      width: 100%;
+    max-width: 520px;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+.toggle-btn-container button{
+width:100%;
+padding: 6px 10px;
+border-radius: 6px;
+transition: all 0.3s ;
+    background: transparent;
+  color: #fff;
+
+}
+
+.toggle-btn.active{
+ border: none;
+  background: #ffffff68;
+  color: #fff;
+}
+.toggle-btn:hover{
+    box-shadow: 0px 0px 10px #ffffff40;
+}
+
+.signup_btn.toggle-btn{
+  border: none;
+}
+.signup_btn.active{
+ border: none;
+  background: #ffffff68;
+  color: #fff;
+}
+.signup_btn:hover{
+    box-shadow: 0px 0px 10px #ffffff40;
+}
+
+/* =========================================================
+   LIGHT MODE — Toggle Buttons
+   ========================================================= */
+
+.light-mode .toggle-btn-container {
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  backdrop-filter: blur(6px);
+  padding: 8px;
+  width: 100%;
+  max-width: 520px;
+  gap: 4px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+}
+
+/* Base button */
+.light-mode .toggle-btn-container button {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: transparent;
+  color: #0f172a;
+  border: none;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+/* Hover effect — subtle light shadow */
+.light-mode .toggle-btn:hover {
+  box-shadow: 0px 0px 10px rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.04);
+  color: #0f172a;
+}
+
+/* Active button — solid subtle background */
+.light-mode .toggle-btn.active {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  box-shadow: 0px 0px 10px rgba(37, 99, 235, 0.1);
+  font-weight: 700;
+}
+
+/* Signup variant */
+.light-mode .signup_btn.toggle-btn {
+  background: transparent;
+  border: none;
+  color: #0f172a;
+}
+
+/* Active signup state */
+.light-mode .signup_btn.active {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  box-shadow: 0px 0px 10px rgba(37, 99, 235, 0.1);
+}
+
+/* Hover signup */
+.light-mode .signup_btn:hover {
+  background: rgba(15, 23, 42, 0.04);
+  box-shadow: 0px 0px 10px rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+}
+
+/* Optional: focus accessibility ring */
+.light-mode .toggle-btn:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.25);
+  outline-offset: 2px;
+  border-radius: 6px;
+}

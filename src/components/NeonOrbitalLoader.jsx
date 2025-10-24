@@ -1,17 +1,10 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import "./CSS/NeonOrbitalLoader.css"
 
 /**
- * NeonOrbitalLoader — Enhanced
- * A visually distinct, attractive circular spinner with layered orbits, comet trail,
- * and a rotating tech-core. Designed to draw attention without being noisy.
- * - Uses framer-motion for smooth rotations, staggered pulses and parallax movement
- * - Tailwind-friendly; accessible (aria-hidden / aria-live) and customizable
- * - Props: isOpen, size, speed, palette, label
- *
- * Usage:
- *  import NeonOrbitalLoader from './NeonOrbitalLoader';
- *  <NeonOrbitalLoader isOpen={true} size={96} speed={900} palette={["#60a5fa","#a78bfa","#34d399"]} />
+ * NeonOrbitalLoader — Enhanced (with classNames)
+ * Fully same logic, just structured CSS-friendly class names.
  */
 
 const NeonOrbitalLoader = ({
@@ -22,46 +15,41 @@ const NeonOrbitalLoader = ({
   label = "Loading...",
 }) => {
   const orbitCount = 3;
-  const dotCount = 10; // comet + subtle satellites
+  const dotCount = 10;
   const baseRadius = size / 2.6;
   const coreSize = Math.max(12, Math.round(size * 0.22));
 
-  // create layered orbits with slightly different radii and rotation speeds
-  const orbits = Array.from({ length: orbitCount }).map((_, i) => {
-    return {
-      r: baseRadius + i * (size * 0.06),
-      strokeW: 2 + i,
-      speed: (speed / 1000) * (1 + i * 0.35),
-      color: palette[i % palette.length],
-      blur:0,
-    };
-  });
+  const orbits = Array.from({ length: orbitCount }).map((_, i) => ({
+    r: baseRadius + i * (size * 0.06),
+    strokeW: 2 + i,
+    speed: (speed / 1000) * (1 + i * 0.35),
+    color: palette[i % palette.length],
+    blur: 0,
+  }));
 
-  // accessible label id
   const labelId = `neon-loader-${Math.random().toString(36).slice(2, 9)}`;
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div
-          className=" z-50 flex items-center justify-center"
+          className="nol-root z-50 flex items-center justify-center"
           role="dialog"
           aria-modal="true"
           aria-labelledby={labelId}
         >
-          {/* subtle backdrop blur */}
-          <div className="absolute inset-0" />
+          {/* backdrop blur */}
+          <div className="nol-backdrop absolute inset-0" />
 
           <div
-            className="pointer-events-auto p-5 rounded-3xl"
-            style={{
-              width: size + 340,
-              maxWidth: "92vw",
-            
-            }}
+            className="nol-container pointer-events-auto p-5 rounded-3xl"
+            style={{ width: size + 340, maxWidth: "92vw" }}
           >
-            <div className="flex flex-col items-center gap-3">
-              <div style={{ width: size, height: size }} className="relative">
+            <div className="nol-content flex flex-col items-center gap-3">
+              <div
+                style={{ width: size, height: size }}
+                className="nol-orbit-wrapper relative"
+              >
                 {/* layered orbits */}
                 {orbits.map((o, idx) => (
                   <motion.svg
@@ -69,7 +57,7 @@ const NeonOrbitalLoader = ({
                     width={size}
                     height={size}
                     viewBox={`0 0 ${size} ${size}`}
-                    className="absolute inset-0"
+                    className="nol-orbit absolute inset-0"
                     style={{ filter: `drop-shadow(0 8px 18px ${o.color}33)` }}
                     animate={{ rotate: 360 }}
                     transition={{
@@ -106,10 +94,11 @@ const NeonOrbitalLoader = ({
                       stroke={`url(#grad-${idx})`}
                       strokeWidth={o.strokeW}
                       strokeLinecap="round"
+                      className="nol-orbit-ring"
                     />
 
-                    {/* subtle dashed tech marks around orbit */}
-                    <g opacity="0.12">
+                    {/* orbit tech marks */}
+                    <g className="nol-techmarks" opacity="0.12">
                       {Array.from({ length: 18 }).map((_, k) => {
                         const ang = (k / 18) * Math.PI * 2;
                         const x1 = size / 2 + Math.cos(ang) * (o.r - 4);
@@ -126,6 +115,7 @@ const NeonOrbitalLoader = ({
                             stroke="#fff"
                             strokeWidth="0.6"
                             strokeLinecap="round"
+                            className="nol-techmark-line"
                           />
                         );
                       })}
@@ -133,9 +123,9 @@ const NeonOrbitalLoader = ({
                   </motion.svg>
                 ))}
 
-                {/* comet: a bright dot with blurred tail that orbits faster */}
+                {/* comet */}
                 <motion.div
-                  className="absolute"
+                  className="nol-comet absolute"
                   style={{ width: size, height: size }}
                   animate={{ rotate: 360 }}
                   transition={{
@@ -144,19 +134,18 @@ const NeonOrbitalLoader = ({
                     repeat: Infinity,
                   }}
                 >
-                  {/* render the comet as an absolute positioned element along the top, motion handles rotation */}
                   <motion.div
                     initial={{ x: size * 0.5 - 6, y: 0 }}
                     animate={{ x: size * 0.5 - 6, y: 0 }}
-                    style={{
-                      position: "absolute",
-                      left: 0,
-                      top: 0,
-                      pointerEvents: "none",
-                    }}
+                    className="nol-comet-container absolute"
+                    style={{ left: 0, top: 0, pointerEvents: "none" }}
                   >
-                    <div style={{ position: "relative", left: size / 2 - 6 }}>
+                    <div
+                      className="nol-comet-trail relative"
+                      style={{ left: size / 2 - 6 }}
+                    >
                       <div
+                        className="nol-comet-head"
                         style={{
                           width: 14,
                           height: 14,
@@ -167,8 +156,8 @@ const NeonOrbitalLoader = ({
                         }}
                       />
                       <div
+                        className="nol-comet-tail absolute"
                         style={{
-                          position: "absolute",
                           left: -40,
                           top: 4,
                           width: 120,
@@ -182,9 +171,9 @@ const NeonOrbitalLoader = ({
                   </motion.div>
                 </motion.div>
 
-                {/* rotating tech-core (polygon) with subtle neon stroke */}
+                {/* tech core */}
                 <motion.div
-                  className="absolute left-1/2 top-1/2"
+                  className="nol-core absolute left-1/2 top-1/2"
                   style={{ transform: "translate(-50%,-50%)" }}
                   animate={{ rotate: [0, 14, -10, 0] }}
                   transition={{
@@ -193,7 +182,12 @@ const NeonOrbitalLoader = ({
                     ease: "easeInOut",
                   }}
                 >
-                  <svg width={coreSize} height={coreSize} viewBox="0 0 48 48">
+                  <svg
+                    width={coreSize}
+                    height={coreSize}
+                    viewBox="0 0 48 48"
+                    className="nol-core-svg"
+                  >
                     <defs>
                       <linearGradient id="coreGrad" x1="0" x2="1">
                         <stop
@@ -215,6 +209,7 @@ const NeonOrbitalLoader = ({
                       stroke="url(#coreGrad)"
                       strokeWidth="1.6"
                       strokeLinejoin="round"
+                      className="nol-core-shape"
                     />
                     <circle
                       cx="24"
@@ -222,17 +217,22 @@ const NeonOrbitalLoader = ({
                       r="6"
                       fill={palette[2]}
                       opacity="0.95"
+                      className="nol-core-center"
                     />
                   </svg>
                 </motion.div>
               </div>
 
-              {/* label + microcopy */}
-              <div className="text-sm text-white/90 font-medium" id={labelId}>
+              {/* label */}
+              <div
+                className="nol-label text-sm text-white/90 font-medium"
+                id={labelId}
+              >
                 {label}
               </div>
 
-              <div className="text-xs text-white/60">
+              {/* subtext */}
+              <div className="nol-subtext text-xs text-white/60">
                 This may take a few seconds — we’re aligning the nodes.
               </div>
             </div>
@@ -245,22 +245,22 @@ const NeonOrbitalLoader = ({
 
 export default NeonOrbitalLoader;
 
-// Demo wrapper
+/* Demo wrapper */
 export const NeonOrbitalDemo = () => {
   const [open, setOpen] = React.useState(true);
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black to-[#07101a] p-6">
-      <div className="space-y-4 w-full max-w-xl">
-        <div className="flex gap-2">
+    <div className="nol-demo min-h-screen flex items-center justify-center bg-gradient-to-b from-black to-[#07101a] p-6">
+      <div className="nol-demo-container space-y-4 w-full max-w-xl">
+        <div className="nol-demo-buttons flex gap-2">
           <button
             onClick={() => setOpen((s) => !s)}
-            className="px-4 py-2 rounded-lg bg-white/6 border border-white/6"
+            className="nol-btn px-4 py-2 rounded-lg bg-white/6 border border-white/6"
           >
             Toggle
           </button>
           <button
             onClick={() => navigator.vibrate && navigator.vibrate(50)}
-            className="px-4 py-2 rounded-lg bg-white/6 border border-white/6"
+            className="nol-btn px-4 py-2 rounded-lg bg-white/6 border border-white/6"
           >
             Tactile
           </button>

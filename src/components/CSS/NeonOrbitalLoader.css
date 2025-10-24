@@ -1,0 +1,114 @@
+/* ====== NeonOrbitalLoader — Clean floating style (light mode) ====== */
+/* Paste this at the end of your stylesheet or inside your .light-mode block */
+
+.light-mode .nol-backdrop {
+  /* remove full white backdrop that creates the big white box */
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.light-mode .nol-container {
+  /* make the container transparent and shrink padding so only loader is visible */
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: auto !important;       /* don't force a huge card width */
+  max-width: none !important;
+  display: inline-block;
+}
+
+/* Keep content centered but remove extra spacing */
+.light-mode .nol-content {
+  padding: 8px 0 12px 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Add a soft, subtle ground-shadow below the orbits so loader reads on white */
+.light-mode .nol-orbit-wrapper::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -10px;
+  width: 58%;
+  height: 10px;
+  background: rgba(3, 44, 140, 0.749);
+  filter: blur(10px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Make the orbit SVGs more legible on white by strengthening contrast slightly */
+.light-mode .nol-orbit-ring {
+  stroke-opacity: 1 !important;
+  stroke-width: 2 !important;
+  /* boost perceived contrast with a very light drop shadow */
+  filter: drop-shadow(0 6px 10px rgba(15,23,42,0.06)) !important;
+}
+
+/* tech mark lines darker to remain visible on white */
+.light-mode .nol-techmark-line {
+  stroke: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Comet: brighter head and softer tail for white background */
+.light-mode .nol-comet-head {
+  background: #001d40 !important;
+  box-shadow: 0 10px 30px rgba(96,165,250,0.18) !important;
+}
+.light-mode .nol-comet-tail {
+  filter: blur(8px) !important;
+  background: linear-gradient(90deg, rgba(96,165,250,0.20), rgba(96,165,250,0.08), transparent) !important;
+}
+
+/* Core: make polygon stroke and center clearly visible on white */
+.light-mode .nol-core-shape {
+  stroke-opacity: 1 !important;
+  filter: drop-shadow(0 6px 18px rgba(167,139,250,0.06)) !important;
+}
+.light-mode .nol-core-center {
+  filter: drop-shadow(0 6px 18px rgba(52,211,153,0.10)) !important;
+  opacity: 1 !important;
+}
+
+/* Label and microcopy: dark colors, no translucent white */
+.light-mode .nol-label {
+  color: #0f172a !important;
+  margin-top: 10px;
+  text-shadow: none !important;
+  font-weight: 600;
+}
+.light-mode .nol-subtext {
+  color: #475569 !important;
+  margin-top: 4px;
+  opacity: 1 !important;
+}
+
+/* Demo buttons (if shown) — minimal flat buttons so they don't look like the card */
+.light-mode .nol-demo .nol-btn,
+.light-mode .nol-demo-buttons .nol-btn {
+  background: transparent !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15,23,42,0.06) !important;
+  box-shadow: none !important;
+}
+
+/* Accessibility: keep keyboard focus visible */
+.light-mode .nol-container :focus {
+  outline: 3px solid rgba(37,99,235,0.12) !important;
+  outline-offset: 3px !important;
+}
+
+/* Mobile padding tweak */
+@media (max-width: 640px) {
+  .light-mode .nol-container { padding: 6px !important; }
+  .light-mode .nol-label { font-size: 0.95rem; }
+  .light-mode .nol-orbit-wrapper::after { width: 72%; bottom: -8px; height: 8px; }
+}

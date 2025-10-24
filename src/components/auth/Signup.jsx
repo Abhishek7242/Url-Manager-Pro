@@ -12,8 +12,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import "../CSS/Signup.css";
 import { Link, useNavigate } from "react-router-dom";
 import UrlContext from "../../context/url_manager/UrlContext";
+import Buttons from "./Buttons";
 
-export default function Signup({ onClose, setOpenVerifyOTPModel }) {
+export default function Signup({ onClose,isLogin,setOpenSignupModel,setOpenLoginModel, setOpenVerifyOTPModel, isSignUp }) {
   const context = React.useContext(UrlContext);
   const {
     API_BASE,
@@ -97,9 +98,9 @@ export default function Signup({ onClose, setOpenVerifyOTPModel }) {
         }
         throw new Error(data.message || "Failed to send OTP");
       }
-      setOpenVerifyOTPModel(true)
+      setOpenVerifyOTPModel(true);
       onClose();
-      setOtpToken(data.otp_token)
+      setOtpToken(data.otp_token);
     } catch (err) {
       console.error("Error sending OTP:", err);
       alert(`Error: ${err.message}`);
@@ -111,34 +112,41 @@ export default function Signup({ onClose, setOpenVerifyOTPModel }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="signup-page"
+        className="signup-page flex items-center justify-center flex-col"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 8 }}
         transition={{ duration: 0.25 }}
       >
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={onClose}
+          className="cut-btn"
+          style={{
+            position: "absolute",
+            right: 12,
+            top: 12,
+            background: "transparent",
+            border: "none",
+            fontSize: 18,
+            cursor: "pointer",
+            color: "inherit",
+            padding: 6,
+            lineHeight: 1,
+          }}
+        >
+          ✕
+        </button>
+        <Buttons
+          setOpenSignupModel={setOpenSignupModel}
+          setOpenLoginModel={setOpenLoginModel}
+          onClose={onClose}
+          isSignUp={isSignUp}
+          isLogin={isLogin}
+        />
         <div className="signup-card">
           {/* Cut / Close button (top-right) */}
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={onClose}
-            className="cut-btn"
-            style={{
-              position: "absolute",
-              right: 12,
-              top: 12,
-              background: "transparent",
-              border: "none",
-              fontSize: 18,
-              cursor: "pointer",
-              color: "inherit",
-              padding: 6,
-              lineHeight: 1,
-            }}
-          >
-            ✕
-          </button>
 
           <div className="signup-top">
             <div className="headline">
@@ -242,10 +250,6 @@ export default function Signup({ onClose, setOpenVerifyOTPModel }) {
                 "Create account"
               )}
             </button>
-
-            <div className="alt-line">
-              Already have an account? <a href="/login">Login</a>
-            </div>
           </form>
         </div>
       </motion.div>

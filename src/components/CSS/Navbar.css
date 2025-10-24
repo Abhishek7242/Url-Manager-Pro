@@ -36,11 +36,16 @@
   box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3);
 }
 
+
 .brand-text h2 {
   margin: 0;
   font-size: 1.8rem;
   font-weight: 700;
   color: #ffffff;
+}
+.dark-mode .brand-text h2 {
+
+  color: #000000;
 }
 
 .brand-text p {
@@ -69,9 +74,19 @@
   cursor: pointer;
   transition: background 0.15s ease;
 }
+.dark-mode .nav-btn {
+ 
+  color: black;
+
+  border: 1px solid var(--border);
+
+}
 
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.05);
+}
+.dark-mode .nav-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .nav-icon-btn {
@@ -81,6 +96,13 @@
   padding: 8px 10px;
   color: var(--text);
   cursor: pointer;
+}
+.dark-mode .nav-icon-btn {
+
+  border: 1px solid black;
+
+  color:black;
+
 }
 
 .nav-icon-btn:hover {
@@ -98,6 +120,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.dark-mode .quick-add {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid ;
+
 }
 
 .input-wrapper {
@@ -271,4 +298,160 @@
 .signup-btn:hover {
   background: #2563eb;
   border-color: #2563eb;
+}
+/* =========================================================
+   🌤️ Light Mode Styles
+   ========================================================= */
+.light-mode {
+  background-color: #FAFBFD;
+  color: #111827;
+}
+
+/* Navbar */
+.light-mode .navbar-pro {
+  background: #FAFBFD;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  color: #111827;
+}
+
+/* Brand */
+.light-mode .brand-icon {
+  background: linear-gradient(135deg, #3b82f6, #9e8bff);
+  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.25);
+}
+
+.light-mode .brand-text h2 {
+  color: #111827;
+}
+
+.light-mode .brand-text p {
+  color: #4b5563;
+}
+
+/* Buttons */
+.light-mode .nav-btn {
+  color: #111827;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+}
+
+.light-mode .nav-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.light-mode .nav-icon-btn {
+  color: #111827;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+}
+
+.light-mode .nav-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Quick Add */
+.light-mode .quick-add {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .quick-input {
+  background: rgba(0, 0, 0, 0.02);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  color: #111827;
+}
+
+.light-mode .quick-input::placeholder {
+  color: #6b7280;
+}
+
+.light-mode .quick-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+.light-mode .quick-input {
+  background: none;
+}
+.light-mode .quick-input:focus {
+  background: none;
+  border: none;
+}
+
+.light-mode .quick-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Tabs */
+.light-mode .nav-tabs {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.light-mode .tab {
+  color: #4b5563;
+}
+
+.light-mode .tab:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #111827;
+}
+
+.light-mode .tab.active {
+  backdrop-filter: blur(12px);
+  background: #e0e0e071;
+  color: #4167ffb3;
+  border: 1px solid rgba(165, 165, 165, 0.06);
+
+  box-shadow: 0 6px 18px rgba(145, 145, 145, 0.262);
+
+}
+
+.light-mode .tab .count {
+  background: rgba(37, 99, 235, 0.15);
+  color: #2563eb;
+}
+
+/* Auth Buttons */
+.light-mode .login-btn {
+  border: 1px solid #2563eb;
+  color: #2563eb;
+}
+
+.light-mode .login-btn:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.light-mode .signup-btn {
+  background: #2563eb;
+  border: 1px solid #2563eb;
+  color: #ffffff;
+}
+
+.light-mode .signup-btn:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* Tips and Muted Text */
+.light-mode .tip {
+  color: #6b7280;
+}
+
+.light-mode .tip span {
+  color: #2563eb;
+}
+
+/* Disabled Buttons */
+.light-mode .quick-btn:disabled {
+  background: #d1d5db !important;
+  color: #6b7280 !important;
+}
+
+/* Adjust for inputs and placeholders */
+.light-mode input,
+.light-mode textarea {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }

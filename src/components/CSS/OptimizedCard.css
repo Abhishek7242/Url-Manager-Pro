@@ -1,0 +1,114 @@
+/* =========================================================
+   LIGHT MODE — OptimizedCard (optimized-*)
+   Append to stylesheet or inside .light-mode
+   ========================================================= */
+
+.light-mode .optimized-card-container {
+  color: #0f172a;
+  position: relative;
+}
+
+/* Card: clean white plate with soft depth */
+.light-mode .optimized-card {
+    width: 100%;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #0f172a;
+}
+
+/* Keep the rotating glow but softened for white background */
+.light-mode .optimized-card-glow {
+  background:
+    conic-gradient(
+      from 90deg,
+      rgba(37,99,235,0.06),
+      rgba(167,139,250,0.05),
+      rgba(34,197,94,0.05),
+      rgba(37,99,235,0.06)
+    );
+  mask-image: radial-gradient(circle, rgba(0,0,0,0.9) 45%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,0.9) 45%, transparent 70%);
+  opacity: 0.95;
+  filter: blur(0.6px) contrast(1.02);
+  mix-blend-mode: normal;
+}
+
+/* Particles: darker tints so they read on white */
+.light-mode .optimized-card-particle {
+  background: rgba(15,23,42,0.12) !important;
+  filter: blur(0.6px) !important;
+}
+
+/* Content: text safe for light background */
+.light-mode .optimized-card-content {
+  color: #0f172a;
+}
+
+/* Icon wrapper: pastel plate with subtle border and lift */
+.light-mode .optimized-card-icon-wrapper {
+  background: linear-gradient(135deg, rgba(34,197,94,0.06), rgba(37,99,235,0.06));
+  border: 1px solid rgba(15,23,42,0.04);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon color: clear, high contrast */
+.light-mode .optimized-card-icon {
+  color: #059669; /* green-600 for trending up */
+}
+
+/* Title + description */
+.light-mode .optimized-card-title {
+  color: #0b1220;
+  font-weight: 700;
+}
+.light-mode .optimized-card-description {
+  color: #475569;
+}
+
+/* Highlight color */
+.light-mode .optimized-card-highlight {
+  color: #059669;
+  font-weight: 600;
+}
+
+/* Divider glow: subtle and readable on white */
+.light-mode .optimized-card-divider {
+  background: linear-gradient(90deg, transparent, rgba(34,197,94,0.12), transparent);
+  opacity: 1;
+}
+
+/* Hover: slight lift for the entire card */
+@media (hover: hover) and (pointer: fine) {
+  .light-mode .optimized-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 28px 80px rgba(15,23,42,0.08);
+    border-color: rgba(37,99,235,0.12);
+  }
+
+  .light-mode .optimized-card:hover .optimized-card-icon-wrapper {
+    transform: translateY(-3px);
+    transition: transform 180ms ease;
+  }
+}
+
+/* Focus accessibility */
+.light-mode .optimized-card :focus {
+  outline: 3px solid rgba(37,99,235,0.14);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .light-mode .optimized-card {
+    width: calc(100% - 32px);
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .light-mode .optimized-card-title { font-size: 1.25rem; }
+  .light-mode .optimized-card-divider { width: 20ch; }
+}

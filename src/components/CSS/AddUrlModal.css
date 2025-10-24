@@ -359,3 +359,182 @@ input[type="date"] {
   transform: none !important;
   box-shadow: none !important;
 }
+
+/* =========================================================
+   🌤️ LIGHT MODE STYLES (Modal)
+   ========================================================= */
+.light-mode .modal-overlay {
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(0px);
+  animation: lightFadeIn 0.3s forwards;
+}
+
+@keyframes lightFadeIn {
+  from {
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.light-mode .modal-overlay.closing {
+  animation: lightFadeOut 0.3s forwards;
+}
+
+@keyframes lightFadeOut {
+  from {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+    opacity: 1;
+  }
+  to {
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+}
+
+/* --- Modal Card --- */
+.light-mode .modal-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
+}
+
+.light-mode .modal-heading {
+  color: #0f172a;
+}
+
+/* --- Close Button --- */
+.light-mode .modal-close {
+  color: #64748b;
+}
+
+.light-mode .modal-close:hover {
+  color: #1e293b;
+  transform: rotate(90deg);
+}
+
+/* --- Form Fields --- */
+.light-mode .field-label {
+  color: #475569;
+}
+
+.light-mode .add-link-field.field input,
+.light-mode .add-link-field.field textarea {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #111827;
+  background: #f8fafc;
+  box-shadow: none;
+}
+
+.light-mode .field input:focus,
+.light-mode .field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.light-mode .field textarea {
+  background: #ffffff;
+}
+
+/* --- Date Input / Row --- */
+.light-mode .date-row.clickable {
+  background: #f8fafc;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.light-mode .date-row.clickable:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.light-mode .date-icon {
+  color: #475569;
+}
+
+.light-mode .date-input {
+  color: #111827;
+  background: transparent;
+}
+
+.light-mode .date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0);
+  opacity: 0.7;
+}
+
+/* --- Modal Actions --- */
+.light-mode .modal-actions {
+  background: transparent;
+}
+
+.light-mode .btn.cancel {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light-mode .btn.cancel:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+/* --- Primary Add Button --- */
+.light-mode .addbtn.btn.primary {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+}
+
+.light-mode .addbtn.btn.primary:hover {
+  transform: translateY(-2px);
+  background: #1d4ed8;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+}
+
+/* --- Error States --- */
+.light-mode .field input.error,
+.light-mode .field textarea.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.light-mode .field-error {
+  color: #dc2626;
+}
+
+/* --- Disabled States --- */
+.light-mode .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #e2e8f0 !important;
+  color: #64748b !important;
+  box-shadow: none !important;
+}
+
+/* --- Animation Colors (consistency) --- */
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalExit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+}

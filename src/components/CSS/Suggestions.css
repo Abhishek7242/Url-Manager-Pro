@@ -193,3 +193,144 @@ animation: spin 1.5s linear infinite;
     gap: 10px;
   }
 }
+
+/* =========================================================
+   🌤️ LIGHT MODE STYLES (Suggestions System)
+   ========================================================= */
+.light-mode {
+  --bg: #FAFBFD;
+  --card: #ffffff;
+  --muted: #64748b;
+  --text: #0f172a;
+  --border: rgba(0, 0, 0, 0.08);
+  --high: #dc2626;
+  --medium: #eab308;
+  --accent: #2563eb;
+  --success: #16a34a;
+}
+
+/* Container */
+.light-mode .sugg-root-container,
+.light-mode .sugg-root {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Header */
+.light-mode .sugg-header {
+  color: var(--text);
+}
+
+.light-mode .bulb-icon {
+  color: #eab308;
+}
+
+.light-mode .sugg-title .count {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+}
+
+/* Suggestion Grid */
+.light-mode .sugg-grid {
+  background: transparent;
+}
+
+/* Each Suggestion Card */
+.light-mode .sugg-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+}
+
+.light-mode .sugg-card:hover {
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.1);
+  transform: translateY(-3px);
+}
+
+/* Card Top */
+.light-mode .sugg-card-title svg {
+  color: var(--accent);
+}
+
+.light-mode .badge {
+  font-weight: 700;
+}
+
+.light-mode .badge.high {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.light-mode .badge.medium {
+  background: rgba(234, 179, 8, 0.15);
+  color: #ca8a04;
+}
+
+/* Description */
+.light-mode .sugg-desc {
+  color: #475569;
+}
+
+/* Meta / Bottom */
+.light-mode .sugg-meta {
+  color: #475569;
+}
+
+.light-mode .affected {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Buttons */
+.light-mode .sugg-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.2);
+}
+
+.light-mode .sugg-btn:hover {
+  background: #1d4ed8;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+}
+
+/* Optimized banner (no suggestions) */
+.light-mode .sugg-clean {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 25px rgba(15, 23, 42, 0.06);
+  color: #475569;
+}
+
+.light-mode .sugg-clean .sugg-icon {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(22, 163, 74, 0.15);
+}
+
+.light-mode .sugg-clean h3 {
+  color: #16a34a;
+}
+
+.light-mode .sugg-clean p {
+  color: #475569;
+}
+
+/* Loading icons */
+.light-mode .loading-icon svg,
+.light-mode .loading-icon-broken-links {
+  color: #2563eb;
+  fill: #2563eb;
+}
+
+/* Responsive Tweaks (unchanged) */
+@media (max-width: 640px) {
+  .light-mode .sugg-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+

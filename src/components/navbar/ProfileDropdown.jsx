@@ -9,6 +9,7 @@ import {
   FiUserPlus,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import "../CSS/ProfileDropdown.css";
 
 // Example: Replace this with your actual AuthContext import
 // import { AuthContext } from "../context/AuthContext";
@@ -99,25 +100,29 @@ export default function ProfileDropdown({
   const avatar = user.avatarUrl || "";
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left pd-root">
       <button
         ref={btnRef}
         aria-haspopup="true"
         aria-expanded={open}
         onClick={() => setOpen((s) => !s)}
-        className="flex items-center gap-3 rounded-full px-3 py-1.5 bg-white/6 backdrop-blur-sm hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="flex items-center gap-3 rounded-full px-3 py-1.5 bg-white/6 backdrop-blur-sm hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 pd-toggle-btn"
       >
         {/* Avatar */}
-        <div className="h-9 w-9 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+        <div className="h-9 w-9 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 pd-avatar">
           {avatar && isLoggedIn ? (
             <img
               src={avatar}
               alt="avatar"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover pd-avatar-img"
             />
           ) : (
-            <div className="h-full w-full flex items-center justify-center text-gray-700 font-medium">
-              {isLoggedIn ? (user.name || "U")[0] : <FiUser />}
+            <div className="h-full w-full flex items-center justify-center text-gray-700 font-medium pd-avatar-fallback">
+              {isLoggedIn ? (
+                (user.name || "U")[0]
+              ) : (
+                <FiUser className="pd-avatar-icon" />
+              )}
             </div>
           )}
         </div>
@@ -125,7 +130,7 @@ export default function ProfileDropdown({
         <FiChevronDown
           className={`ml-1 text-gray-300 ${
             open ? "rotate-180" : ""
-          } transition-transform`}
+          } transition-transform pd-chevron`}
         />
       </button>
 
@@ -138,7 +143,7 @@ export default function ProfileDropdown({
             exit={{ opacity: 0, scale: 0.96, y: -6 }}
             transition={{ duration: 0.14 }}
             ref={menuRef}
-            className="origin-top-right border border-gray-600 absolute right-0 mt-2 w-56 rounded-lg backdrop-blur-md shadow-lg ring-1 ring-black/30 focus:outline-none z-50"
+            className="origin-top-right border border-gray-600 absolute right-0 mt-2 w-56 rounded-lg backdrop-blur-md shadow-lg ring-1 ring-black/30 focus:outline-none z-50 pd-menu"
             role="menu"
             aria-orientation="vertical"
             aria-label="Profile options"
@@ -146,27 +151,27 @@ export default function ProfileDropdown({
             {isLoggedIn ? (
               <>
                 {/* User Info */}
-                <div className="px-3 py-3 border-b border-white/6">
+                <div className="px-3 py-3 border-b border-white/6 pd-user-info">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200">
+                    <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200 pd-avatar-sm">
                       {avatar ? (
                         <img
                           src={avatar}
                           alt="avatar"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover pd-avatar-sm-img"
                         />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center text-gray-700 font-medium">
+                        <div className="h-full w-full flex items-center justify-center text-gray-700 font-medium pd-avatar-sm-fallback">
                           {(user.name || "U")[0]}
                         </div>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">
+                    <div className="flex-1 min-w-0 pd-user-meta">
+                      <p className="text-sm font-semibold text-white truncate pd-user-name">
                         {user.name || "User"}
                       </p>
                       {user.email && (
-                        <p className="text-xs text-gray-300 truncate">
+                        <p className="text-xs text-gray-300 truncate pd-user-email">
                           {user.email}
                         </p>
                       )}
@@ -175,16 +180,16 @@ export default function ProfileDropdown({
                 </div>
 
                 {/* Logged-in menu */}
-                <div className="py-2 px-2 flex flex-col gap-1">
+                <div className="py-2 px-2 flex flex-col gap-1 pd-loggedin-menu">
                   <button
                     onClick={() => {
                       setOpen(false);
                       onProfile();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-profile-btn"
                   >
-                    <FiUser />
-                    <span>Profile</span>
+                    <FiUser className="pd-icon" />
+                    <span className="pd-menu-item-label">Profile</span>
                   </button>
 
                   <button
@@ -192,10 +197,10 @@ export default function ProfileDropdown({
                       setOpen(false);
                       onSettings();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-settings-btn"
                   >
-                    <FiSettings />
-                    <span>Settings</span>
+                    <FiSettings className="pd-icon" />
+                    <span className="pd-menu-item-label">Settings</span>
                   </button>
 
                   <button
@@ -203,51 +208,51 @@ export default function ProfileDropdown({
                       setOpen(false);
                       onNotifications();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-notifications-btn"
                   >
-                    <FiBell />
-                    <span>Notifications</span>
+                    <FiBell className="pd-icon" />
+                    <span className="pd-menu-item-label">Notifications</span>
                   </button>
 
-                  <div className="h-px bg-white/6 my-1 rounded" />
+                  <div className="h-px bg-white/6 my-1 rounded pd-divider" />
 
                   <button
                     onClick={() => {
                       setOpen(false);
                       onLogout();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-red-400 hover:bg-red-600/10 focus:bg-red-600/10 focus:outline-none"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-red-400 hover:bg-red-600/10 focus:bg-red-600/10 focus:outline-none pd-menu-item pd-logout-btn"
                   >
-                    <FiLogOut />
-                    <span>Logout</span>
+                    <FiLogOut className="pd-icon" />
+                    <span className="pd-menu-item-label">Logout</span>
                   </button>
                 </div>
               </>
             ) : (
               <>
                 {/* Guest Menu */}
-                <div className="py-2 px-2 flex flex-col gap-1">
+                <div className="py-2 px-2 flex flex-col gap-1 pd-guest-menu">
                   <button
                     onClick={() => {
                       setOpen(false);
                       setOpenLoginModel(true);
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-login-btn"
                   >
-                    <FiLogIn />
-                    <span>Login</span>
+                    <FiLogIn className="pd-icon" />
+                    <span className="pd-menu-item-label">Login</span>
                   </button>
 
                   <button
                     onClick={() => {
                       setOpen(false);
-                        setOpenSignupModel(true);
-                        console.log(openSignupModel);
+                      setOpenSignupModel(true);
+                      console.log(openSignupModel);
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-signup-btn"
                   >
-                    <FiUserPlus />
-                    <span>Sign Up</span>
+                    <FiUserPlus className="pd-icon" />
+                    <span className="pd-menu-item-label">Sign Up</span>
                   </button>
                 </div>
               </>
