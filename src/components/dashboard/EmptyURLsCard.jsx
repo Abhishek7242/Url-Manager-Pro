@@ -25,18 +25,17 @@ const EmptyURLsCard = ({
   const s = sizes[size] || sizes.md;
 
   return (
-    <div className="empty-urls-card-wrapper flex items-center justify-center">
+    <div className="saved-urls-panel">
+      <div className="saved-header">
+        <h2 className="saved-title">Saved URLs</h2>
+        <div className="saved-actions-text">Quick actions</div>
+      </div>
+
       <div
-        className={`${s.w} relative ${s.pad} rounded-3xl overflow-hidden flex flex-col items-center text-center empty-urls-card`}
+        className={`saved-list`}
         role="status"
         aria-live="polite"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008))",
-          border: "1px solid rgba(255,255,255,0.06)",
-          boxShadow: "0 10px 40px rgba(2,6,23,0.6)",
-          backdropFilter: "blur(8px)",
-        }}
+      
       >
         {/* Conic halo (soft) */}
         <div
@@ -54,7 +53,10 @@ const EmptyURLsCard = ({
         />
 
         {/* floating micro-particles for depth */}
-        <div aria-hidden className="empty-urls-card-particles absolute inset-0 pointer-events-none">
+        <div
+          aria-hidden
+          className="empty-urls-card-particles absolute inset-0 pointer-events-none"
+        >
           {Array.from({ length: 6 }).map((_, i) => {
             const left = 6 + i * 15 + (i % 2) * 5;
             const top = 8 + ((i * 11) % 56);
@@ -91,7 +93,7 @@ const EmptyURLsCard = ({
 
         {/* focal icon chip */}
         <motion.div
-          className="empty-urls-card-content z-10 flex flex-col items-center gap-4"
+          className="empty-urls-card-content z-10 flex flex-col items-center gap-1"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
@@ -117,17 +119,22 @@ const EmptyURLsCard = ({
             />
           </motion.div>
 
-          <h3 className={`empty-urls-card-title ${s.txt} font-semibold text-white/90`}>{title}</h3>
+          <h3
+            className={`empty-urls-card-title ${s.txt} font-semibold text-white/90`}
+          >
+            {title}
+          </h3>
 
-          <p className="empty-urls-card-subtitle text-sm text-white/60 max-w-[85%]">{subtitle}</p>
           {hint ? (
-            <p className="empty-urls-card-hint text-xs text-white/50 mt-1 max-w-[85%]">{hint}</p>
+            <p className="empty-urls-card-hint text-xs text-white/50 mt-1 max-w-[85%]">
+              {hint}
+            </p>
           ) : null}
 
           {/* CTA */}
-          <button
+          {/* <button
             onClick={onAdd}
-            className="empty-urls-card-add-btn mt-6 inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 hover:scale-95 transition-transform duration-300"
+            className="empty-urls-card-add-btn inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 hover:scale-95 transition-transform duration-300"
             style={{
               background:
                 "linear-gradient(90deg, rgba(59,130,246,0.95), rgba(16,185,129,0.95))",
@@ -137,8 +144,13 @@ const EmptyURLsCard = ({
             aria-label="Add URL"
           >
             <FiPlus className="empty-urls-card-add-btn-icon text-white" />
-            <span className="empty-urls-card-add-btn-text" style={{ color: "#07101a", fontWeight: 700 }}>Add URL</span>
-          </button>
+            <span
+              className="empty-urls-card-add-btn-text"
+              style={{ color: "#07101a", fontWeight: 700 }}
+            >
+              Add URL
+            </span>
+          </button> */}
 
           {/* subtle divider */}
           <div

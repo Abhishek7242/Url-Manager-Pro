@@ -1,34 +1,163 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiX, FiCalendar, FiLoader } from "react-icons/fi";
 import "../CSS/AddUrlModal.css";
 import UrlContext from "../../context/url_manager/UrlContext";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function AddUrlModal({
   isOpen = false,
   onClose = () => {},
   defaultValues = {},
 }) {
-  const context = React.useContext(UrlContext);
-  const { addUrl, getAllUrls, showNotify, setUrls, archive } = context;
+  const ctx = React.useContext(UrlContext) || {};
+  const { addUrl, getAllUrls, showNotify, setUrls, archive } = ctx;
 
-  const [title, setTitle] = useState(defaultValues.title || "");
-  const [url, setUrl] = useState(defaultValues.url || "");
-  const [note, setNote] = useState(defaultValues.note || "");
-  const [tagsStr, setTagsStr] = useState((defaultValues.tags || []).join(", "));
+  const MAX_TAGS = 4;
+
+  // fields
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [note, setNote] = useState("");
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
   const [reminder, setReminder] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [tagError, setTagError] = useState("");
+
+  const titleRef = useRef(null);
+
+  // seed state only when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+    setTitle(defaultValues.title || "");
+    setUrl(defaultValues.url || "");
+    setNote(defaultValues.note || "");
+    const iv = Array.isArray(defaultValues.tags)
+      ? defaultValues.tags
+      : typeof defaultValues.tags === "string"
+      ? defaultValues.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : [];
+    setTags(iv.map((t) => (t.startsWith("#") ? t : `#${t}`)));
+    setTagInput("");
+    setSelectedDate(
+      defaultValues.reminder ? new Date(defaultValues.reminder) : null
+    );
+    setReminder(defaultValues.reminder || "");
+    setTimeout(() => titleRef.current?.focus(), 80);
+  }, []);
 
   if (!isOpen) return null;
 
-  function parseTags(input) {
-    return input
+  // helpers
+  const normalizeTag = (raw) => {
+    if (!raw) return "";
+    const t = raw.trim();
+    if (!t) return "";
+    return t.startsWith("#") ? t : `#${t}`;
+  };
+
+  const parseTagsFromString = (s) =>
+    s
+      .toString()
       .split(",")
       .map((t) => t.trim())
-      .filter(Boolean);
-  }
+      .filter(Boolean)
+      .map(normalizeTag);
 
-  function isValidUrl(s) {
+  const remainingSlots = () => Math.max(0, MAX_TAGS - tags.length);
+
+  const addTagFromInput = (raw) => {
+    if (!raw) return;
+    if (tags.length >= MAX_TAGS) {
+      setTagError(`Maximum ${MAX_TAGS} tags allowed`);
+      clearTagErrorSoon();
+      return;
+    }
+    const incoming = raw.includes(",")
+      ? parseTagsFromString(raw)
+      : [normalizeTag(raw)];
+    const allowed = remainingSlots();
+    const toAdd = incoming.slice(0, allowed);
+    if (toAdd.length === 0) {
+      setTagError(`Maximum ${MAX_TAGS} tags allowed`);
+      clearTagErrorSoon();
+      return;
+    }
+    setTags((prev) => {
+      const lower = new Set(prev.map((p) => p.toLowerCase()));
+      const merged = [...prev];
+      for (const t of toAdd) {
+        if (!lower.has(t.toLowerCase())) {
+          merged.push(t);
+          lower.add(t.toLowerCase());
+        }
+      }
+      return merged;
+    });
+    setTagInput("");
+  };
+
+  const removeTag = (idx) => {
+    setTags((prev) => prev.filter((_, i) => i !== idx));
+    setTagError("");
+  };
+
+  const clearTagErrorSoon = () => {
+    setTimeout(() => setTagError(""), 2200);
+  };
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const raw = tagInput.trim().replace(/,+$/, "");
+      if (raw) addTagFromInput(raw);
+    } else if (e.key === "Backspace" && !tagInput) {
+      setTags((prev) => prev.slice(0, -1));
+      setTagError("");
+    }
+  };
+
+  const handleTagPaste = (e) => {
+    const text = (e.clipboardData || window.clipboardData).getData("text");
+    if (!text) return;
+    if (tags.length >= MAX_TAGS) {
+      e.preventDefault();
+      setTagError(`Maximum ${MAX_TAGS} tags allowed`);
+      clearTagErrorSoon();
+      return;
+    }
+    if (text.includes(",")) {
+      e.preventDefault();
+      const parts = parseTagsFromString(text);
+      const allowed = remainingSlots();
+      const toAdd = parts.slice(0, allowed);
+      if (toAdd.length === 0) {
+        setTagError(`Maximum ${MAX_TAGS} tags allowed`);
+        clearTagErrorSoon();
+        return;
+      }
+      setTags((prev) => {
+        const lower = new Set(prev.map((p) => p.toLowerCase()));
+        const merged = [...prev];
+        for (const t of toAdd) {
+          if (!lower.has(t.toLowerCase())) {
+            merged.push(t);
+            lower.add(t.toLowerCase());
+          }
+        }
+        return merged;
+      });
+      setTagInput("");
+    }
+  };
+
+  const isValidUrl = (s) => {
     try {
       const u = new URL(s);
       return (
@@ -37,73 +166,63 @@ export default function AddUrlModal({
     } catch {
       return false;
     }
-  }
+  };
 
-  function validateForm() {
+  const validateForm = () => {
     const newErrors = {};
-
-    if (!title.trim()) {
-      newErrors.title = "Title is required";
-    }
-
-    if (!url.trim()) {
-      newErrors.url = "URL is required";
-    } else if (!isValidUrl(url.trim())) {
+    if (!title.trim()) newErrors.title = "Title is required";
+    if (!url.trim()) newErrors.url = "URL is required";
+    else if (!isValidUrl(url.trim()))
       newErrors.url = "Please enter a valid URL (include https://)";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    const iso = date ? date.toISOString().split("T")[0] : "";
+    setReminder(iso);
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
-
-    // Prevent multiple submissions
     if (isLoading) return;
-
-    // Validate form
     if (!validateForm()) return;
 
     setIsLoading(true);
     setErrors({});
-
     try {
+      const finalTags = tags
+        .slice(0, MAX_TAGS)
+        .map((t) => (t.startsWith("#") ? t : `#${t}`));
       const newLink = {
         title: title.trim(),
         url: url.trim(),
         description: note.trim(),
         status: archive ? "archived" : "active",
-        tags: parseTags(tagsStr),
+        tags: finalTags,
         url_clicks: 0,
         reminder_at: reminder || null,
       };
 
-      // Optimistic UI update
-      setUrls((prevUrls) => [newLink, ...prevUrls]);
-
-      // Send to API
-      let res = await addUrl(newLink);
+      setUrls?.((prev) => [newLink, ...(prev || [])]);
+      const res = await addUrl?.(newLink);
 
       if (res) {
-        showNotify("success", "URL added successfully!");
-        onClose();
-
-        // Clear form fields
+        showNotify?.("success", "URL added successfully!");
+        onClose?.();
         setTitle("");
         setUrl("");
         setNote("");
-        setTagsStr("");
+        setTags([]);
+        setTagInput("");
         setReminder(null);
-
-        // Refresh URLs from server
-        const refreshedUrls = await getAllUrls();
-        if (refreshedUrls && refreshedUrls.data) {
-          setUrls(refreshedUrls.data);
-        }
+        setSelectedDate(null);
+        const refreshedUrls = await getAllUrls?.();
+        if (refreshedUrls && refreshedUrls.data) setUrls?.(refreshedUrls.data);
       }
     } catch (error) {
-      // console.error("Error adding URL:", error);
-      showNotify("error", "Failed to add URL. Please try again.");
+      showNotify?.("error", "Failed to add URL. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +230,7 @@ export default function AddUrlModal({
 
   return (
     <div
-      className="modal-overlay"
+      className="modal-overlay add"
       role="dialog"
       aria-modal="true"
       aria-labelledby="addurl-title"
@@ -120,8 +239,18 @@ export default function AddUrlModal({
         <button
           className="modal-close"
           aria-label="Close"
-          onClick={onClose}
+          onClick={() => {
+            onClose()
+                setTitle("");
+                setUrl("");
+                setNote("");
+                setTags([]);
+                setTagInput("");
+                setReminder(null);
+                setSelectedDate(null);
+          }}
           disabled={isLoading}
+          type="button"
         >
           <FiX />
         </button>
@@ -130,40 +259,48 @@ export default function AddUrlModal({
           Add New URL
         </h3>
 
+        {/* form becomes scrollable when tall */}
         <form className="modal-form" onSubmit={handleSubmit}>
-          <label className="add-link-field field">
-            <div className="field-label">Title</div>
-            <input
-              id="addurl-title"
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                if (errors.title) {
-                  setErrors((prev) => ({ ...prev, title: null }));
-                }
-              }}
-              placeholder="Enter URL title"
-              className={errors.title ? "error" : ""}
-            />
-            {errors.title && <div className="field-error">{errors.title}</div>}
-          </label>
+          {/* Title + URL row */}
+          <div className="field-row two-col-row">
+            <label className="add-link-field field">
+              <div className="field-label">Title</div>
+              <input
+                ref={titleRef}
+                id="addurl-title"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (errors.title) setErrors((p) => ({ ...p, title: null }));
+                }}
+                placeholder="Enter URL title"
+                className={errors.title ? "error" : ""}
+                autoComplete="off"
+                type="text"
+              />
+              {errors.title && (
+                <div className="field-error">{errors.title}</div>
+              )}
+            </label>
 
-          <label className="add-link-field field">
-            <div className="field-label">URL</div>
-            <input
-              value={url}
-              onChange={(e) => {
-                setUrl(e.target.value);
-                if (errors.url) {
-                  setErrors((prev) => ({ ...prev, url: null }));
-                }
-              }}
-              placeholder="https://example.com"
-              className={errors.url ? "error" : ""}
-            />
-            {errors.url && <div className="field-error">{errors.url}</div>}
-          </label>
+            <label className="add-link-field field">
+              <div className="field-label">URL</div>
+              <input
+                value={url}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  if (errors.url) setErrors((p) => ({ ...p, url: null }));
+                }}
+                placeholder="https://example.com"
+                className={errors.url ? "error" : ""}
+                autoComplete="off"
+                type="url"
+              />
+              {errors.url && <div className="field-error">{errors.url}</div>}
+            </label>
+          </div>
 
+          {/* Notes */}
           <label className="add-link-field field">
             <div className="field-label">Notes</div>
             <textarea
@@ -174,36 +311,108 @@ export default function AddUrlModal({
             />
           </label>
 
-          <label className="add-link-field field">
-            <div className="field-label">Tags</div>
-            <input
-              value={tagsStr}
-              onChange={(e) => setTagsStr(e.target.value)}
-              placeholder="work, important, reference (comma separated)"
-            />
-          </label>
+          {/* Tags + Date on same line */}
+          <div className="field-row tags-date-row">
+            <label className="add-link-field field tags-field">
+              <div className="field-label">Tags</div>
 
-          <label className="add-link-field field">
-            <div className="field-label">Reminder Date (Optional)</div>
+              <div className="tag-input-wrap">
+                <div className="tags-list" role="list">
+                  {tags.map((t, i) => (
+                    <span
+                      className="tag-chip small"
+                      key={`${t}-${i}`}
+                      role="listitem"
+                    >
+                      <span className="tag-text">
+                        {t.startsWith("#") ? t.slice(1) : t}
+                      </span>
+                      <button
+                        type="button"
+                        className="tag-cut-btn"
+                        onClick={() => removeTag(i)}
+                        aria-label={`Remove tag ${t}`}
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
 
-            <div
-              className="date-row clickable"
-              onClick={() => {
-                document.getElementById("reminder-date-input")?.showPicker?.();
-                document.getElementById("reminder-date-input")?.focus();
-              }}
-            >
-              <FiCalendar className="date-icon" />
-              <input
-                id="reminder-date-input"
-                type="date"
-                value={reminder || ""}
-                onChange={(e) => setReminder(e.target.value)}
-                className="date-input"
-              />
-            </div>
-          </label>
+                  <input
+                    className="tag-input"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleTagKeyDown}
+                    onPaste={handleTagPaste}
+                    placeholder={`Type tag and press Enter or comma (max ${MAX_TAGS})`}
+                    disabled={tags.length >= MAX_TAGS}
+                  />
+                </div>
 
+                <div className="tag-actions">
+                  <button
+                    type="button"
+                    className="btn add-tag-btn"
+                    onClick={() => {
+                      if (tagInput.trim()) addTagFromInput(tagInput.trim());
+                    }}
+                    disabled={!tagInput.trim() || tags.length >= MAX_TAGS}
+                  >
+                    Add
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn clear-tags-btn"
+                    onClick={() => {
+                      setTags([]);
+                      setTagInput("");
+                      setTagError("");
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                <div
+                  className={`tag-limit ${tagError ? "has-error" : ""}`}
+                  aria-live="polite"
+                >
+                  <small>
+                    Tags: {tags.length}/{MAX_TAGS}
+                    {tagError ? ` — ${tagError}` : ""}
+                  </small>
+                </div>
+              </div>
+            </label>
+
+            {/* Date on same row as tags */}
+            <label className="add-link-field field date-field">
+              <div className="field-label">Reminder Date (Optional)</div>
+              <div
+                className="date-row clickable"
+                onClick={() => {
+                  const el = document.querySelector(
+                    ".react-datepicker__input-container input"
+                  );
+                  if (el) el.focus();
+                }}
+              >
+                <FiCalendar className="date-icon" />
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={handleDateChange}
+                  placeholderText="Select a date"
+                  dateFormat="dd-MM-yyyy"
+                  isClearable
+                  showPopperArrow={false}
+                  className="date-input"
+                />
+              </div>
+            </label>
+          </div>
+
+          {/* Actions */}
           <div className="modal-actions">
             <button
               type="button"
@@ -222,7 +431,7 @@ export default function AddUrlModal({
                 <>
                   <FiLoader
                     className="animate-spin"
-                    style={{ marginRight: "8px" }}
+                    style={{ marginRight: 8 }}
                   />
                   Adding...
                 </>

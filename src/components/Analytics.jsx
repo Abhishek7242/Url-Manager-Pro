@@ -136,70 +136,75 @@ export default function Analytics() {
   }
       
   return (
-    <main className="analytics-root flex flex-col gap-20">
-      <section className="cards-grid">
-        <article className="card">
-          <div className="card-head">
-            <div className="card-title">Total URLs</div>
-            <FiDatabase className="icon" />
-          </div>
-          <div className="card-value">{filtered.length}</div>
-          <div className="card-sub">URLs in your collection</div>
-        </article>
+    <main className="analytics-root flex justify-center items-center">
 
-        <article className="card">
-          <div className="card-head">
-            <div className="card-title">Total Clicks</div>
-            <FiActivity className="icon" />
-          </div>
-          <div className="card-value">{totalClicks}</div>
-          <div className="card-sub">Times URLs were accessed</div>
-        </article>
-
-        <article className="card">
-          <div className="card-head">
-            <div className="card-title">URL Health</div>
-            <div className="health-mini">
-              {checking ? (
-                <div className="checking-health">
-                  <FiLoader className="spin-icon" /> Checking...
-                </div>
-              ) : (
-                <>{healthyCount} healthy, {brokenCount} broken</>
-              )}
+      <div className="analytics-inner-root flex flex-col gap-20">
+        <section className="cards-grid">
+          <article className="card">
+            <div className="card-head">
+              <div className="card-title">Total URLs</div>
+              <FiDatabase className="icon" />
             </div>
+            <div className="card-value">{filtered.length}</div>
+            <div className="card-sub">URLs in your collection</div>
+          </article>
+
+          <article className="card">
+            <div className="card-head">
+              <div className="card-title">Total Clicks</div>
+              <FiActivity className="icon" />
+            </div>
+            <div className="card-value">{totalClicks}</div>
+            <div className="card-sub">Times URLs were accessed</div>
+          </article>
+
+          <article className="card">
+            <div className="card-head">
+              <div className="card-title">URL Health</div>
+              <div className="health-mini">
+                {checking ? (
+                  <div className="checking-health">
+                    <FiLoader className="spin-icon" /> Checking...
+                  </div>
+                ) : (
+                  <>
+                    {healthyCount} healthy, {brokenCount} broken
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="health-pct">{healthPct.toFixed(1)}%</div>
+
+            <div className="health-bar">
+              <div
+                className="health-fill"
+                style={{ width: `${healthPct}%` }}
+                aria-hidden="true"
+              />
+            </div>
+
+            <div className="card-sub small">--</div>
+          </article>
+
+          <article className="card">
+            <div className="card-head">
+              <div className="card-title">Recent Activity</div>
+              <FiCalendar className="icon" />
+            </div>
+            <div className="card-value">{recentCount}</div>
+            <div className="card-sub">URLs added this week</div>
+          </article>
+        </section>
+        <div className="flex gap-20 flex-col">
+          <div className="analytics-section">
+            <ClicksOverTime />
+            <TopTags height={240} />
           </div>
-
-          <div className="health-pct">{healthPct.toFixed(1)}%</div>
-
-          <div className="health-bar">
-            <div
-              className="health-fill"
-              style={{ width: `${healthPct}%` }}
-              aria-hidden="true"
-            />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }}>
+            <MostVisited items={byClicks} />
+            <RecentlyAdded items={recent} />
           </div>
-
-          <div className="card-sub small">--</div>
-        </article>
-
-        <article className="card">
-          <div className="card-head">
-            <div className="card-title">Recent Activity</div>
-            <FiCalendar className="icon" />
-          </div>
-          <div className="card-value">{recentCount}</div>
-          <div className="card-sub">URLs added this week</div>
-        </article>
-      </section>
-      <div className="flex gap-20 flex-col">
-        <div className="analytics-section">
-          <ClicksOverTime />
-          <TopTags height={240} />
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }}>
-          <MostVisited items={byClicks} />
-          <RecentlyAdded items={recent} />
         </div>
       </div>
     </main>

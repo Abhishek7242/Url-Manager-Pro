@@ -21,6 +21,7 @@ import AddTagsLinksModel from "./components/suggestion/AddTagsLinksModel";
 import ProfileCard from "./components/navbar/ProfileCard";
 import FullscreenLoader from "./components/FullscreenLoader";
 import URLMgrLanding from "./components/URLMgrLanding";
+import Settings from "./components/dashboard/Settings";
 
 function App() {
   const context = React.useContext(UrlContext);
@@ -41,7 +42,16 @@ function App() {
     showNotify,
     screenLoading,
     setScreenLoading,
-   
+    user,
+    openLoginModel,
+    setOpenLoginModel,
+    openSignupModel,
+    setOpenSignupModel,
+    openverifyOTPModel,
+    setOpenVerifyOTPModel,
+    openProfileModel,
+    setOpenProfileModel,
+    updateUserName,
   } = context;
   const handleExport = () => {
     const data = JSON.parse(localStorage.getItem("lynkr_urls") || "[]");
@@ -77,15 +87,61 @@ function App() {
 
   return (
     <>
+      {openProfileModel && (
+        <ProfileCard
+          isOpen={openProfileModel}
+          onClose={() => setOpenProfileModel(false)}
+          user={user}
+          onSaveProfile={updateUserName}
+        />
+      )}
+      {openLoginModel && (
+        <Login
+          isOpen={openLoginModel}
+          setOpenSignupModel={setOpenSignupModel}
+          isSignUp={openSignupModel}
+          onClose={() => setOpenLoginModel(false)}
+        />
+      )}
+      {openSignupModel && (
+        <Signup
+          isLogin={openLoginModel}
+          isSignUp={openSignupModel}
+          onClose={() => setOpenSignupModel(false)}
+          setOpenLoginModel={setOpenLoginModel}
+          setOpenVerifyOTPModel={setOpenVerifyOTPModel}
+        />
+      )}
+      {openverifyOTPModel && (
+        <VerifyOtp
+          isOpen={openverifyOTPModel}
+          onClose={() => setOpenVerifyOTPModel(false)}
+          setOpenVerifyOTPModel={setOpenVerifyOTPModel}
+        />
+      )}
       {/* { screenLoading ? <FullscreenLoader/> : null } */}
-      {location.pathname !== '/' && <Navbar />}
+      {location.pathname !== "/" && <Navbar />}
+      <Settings />
+
       <div className="app">
+        <div className="linkuss-tag fixed bottom-4 right-4 z-50 text-sm text-gray-400 font-medium">
+          <p>
+            Powered by{" "}
+            <a
+              href="https://linkuss.com/" target="_blank"
+              className="text-indigo-400 font-semibold hover:text-cyan-400 transition-colors duration-200"
+            >
+              Linkuss
+            </a>
+          </p>
+        </div>
+
         <div className="notify-container">
           {notify && (
             <Notification
               type={notify.type}
               message={notify.message}
-              duration={4000}
+              duration={2000}
               onClose={() => setNotify(null)}
             />
           )}
@@ -93,7 +149,13 @@ function App() {
       </div>
 
       <Routes>
-        <Route path="/" element={<URLMgrLanding />} />
+        <Route
+          path="/"
+          element={
+            !user ? <URLMgrLanding /> : <Navigate to="/dashboard" replace />
+          }
+        />
+
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/storage" element={<Storage />} />
         <Route path="/reminders" element={<Reminders />} />

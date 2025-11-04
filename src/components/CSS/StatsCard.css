@@ -1,0 +1,136 @@
+/* StatsCard.css - glass stats card centered like screenshot */
+
+.stats-card {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  box-sizing: border-box;
+  transition: opacity 0.3s ease;
+}
+.stats-card.focus{
+  opacity: 0;
+  pointer-events: none
+}
+
+/* inner card */
+.stats-card-inner {
+  width: 100%;
+  max-width: 550px; /* central width */
+  border-radius: 14px;
+  padding: 20px 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  color: #e6eef8;
+}
+
+/* header */
+.stats-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.stats-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  opacity: 0.85;
+  color: #ffffff;
+text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+
+/* grid of three stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 24px;
+  align-items: center;
+}
+
+/* each stat block */
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 72px;
+}
+
+/* optional icon */
+.stat-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+  color: rgba(255,255,255,0.9);
+  opacity: 0.9;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* main number */
+.stats-card .stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* highlighted middle value — makes it stand out like screenshot */
+.stat-value.highlight {
+  color: #a78bfa; /* violet */
+  font-size: 30px;
+}
+
+/* small label text */
+.stats-card .stat-label {
+  font-size: 15px;
+  opacity: 0.8;
+  color: #f0f0f0;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.557);
+}
+
+/* subtle separators for layout match in screenshot (optional) */
+@media (min-width: 860px) {
+  .stat-item:not(:last-child) {
+    padding-right: 12px;
+  }
+}
+
+/* responsive: stack on small screens */
+@media (max-width: 720px) {
+  .stats-card-inner {
+    padding: 16px;
+  }
+  .stats-grid {
+    gap: 4px;
+  }
+  .stat-value {
+    font-size: 22px;
+  }
+  .stat-value.highlight {
+    font-size: 24px;
+  }
+}
+
+/* small polish - tiny neon bottom glow */
+.stats-card-inner::after {
+  content: "";
+  display: block;
+  height: 6px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(99,102,241,0.14), rgba(14,165,233,0.12), rgba(99,102,241,0.14));
+  opacity: 0.9;
+}

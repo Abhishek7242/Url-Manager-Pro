@@ -4,10 +4,47 @@
 
 /* ROOT */
 .dups-root {
+  width: 100%;
   padding: 20px;
   color: var(--text);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 14px;
+  /* background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18)); */
+  min-height: 100vh;
+}
+.duplicate-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  padding: 8px;
+}
+.duplicate-container > div {
+  max-width: 500px;
+  width: 100%;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.dups-inner-root {
+  padding: 20px;
+  width: 100%;
+  max-width: 808px;
+  border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.18)
+  );
 }
 
 /* ===========================================
@@ -24,23 +61,23 @@
   text-align: center;
 }
 .dups-clean {
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 36px;
   text-align: center;
   color: var(--muted);
-  box-shadow: 0 8px 40px rgba(2,6,23,0.6);
+  box-shadow: 0 8px 40px rgba(2, 6, 23, 0.6);
 }
 /* optimized banner (no suggestions) */
 .dups-clean {
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 36px;
   text-align: center;
   color: var(--muted);
-  box-shadow: 0 8px 40px rgba(2,6,23,0.6);
+  box-shadow: 0 8px 40px rgba(2, 6, 23, 0.6);
 }
 
 .dups-clean .dups-icon {
@@ -52,9 +89,9 @@
   align-items: center;
   justify-content: center;
   color: var(--success);
-  background: rgba(34,197,94,0.08);
+  background: rgba(34, 197, 94, 0.08);
   font-size: 22px;
-  border: 1px solid rgba(34,197,94,0.12);
+  border: 1px solid rgba(34, 197, 94, 0.12);
 }
 
 .dups-clean h3 {
@@ -170,6 +207,31 @@
   margin: 0;
   color: var(--muted);
 }
+.meta-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.meta-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06); /* transparent frosted chip */
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s ease;
+  cursor: default;
+}
+
+
+
 
 /* ===========================================
    HEADER
@@ -217,7 +279,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+  /* box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4); */
 }
 
 /* Each group card */
@@ -241,7 +303,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--text);
+  color: black;
   font-weight: 700;
   text-decoration: none;
   background: transparent;
@@ -249,8 +311,8 @@
 
 .group-key .badge {
   margin-left: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.342);
+  color: black;
   padding: 6px 10px;
   border-radius: 999px;
   font-weight: 700;
@@ -292,8 +354,11 @@
   display: flex;
   gap: 12px;
   align-items: flex-start;
+  width: 100%;
 }
-
+.meta-created {
+  color: white;
+}
 /* Checkbox */
 .item-left input[type="checkbox"] {
   width: 18px;
@@ -341,6 +406,12 @@
   color: var(--accent);
   text-decoration: none;
   font-size: 0.9rem;
+
+  /* ✅ Prevent wrapping & hide overflow text */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* optional: keeps it responsive within parent */
 }
 
 .link-icon {
@@ -381,10 +452,17 @@
 
 /* Keep button (primary dark) */
 .btn.keep {
-  background: linear-gradient(90deg, #0b1220, #0b1220);
-  color: #e6eefc;
+  border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.427),
+    rgba(255, 255, 255, 0.354)
+  );
+  color: #000000;
+  box-shadow: inset 0 -10px 10px rgba(65, 242, 255, 0.619);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.6);
 }
 
 .btn.keep:disabled {
@@ -440,4 +518,282 @@
   .skeleton-group {
     height: 76px;
   }
+} /* =========================
+   Duplicates - Responsive Overrides
+   Append to bottom of file
+   ========================= */
+
+/* Make root/container fluid and center content cleanly */
+.dups-root,
+.duplicate-container {
+  box-sizing: border-box;
+  padding: 12px;
+}
+
+/* Cap widths so content doesn't stretch on large screens */
+.dups-inner-root {
+  width: 100%;
+  max-width: 920px; /* keeps layout tidy on very wide screens */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Ensure the inner wrapper (the direct child) also fits */
+.duplicate-container > div {
+  max-width: 920px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+}
+
+/* Tighter group card padding on smaller viewports */
+@media (max-width: 920px) {
+  .dup-group {
+    padding: 20px;
+  }
+
+  .dup-item {
+    padding: 10px;
+  }
+
+  .group-items {
+    gap: 8px;
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 768px) {
+  .dups-inner-root {
+    padding: 16px;
+    max-width: 720px;
+  }
+
+  .dup-group {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .dup-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .item-left {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .item-content {
+    max-width: 100%;
+    gap: 6px;
+  }
+
+  .item-url {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .item-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .group-key .badge {
+    margin-left: 8px;
+    padding: 5px 8px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Large phone / small tablet */
+@media (max-width: 480px) {
+  .dups-root,
+  .duplicate-container {
+    padding: 8px;
+  }
+
+  .dups-inner-root {
+    padding: 12px;
+    max-width: 420px;
+  }
+
+  .dup-group {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .dup-item {
+    padding: 8px;
+    gap: 6px;
+  }
+  .dups-inner-root {
+    padding: 0px;
+  }
+  /* shrink icons/checkboxes */
+  .warning-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+  .item-left input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  .item-title {
+    font-size: 0.95rem;
+  }
+  .item-url {
+    font-size: 0.88rem;
+  }
+
+  .item-meta {
+    font-size: 0.82rem;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 7px 10px;
+    font-size: 0.85rem;
+  }
+  .btn.keep {
+    border-radius: 12px;
+  }
+
+  .loader-skeletons {
+    gap: 8px;
+  }
+  .skeleton-group {
+    height: 72px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  .dup-group {
+    padding: 8px;
+    border-radius: 10px;
+  }
+  .dup-item {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .item-title {
+    font-size: 0.92rem;
+  }
+  .item-url {
+    font-size: 0.82rem;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-meta {
+    font-size: 0.78rem;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .btn {
+    padding: 6px 8px;
+    font-size: 0.82rem;
+  }
+  .btn.keep {
+    padding: 6px 10px;
+  }
+
+  .warning-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  .item-left input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+  .dups-title {
+ 
+    gap: 4px;
+}
+}
+
+/* Tiny devices down to 280px */
+@media (max-width: 280px) {
+  .dups-root,
+  .duplicate-container {
+    padding: 6px;
+    min-height: auto;
+  }
+  .dups-inner-root {
+    padding: 8px;
+    max-width: 280px;
+  }
+  .dup-group {
+    padding: 6px;
+    border-radius: 8px;
+  }
+  .dup-item {
+    padding: 6px;
+    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .item-title {
+    font-size: 0.9rem;
+  }
+  .item-url {
+    font-size: 0.8rem;
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+  }
+
+  .item-meta {
+    font-size: 0.78rem;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .group-key .badge {
+    font-size: 0.75rem;
+    padding: 4px 6px;
+  }
+  .btn {
+    font-size: 0.78rem;
+    padding: 6px 8px;
+  }
+
+  /* make sure checkboxes don't overflow */
+  .item-left {
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+  }
+  .item-left input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Utility: preserve readable wrapping and avoid overflow */
+.dup-group,
+.dup-item,
+.item-content {
+  box-sizing: border-box;
+  width: 100%;
+  hyphens: auto;
+}
+
+/* Accessibility: focus states are visible on small devices too */
+.btn:focus,
+.dup-item:focus {
+  outline: 3px solid rgba(59, 130, 246, 0.12);
+  outline-offset: 2px;
 }

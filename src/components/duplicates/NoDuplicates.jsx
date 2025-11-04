@@ -5,6 +5,7 @@ import '../CSS/NoDuplicates.css'
 
 const NoDuplicates = () => {
   return (
+    <div className="duplicate-container flex ">
     <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-3xl bg-transparent backdrop-blur-md nd-root">
       {/* glowing gradient ring */}
       <div className="absolute inset-0 rounded-3xl border border-white/5 bg-gradient-to-b from-white/[0.03] to-white/[0.01] nd-bg-ring" />
@@ -57,6 +58,7 @@ const NoDuplicates = () => {
           className="mt-6 h-[1px] w-24 bg-gradient-to-r from-transparent via-blue-400/40 to-transparent nd-glow-line"
         />
       </motion.div>
+    </div>
     </div>
   );
 };

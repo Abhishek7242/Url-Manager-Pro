@@ -1,103 +1,217 @@
-/* =========================================================
-   LIGHT MODE — ReminderEmptyCard (rec-*)
-   Append this at the end of your stylesheet (or inside .light-mode)
-   ========================================================= */
+/* ================================
+   ReminderEmptyCard — Responsive CSS
+   Drop into ReminderEmptyCard.css
+   ================================ */
 
-.light-mode .rec-root {
-  color: #0f172a;
+/* base variables for quick tuning */
+:root {
+  --rec-max-w: 360px;
+  --rec-pad-lg: 48px 40px;
+  --rec-pad-md: 32px 28px;
+  --rec-pad-sm: 20px 18px;
+  --rec-icon-scale: 1;
+}
+
+/* root / layout */
+.rec-root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* card: allow fluid width but cap with max-width */
+.rec-card {
+  max-width: var(--rec-max-w);
+  box-sizing: border-box;
   position: relative;
-}
-
-/* Card: keep it light and airy — no heavy dark glass */
-.light-mode .rec-card {
-  background: none!important; /* subtle white plate */
-  border: none!important;
-  box-shadow:none!important;
-  backdrop-filter: blur(6px)!important;
-  -webkit-backdrop-filter: blur(6px)!important;
+  overflow: hidden;
+  border-radius: 18px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  text-align: center;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Halo: softened, visible on white without washing content */
-.light-mode .rec-halo {
-  background: conic-gradient(
-    from 90deg,
-    rgba(37,99,235,0.06),
-    rgba(167,139,250,0.05),
-    rgba(52,211,153,0.05)
-  );
-  mask-image: radial-gradient(circle at center, rgba(0,0,0,0.85), transparent 62%);
-  -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,0.85), transparent 62%);
-  opacity: 1;
+/* halo: subtle ring that stays behind content */
+.rec-halo {
   pointer-events: none;
-}
-
-/* Particles: darker tints so they remain visible on white */
-.light-mode .rec-particles .rec-particle {
-  background: rgba(15, 23, 42, 0.12) !important;
-  filter: blur(0.6px) !important;
-}
-
-/* Content wrapper text colors */
-.light-mode .rec-content { color: #0f172a; }
-
-/* Icon wrapper: pastel plate, subtle border and lift */
-.light-mode .rec-icon-wrapper {
-  background: linear-gradient(135deg, rgba(96,165,250,0.10), rgba(167,139,250,0.06));
-  border: 1px solid rgba(15,23,42,0.04);
-  box-shadow: 0 10px 30px rgba(15,23,42,0.04);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Icon color stronger for contrast */
-.light-mode .rec-icon {
-  color: #2563eb !important;
-}
-
-/* Heading / text */
-.light-mode .rec-title {
-  color: #0b1220;
-  font-weight: 700;
-}
-.light-mode .rec-subtitle {
-  color: #475569;
-}
-.light-mode .rec-hint {
-  color: #6b7280;
-}
-
-/* Divider glow: subtle and readable on white */
-.light-mode .rec-divider {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(37,99,235,0.12),
-    transparent
-  );
   opacity: 1;
+  transition: opacity 240ms ease;
+  filter: blur(8px);
+  will-change: transform, opacity;
 }
 
-/* Hover: gentle lift of icon wrapper */
-.light-mode .rec-card:hover .rec-icon-wrapper {
-  transform: translateY(-4px);
-  transition: transform 180ms ease, box-shadow 180ms ease;
-  box-shadow: 0 14px 40px rgba(15,23,42,0.07);
+/* particles: ensure they don't overflow on tiny screens */
+.rec-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+/* particles individual (fallback style if inline styles missing) */
+.rec-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  filter: blur(1px);
+  opacity: 0.06;
+  will-change: transform, opacity;
 }
 
-/* Focus accessibility */
-.light-mode .rec-card :focus {
-  outline: 3px solid rgba(37,99,235,0.12);
-  outline-offset: 4px;
-  border-radius: 12px;
+/* content stacking */
+.rec-content { z-index: 10; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+
+/* icon wrapper — keep it perfectly centered and responsive */
+.rec-icon-wrapper {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  box-sizing: border-box;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+  will-change: transform;
+  transform-origin: center;
 }
 
-/* Small screens: tighten spacings */
-@media (max-width: 640px) {
-  .light-mode .rec-card { padding: 14px; }
-  .light-mode .rec-title { font-size: 1.125rem; }
-  .light-mode .rec-hint { font-size: 0.82rem; max-width: 20ch; }
+/* icon itself */
+.rec-icon { display: block; }
+
+/* typography */
+.rec-title {
+  margin: 0;
+  line-height: 1.05;
+  color: rgba(255,255,255,0.95);
+  font-size: 1.7rem; /* default desktop */
+  letter-spacing: -0.01em;
 }
+
+.rec-subtitle {
+  margin: 0;
+  color: rgba(255,255,255,0.72);
+  font-size: 0.95rem;
+}
+
+.rec-hint {
+  margin: 0;
+  color: rgba(255,255,255,0.62);
+  font-size: 0.82rem;
+  max-width: 680px;
+}
+
+/* divider */
+.rec-divider { border-radius: 999px; height: 2px; opacity: 0.95; }
+
+/* subtle hover for pointer devices */
+.rec-card:hover .rec-icon-wrapper { transform: scale(calc(1 + var(--rec-icon-scale) * 0.05)); }
+
+/* =========================
+   RESPONSIVE BREAKPOINTS
+   ========================= */
+
+/* Large desktop (default) */
+@media (min-width: 1200px) {
+  :root { --rec-max-w: 680px; --rec-pad-lg: 56px 48px; --rec-icon-scale: 1; }
+  .rec-title { font-size: 2rem; }
+  .rec-subtitle { font-size: 1rem; }
+  .rec-hint { font-size: 0.9rem; }
+}
+
+/* Desktop / laptop */
+@media (min-width: 900px) and (max-width: 1199px) {
+  :root { --rec-max-w: 560px; --rec-pad-lg: 44px 36px; --rec-icon-scale: 1; }
+  .rec-title { font-size: 1.85rem; }
+}
+
+/* Tablet */
+@media (max-width: 900px) and (min-width: 640px) {
+  :root { --rec-max-w: 520px; --rec-pad-lg: var(--rec-pad-md); --rec-icon-scale: 0.95; }
+  .rec-card { padding: var(--rec-pad-md); border-radius: 16px; }
+  .rec-title { font-size: 1.5rem; }
+  .rec-subtitle { font-size: 0.95rem; }
+  .rec-hint { font-size: 0.85rem; max-width: 420px; }
+  /* scale down particles slightly */
+  .rec-particle { opacity: 0.06; }
+}
+
+/* Large phones */
+@media (max-width: 639px) and (min-width: 420px) {
+  :root { --rec-max-w: 420px; --rec-pad-lg: var(--rec-pad-sm); --rec-icon-scale: 0.9; }
+  .rec-card { padding: var(--rec-pad-sm); border-radius: 14px; }
+  .rec-title { font-size: 1.35rem; }
+  .rec-subtitle { font-size: 0.9rem; }
+  .rec-hint { font-size: 0.82rem; max-width: 340px; }
+  .rec-icon-wrapper { transform-origin: center; }
+}
+
+/* Small phones */
+@media (max-width: 419px) and (min-width: 320px) {
+  :root { --rec-max-w: 360px; --rec-pad-lg: 16px 14px; --rec-icon-scale: 0.85; }
+  .rec-card { padding: 14px; border-radius: 12px; }
+  .rec-title { font-size: 1.15rem; }
+  .rec-subtitle { font-size: 0.86rem; }
+  .rec-hint { font-size: 0.78rem; max-width: 300px; }
+  /* limit particle density visually */
+  .rec-particles .rec-particle { opacity: 0.05; }
+}
+
+/* Very small phones */
+@media (max-width: 319px) {
+  :root { --rec-max-w: 300px; --rec-pad-lg: 12px 10px; --rec-icon-scale: 0.8; }
+  .rec-card { padding: 12px; border-radius: 10px; }
+  .rec-title { font-size: 1rem; }
+  .rec-subtitle { font-size: 0.82rem; }
+  .rec-hint { font-size: 0.75rem; max-width: 240px; }
+  /* particles minimal */
+  .rec-particles { display: none; }
+  .rec-halo { opacity: 0.9; filter: blur(6px); }
+}
+
+/* Ultra tiny devices (<=280px) — compact mode */
+@media (max-width: 280px) {
+  :root { --rec-max-w: 260px; --rec-pad-lg: 10px 8px; --rec-icon-scale: 0.75; }
+  .rec-card { padding: 10px; border-radius: 10px; }
+  .rec-title { font-size: 0.95rem; }
+  .rec-subtitle { font-size: 0.78rem; display: none; } /* hide subtitle for space */
+  .rec-hint { font-size: 0.72rem; max-width: 220px; }
+  .rec-particles { display: none; }
+}
+
+/* =========================
+   ICON SIZING — helpful fallback if inline styles missing
+   (component sets sizes inline; these provide graceful fallback)
+   ========================= */
+
+.rec-icon-wrapper { width: 90px; height: 90px; }
+.rec-icon-wrapper .rec-icon { font-size: 20px; }
+
+/* scale icon wrapper across breakpoints */
+@media (max-width: 900px) {
+  .rec-icon-wrapper { width: 74px; height: 74px; }
+  .rec-icon-wrapper .rec-icon { font-size: 18px; }
+}
+@media (max-width: 420px) {
+  .rec-icon-wrapper { width: 64px; height: 64px; }
+  .rec-icon-wrapper .rec-icon { font-size: 16px; }
+}
+@media (max-width: 340px) {
+    .reminders-page {
+        padding: 8px;
+        padding-top: 50px;
+    }
+  .rec-icon-wrapper { width: 54px; height: 54px; }
+  .rec-icon-wrapper .rec-icon { font-size: 14px; }
+}
+@media (max-width: 280px) {
+  .rec-icon-wrapper { width: 48px; height: 48px; }
+  .rec-icon-wrapper .rec-icon { font-size: 12px; }
+}
+
+/* =========================
+   Small accessibility touches
+   ========================= */
+
+.rec-card:focus { outline: 3px solid rgba(99,102,241,0.12); outline-offset: 4px; }
+.rec-card[role="status"] { /* ensure good contrast for screen readers */ }
+
+/* end of ReminderEmptyCard responsive CSS */

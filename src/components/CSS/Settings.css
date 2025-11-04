@@ -1,0 +1,463 @@
+.fixed-settings {
+  /* position: absolute; */
+  right: 40px;
+  top: 21px;
+  padding: 12px;
+  font-size: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 11111;
+
+  /* 🌞 Sun Glow Gradient */
+  color: #fff7c2;
+
+  /* 🔆 Glow and Glass effect */
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+
+
+  /* Smooth transitions */
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+}
+
+/* 🌤️ Hover: gentle spin + radiant pulse */
+.fixed-settings:hover {
+  transform: rotate(90deg);
+  box-shadow: 
+    0 0 30px rgba(255, 200, 80, 0.8),
+    0 0 80px rgba(255, 170, 50, 0.6),
+    inset 0 0 16px rgba(255, 250, 180, 0.5);
+}
+
+/* 🌕 Active: small inward pulse (tap feedback) */
+.fixed-settings:active {
+  transform: scale(0.92) rotate(15deg);
+  box-shadow: 
+    0 0 10px rgba(255, 190, 70, 0.6),
+    inset 0 0 20px rgba(255, 240, 180, 0.6);
+}
+
+
+
+.settings-root-container{
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1111111111;
+      backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+}
+
+.settings-header{
+  padding-left: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 20px;
+  font-weight: 600;
+border-bottom: 1px solid gray;
+height: 70px;
+}
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  /* keep header text styling consistent with existing UI */
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #e8e8e8;
+  font-weight: 600;
+}
+
+/* Round Cut Button */
+.round-cut-btn {
+  --size: 36px;
+  width: var(--size);
+  height: var(--size);
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;         /* perfectly round */
+  border: 0;
+  cursor: pointer;
+  background: rgba(255,255,255,0.04); /* soft glass */
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.02);
+  color: #dcd6ff; /* icon color */
+  transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
+  padding: 0;
+}
+
+/* subtle pressed / hover states */
+.round-cut-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(103,84,248,0.12);
+  box-shadow: 0 8px 22px rgba(103,84,248,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+.round-cut-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+.round-cut-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(103,84,248,0.12);
+}
+
+/* smaller icon size for consistent visual balance */
+.round-cut-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  width: 850px;
+  height: 520px;
+  background: #22222262;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #eaeaea;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+.settings-inner-container {
+  display: flex;
+  width: 850px;
+  height: 520px;
+  overflow: hidden;
+  color: #eaeaea;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.settings-sidebar {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.sidebar-item {
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  color: #b0b0b0;
+  transition: 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background: #cfcfcf72;
+
+  color: #fff;
+}
+
+.sidebar-item.active {
+  background: #cfcfcf72;
+  color: #b3a6ff;
+}
+
+.settings-content {
+  flex: 1;
+  padding: 20px 28px;
+  overflow-y: auto;
+}
+
+.settings-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #202020;
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #444;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background-color: #6754f8;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.bg-grid {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.bg-card {
+  width: 200px;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s;
+}
+
+.bg-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bg-card.selected {
+  border-color: #6754f8;
+}
+
+.bg-footer {
+  display: flex;
+  justify-content: space-between;
+  color: #999;
+  font-size: 14px;
+  margin-top: 10px;
+}
+/* ===========================
+   Settings Outer — Responsive
+   (append this to your CSS)
+   =========================== */
+
+/* Make fixed settings button friendlier on smaller screens */
+@media (max-width: 1100px) {
+  .fixed-settings {
+    right: 20px;
+    top: 18px;
+    font-size: 20px;
+    padding: 10px;
+  }
+}
+
+/* Centered sheet for mid-sized screens */
+@media (max-width: 900px) {
+  .fixed-settings {
+    right: 16px;
+    top: 14px;
+    font-size: 20px;
+  }
+
+  .settings-root-container {
+    padding: 12px;
+   
+    background: rgba(0,0,0,0.35); /* subtle dim */
+  }
+
+  .settings-container,
+  .settings-inner-container {
+    width: calc(100% - 48px);
+    max-width: 720px;
+    /* height: auto; */
+    max-height: 100vh;
+    border-radius: 12px;
+  }
+
+  .settings-content {
+    padding: 16px;
+  }
+
+  .settings-sidebar {
+    width: 180px;
+    padding: 12px;
+  }
+
+  .bg-card { width: 160px; height: 100px; }
+}
+
+/* Stack sidebar and content on narrow tablets — convert to top tabs */
+@media (max-width: 640px) {
+  .settings-root-container {
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+  }
+
+  .settings-container,
+  .settings-inner-container {
+    width: calc(100% - 24px);
+    max-width: 640px;
+    height: auto;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* collapse sidebar into a horizontal top strip */
+  .settings-sidebar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 8px;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  }
+
+  .sidebar-item {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  .settings-content {
+    padding: 12px;
+    overflow-y: auto;
+    max-height: calc(90vh - 120px);
+  }
+
+  .bg-grid { gap: 10px; }
+  .bg-card { width: 48%; height: 90px; }
+}
+
+/* Phones: bottom sheet pattern, full width and stacked layout */
+@media (max-width: 480px) {
+  .fixed-settings {
+    right: 10px;
+    top: 10px;
+    font-size: 18px;
+    padding: 8px;
+  }
+
+  .settings-root-container {
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+  }
+
+  .settings-container,
+  .settings-inner-container {
+    width: 100%;
+    height: auto;
+    max-height: 92vh;
+    border-radius: 12px 12px 0 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .settings-sidebar {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .settings-content {
+    padding: 10px;
+    max-height: calc(92vh - 120px);
+    overflow-y: auto;
+  }
+
+  .bg-card { width: 48%; height: 88px; }
+  .bg-footer { font-size: 13px; }
+  .round-cut-btn { --size: 32px; }
+}
+
+/* Very small screens: compact everything and allow vertical scrolling */
+@media (max-width: 360px) {
+  .settings-container,
+  .settings-inner-container {
+    border-radius: 10px 10px 0 0;
+    max-height: 95vh;
+  }
+
+  .sidebar-item { padding: 6px 10px; font-size: 0.85rem; }
+  .bg-card { width: 100%; height: 84px; }
+  .bg-grid { flex-direction: column; gap: 8px; }
+  .settings-content { padding: 8px; }
+  .settings-header { padding-left: 12px; height: 56px; }
+  .group-body { height: auto; padding: 8px; }
+}
+
+/* Tiny devices down to 280px: safe minimal layout */
+@media (max-width: 280px) {
+  .fixed-settings { right: 6px; top: 6px; font-size: 16px; padding: 6px; }
+  .settings-container, .settings-inner-container { max-width: 100%; height: auto; max-height: 96vh; border-radius: 8px 8px 0 0; }
+  .settings-sidebar { gap: 6px; padding: 6px; }
+  .sidebar-item { padding: 6px 8px; font-size: 0.78rem; }
+  .bg-card { height: 72px; width: 100%; }
+  .bg-footer { font-size: 12px; }
+  .settings-content { padding: 6px; max-height: calc(96vh - 120px); }
+}
+
+/* Accessibility & utility tweaks */
+.settings-sidebar, .settings-content {
+  box-sizing: border-box;
+}
+
+/* Make sure images and cards don't overflow */
+.bg-card img { max-width: 100%; height: auto; display: block; object-fit: cover; }

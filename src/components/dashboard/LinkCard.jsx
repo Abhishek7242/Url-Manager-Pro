@@ -1,114 +1,370 @@
 import React, { useRef, useEffect, useState } from "react";
 import {
   FiExternalLink,
-  FiShare2,
+  FiTrash2,
+  FiCopy,
   FiMoreVertical,
   FiEdit2,
-  FiTrash2,
+  FiCheck,
+  FiStar,
+  FiInfo,
 } from "react-icons/fi";
+import { FaStar } from "react-icons/fa"; // filled star
 import "../CSS/LinkCard.css";
 import UrlContext from "../../context/url_manager/UrlContext";
+import MoreMenu from "./MoreMenu"; // new component (same folder)
 
 export default function LinkCard({
   link,
   selected,
   activeMode,
   onSelect = () => {},
+  onDelete = () => {},
   onShare = () => {},
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
-  const moreBtnRef = useRef(null);
   const context = React.useContext(UrlContext);
   const {
     deleteUrlPost,
     setUrls,
+    urls,
     showNotify,
     updateClickCount,
-    formData,
     setFormData,
-    isEditOpen,
     setIsEditOpen,
-  } = context;
+    getXsrfHeader,
+    API_BASE,
+    filtered,
+    isLoggedIn,
+    setShowAuthFeature,
+    setShowDetails,
+    setShowDetailsView,
+  } = context || {};
 
-  useEffect(() => {
-    // close menu on outside click
-    function handleOutside(e) {
-      if (
-        menuOpen &&
-        menuRef.current &&
-        !menuRef.current.contains(e.target) &&
-        !moreBtnRef.current.contains(e.target)
-      ) {
-        setMenuOpen(false);
-      }
+  const [copied, setCopied] = useState(false);
+  const menuAnchorRef = useRef(null); // used for both grid and list
+  const moreBtnRef = menuAnchorRef; // alias for clarity
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Copy URL
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(link.url);
+      setCopied(true);
+      if (showNotify) showNotify("success", "URL copied to clipboard!");
+      setTimeout(() => setCopied(false), 1800);
+      setMenuOpen(false);
+    } catch (err) {
+      if (showNotify) showNotify("error", "Failed to copy URL!");
     }
-
-    // close on escape
-    function handleEsc(e) {
-      if (e.key === "Escape") setMenuOpen(false);
-    }
-    document.addEventListener("mousedown", handleOutside);
-    document.addEventListener("touchstart", handleOutside);
-    document.addEventListener("keydown", handleEsc);
-    return () => {
-      document.removeEventListener("mousedown", handleOutside);
-      document.removeEventListener("touchstart", handleOutside);
-      document.removeEventListener("keydown", handleEsc);
-    };
-  }, [menuOpen]);
-
-  // Selection is now handled by the parent component
-
-  const onEdit = (link) => {
-    setFormData({
-      id: link.id,
-      title: link.title,
-      url: link.url,
-      note: link.note || "",
-      tags: (link.tags || []).join(", "),
-    });
   };
-  // Selection is now handled by the parent component via onSelect prop
-  // keyboard toggle for button
+
+  // Delete URL
+  const handleDelete = (id) => {
+    if (deleteUrlPost) deleteUrlPost(id);
+    if (setUrls) setUrls((prev) => prev.filter((x) => x.id !== id));
+    if (onDelete) onDelete(id);
+    if (showNotify) showNotify("success", "URL deleted successfully!");
+    setMenuOpen(false);
+  };
+
+  const handleToggleFavourite = async (id) => {
+  console.log( id);
+  if (!id) return;
+
+  try {
+    // 🔹 1. Find current link
+    const isCurrentlyFav = Array.isArray(id?.tags)
+      ? id.tags.includes("#favourite")
+      : false;
+console.log(isCurrentlyFav);
+    // 🔹 2. Optimistic UI update
+ 
+
+    // 🔹 3. Send API request to backend
+    const response = await fetch(`${API_BASE}/update-favourite`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...getXsrfHeader(),
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        id: id.id,
+        favourite: !isCurrentlyFav, // backend can handle tag add/remove
+      }),
+    });
+
+    if (!response.ok) throw new Error("Failed to update favourite");
+
+    const data = await response.json();
+   if (setUrls) {
+     setUrls((prev) =>
+       prev.map((x) =>
+         x.id === id.id
+           ? {
+               ...x,
+               tags: isCurrentlyFav
+                 ? x.tags.filter((t) => t !== "#favourite")
+                 : [...(x.tags || []), "#favourite"],
+             }
+           : x
+       )
+     );
+   }
+    // 🔹 4. Notify success
+    if (showNotify) {
+      showNotify(
+        "success",
+        data?.message ||
+          (!isCurrentlyFav ? "Marked as favourite" : "Removed from favourites")
+      );
+    }
+  } catch (err) {
+    console.error("Favourite update failed:", err);
+    if (showNotify) showNotify("error", "Failed to update favourite");
+  } finally {
+    setMenuOpen(false);
+  }
+};
+
+  // Details (simple notify / fallback to alert)
+  const handleDetails = (linkObj) => {
+    setMenuOpen(false);
+    setShowDetailsView(true)
+    setShowDetails(linkObj);
+  };
+
+  const onEdit = (linkObj) => {
+    if (setFormData) {
+      setFormData({
+        id: linkObj.id,
+        title: linkObj.title,
+        url: linkObj.url,
+        note: linkObj.note || "",
+        tags: (linkObj.tags || []).join(", "),
+        reminder_at: linkObj.reminder_at || "",
+      });
+    }
+    if (setIsEditOpen) setIsEditOpen(true);
+    setMenuOpen(false);
+  };
+
+  // Keyboard toggle for menu (Enter/Space)
   function handleMoreKey(e) {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       setMenuOpen((v) => !v);
     }
   }
-  const onDelete = (id) => {
-    let res = deleteUrlPost(id);
-    if (res) {
-      showNotify("success", "URL deleted successfully!");
+
+  // Close menu on outside click (kept for compatibility but MoreMenu also handles outside clicks)
+useEffect(() => {
+  function handleOutside(e) {
+    if (!menuOpen) return;
+
+    const clickedInsideAnchor =
+      menuAnchorRef.current && menuAnchorRef.current.contains(e.target);
+
+    // check if click is inside the floating portal menu
+    const floatingMenu = document.querySelector(
+      ".more-menu.more-menu--floating"
+    );
+    const clickedInsideMenu = floatingMenu && floatingMenu.contains(e.target);
+
+    if (!clickedInsideAnchor && !clickedInsideMenu) {
+      setMenuOpen(false);
     }
+  }
+  document.addEventListener("mousedown", handleOutside);
+  return () => document.removeEventListener("mousedown", handleOutside);
+}, [menuOpen]);
 
-    setUrls((prev) => prev.filter((x) => x.id !== id));
-  };
-  return (
-    <div className={`link-card ${activeMode} ${selected ? "selected" : ""}`}>
-      <div className="card-top">
-        <input
-          type="checkbox"
-          checked={!!selected}
-          onChange={(e) => onSelect(link.id, e.target.checked)}
-        />
-        <h3 className="card-title">{link.title}</h3>
+  // truncate helper
+  const truncate = (text = "", max = 12) =>
+    text && text.length > max ? text.slice(0, max) + "..." : text;
 
-        {/* right corner icons (hidden until hover) */}
-        <div className="card-actions" aria-hidden={menuOpen ? "false" : "true"}>
+  // Favicon
+  let faviconUrl = "";
+  try {
+    faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${
+      new URL(link.url).hostname
+    }`;
+  } catch (err) {
+    faviconUrl = "";
+  }
+
+  // Build menu items once (reusable)
+  const menuItems = [
+    {
+      key: "edit",
+      label: "Edit",
+      icon: FiEdit2,
+      onClick: () => onEdit(link),
+    },
+    {
+      key: "copy",
+      label: "Copy",
+      icon: FiCopy,
+      onClick: handleCopy,
+    },
+ {
+  key: "favourite",
+  label: (link.tags || []).includes("#favourite")
+    ? "Unfavourite"
+    : "Favourite",
+  icon: (link.tags || []).includes("#favourite") ? FaStar : FiStar,
+  className: (link.tags || []).includes("#favourite") ? "fav-active" : "",
+  onClick: () => {
+    if (isLoggedIn) {
+      handleToggleFavourite(link);
+    } else {
+      setShowAuthFeature(true); // Show login-required modal
+    }
+  },
+},
+
+    {
+      key: "details",
+      label: "Details",
+      icon: FiInfo,
+      onClick: () => handleDetails(link),
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      icon: FiTrash2,
+      className: "danger",
+      onClick: () => handleDelete(link.id),
+    },
+  ];
+
+  // GRID MODE: compact clickable tile (favicon + title) + three-dot menu
+  if (activeMode === "grid") {
+    return (
+      <div
+        className={`link-card grid-mode ${selected ? "selected" : ""}`}
+        style={{ zIndex: menuOpen ? 999 : 1 }}
+      >
+        <a
+          className={`grid-tile-link ${selected ? "selected" : ""}`}
+          href={link.url}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => {
+            if (updateClickCount) updateClickCount(link.id);
+          }}
+          aria-label={link.title || link.url}
+        >
+          <div className="tile-icon" aria-hidden="true">
+            {faviconUrl ? (
+              <img src={faviconUrl} alt="" />
+            ) : (
+              <div style={{ width: 36, height: 36 }} />
+            )}
+          </div>
+
+          <div className="tile-title" title={link.title}>
+            {truncate(link.title || link.url, 14)}
+          </div>
+        </a>
+
+        {/* anchor for MoreMenu */}
+        <div className="more-wrapper grid-more">
           <button
-            className="icon-btn share-btn"
-            title="Share URL"
-            onClick={() => onShare(link)}
-            aria-label={`Share ${link.title}`}
+            ref={menuAnchorRef}
+            className="icon-btn more-btn"
+            title="More options"
+            aria-haspopup="true"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            onKeyDown={handleMoreKey}
           >
-            <FiShare2 />
+            <FiMoreVertical />
           </button>
+
+          {menuOpen && (
+            <MoreMenu
+              anchorRef={menuAnchorRef}
+              items={menuItems}
+              onClose={() => setMenuOpen(false)}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // DEFAULT (list) mode — original card layout with MoreMenu
+  return (
+    <div
+      key={link.id}
+      className={`link-card ${activeMode} ${selected ? "selected" : ""}`}
+      style={{ zIndex: menuOpen ? 999 : 1 }}
+    >
+      <div className="card-top">
+        <div className="favicon-wrapper">
+          <img src={faviconUrl} alt="favicon" className="favicon" />
+        </div>
+
+        <div className="card-info">
+          <h3 className="card-title">{link.title}</h3>
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noreferrer"
+            className="card-url"
+          >
+            <span title={link.url}>{link.url}</span>
+          </a>
+          <div className="card-tags">
+            {Array.isArray(link.tags)
+              ? link.tags.map((tag, idx) => (
+                  <span key={idx} className="tag-item">
+                    {tag.trim()}
+                  </span>
+                ))
+              : typeof link.tags === "string"
+              ? link.tags
+                  .split(",")
+                  .map((t, idx) => t.trim())
+                  .filter(Boolean)
+                  .map((tag, idx) => (
+                    <span key={idx} className="tag-item">
+                      {tag}
+                    </span>
+                  ))
+              : null}
+          </div>
+        </div>
+
+        <div className="action-group">
+          <button
+            className="pill-btn copy"
+            onClick={handleCopy}
+            aria-label="Copy"
+          >
+            {copied ? (
+              <FiCheck className="pill-icon success-icon" />
+            ) : (
+              <FiCopy className="pill-icon" />
+            )}
+          </button>
+
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noreferrer"
+            className="pill-btn open open-link"
+            onClick={() => updateClickCount && updateClickCount(link.id)}
+          >
+            <FiExternalLink className="pill-icon" />
+            <span> Open</span>
+          </a>
 
           <div className="more-wrapper">
             <button
-              ref={moreBtnRef}
+              ref={menuAnchorRef}
               className="icon-btn more-btn"
               title="More options"
               aria-haspopup="true"
@@ -119,71 +375,12 @@ export default function LinkCard({
               <FiMoreVertical />
             </button>
 
-            {/* menu */}
             {menuOpen && (
-              <div
-                className="more-menu"
-                ref={menuRef}
-                role="menu"
-                aria-label="Link actions"
-              >
-                <button
-                  className="menu-item"
-                  role="menuitem"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setIsEditOpen(true);
-                    onEdit(link);
-                  }}
-                >
-                  <FiEdit2 className="mi-icon" /> Edit
-                </button>
-
-                <button
-                  className="menu-item danger"
-                  role="menuitem"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onDelete(link.id);
-                  }}
-                >
-                  <FiTrash2 className="mi-icon" /> Delete
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="card-body">
-        <a
-          className="card-url"
-          href={link.url}
-          onClick={() => updateClickCount(link.id)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span title={link.url}>
-            {link.url.length > 20 ? link.url.slice(0, 15) + "..." : link.url}
-          </span>
-          <FiExternalLink />
-        </a>
-
-        {link.note && <p className="card-note">{link.note}</p>}
-
-        <div className="card-meta">
-          <div className="tags">
-            {(link.tags || []).map((t) => (
-              <span key={t} className="tag">
-                {t}
-              </span>
-            ))}
-          </div>
-
-          <div className="dates">
-            <div className="added">Added {link.formatted_created_at}</div>
-            {link.lastAccessed && (
-              <div className="accessed">Last accessed {link.lastAccessed}</div>
+              <MoreMenu
+                anchorRef={menuAnchorRef}
+                items={menuItems}
+                onClose={() => setMenuOpen(false)}
+              />
             )}
           </div>
         </div>

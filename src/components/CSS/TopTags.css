@@ -1,6 +1,6 @@
 
 .top-tags-card{
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+
   border: 1px solid rgba(255,255,255,0.03);
   border-radius: 10px;
   padding: 12px 14px;
@@ -52,76 +52,5 @@
 
 .empty-tags-message {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 14px;
-}
-/* =========================================================
-   🌤️ LIGHT MODE STYLES (Top Tags Card)
-   ========================================================= */
-.light-mode .top-tags-card {
-  background: #ffffff9d;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-  padding: 12px 14px;
-  color: #0f172a;
-  box-shadow: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.light-mode .top-tags-card:hover {
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
-  transform: translateY(-2px);
-}
-
-/* Header */
-.light-mode .top-tags-header {
-  color: var(--text);
-}
-
-.light-mode .tag-title {
-  color: #0f172a;
-}
-
-/* Body (chart area) */
-.light-mode .top-tags-body {
-  background: transparent;
-}
-
-/* Legend */
-.light-mode .legend-row {
-  color: #475569;
-}
-
-.light-mode .legend-name {
-  color: #2563eb;
-}
-
-.light-mode .legend-pct {
-  color: #16a34a;
-}
-
-/* Empty state */
-.light-mode .empty-tags {
-  background: transparent;
-}
-
-.light-mode .empty-tags-message {
-  color: rgba(15, 23, 42, 0.4);
-}
-
-/* Small screens */
-@media (max-width: 800px) {
-  .light-mode .top-tags-card {
-    padding: 10px;
-  }
-
-  .light-mode .top-tags-body {
-    align-items: flex-start;
-  }
-
-  .light-mode .recharts-legend-wrapper {
-    display: none !important;
-  }
+  font-size: 19px;
 }

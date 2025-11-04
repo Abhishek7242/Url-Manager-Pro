@@ -6,7 +6,11 @@
   --text: #e6eef8;
   --glass-blur: 15px;
 }
-
+.field input:-webkit-autofill {
+    border: none;
+    box-shadow: none;
+    outline: none;
+}
 /* page */
 .login-page {
   position: fixed;
@@ -23,9 +27,12 @@
   z-index: 1111111111;
   
   /* key part */
-  background: rgba(0, 0, 0, 0.3); /* translucent layer */
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(20px); /* for Safari */
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.347));
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.6);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.516);
+
 }
 
 
@@ -93,7 +100,6 @@
 }
 .login-head .sub {
   margin: 6px 0 0;
-  color: var(--muted);
   font-size: 0.92rem;
 }
 
@@ -130,11 +136,12 @@
   color: var(--text);
   transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
   box-shadow: 0 6px 18px rgba(2,6,23,0.36);
+  transform: translateY(-1px);
+
 }
 .field:focus-within {
   border-color: rgba(107,140,255,0.9);
   box-shadow: 0 10px 30px rgba(107,140,255,0.06);
-  transform: translateY(-1px);
 }
 
 .field input {
@@ -244,13 +251,15 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4,6,10,0.48);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   z-index: 1000;
-  backdrop-filter: blur(10px);
 }
 .modal-card {
   width: 520px;
@@ -277,6 +286,7 @@
   top: 10px;
   background: transparent;
   border: 0;
+  z-index: 1;
   color: var(--muted);
   cursor: pointer;
 }
@@ -285,6 +295,7 @@
   font-size: 1.05rem;
   font-weight: 700;
 }
+
 .muted {
   color: var(--muted);
   margin-bottom: 8px;
@@ -335,188 +346,3 @@
     left: 12px;
   }
 }
-/* =========================================================
-   🌤️ LIGHT MODE STYLES (Login / Auth)
-   Append at end of stylesheet
-   ========================================================= */
-.light-mode {
-  --bg: #FAFBFD;
-  --card: #ffffff;
-  --border: rgba(15, 23, 42, 0.06);
-  --muted: #64748b;
-  --text: #0f172a;
-  --glass-blur: 10px;
-  --theme-color: #2563eb;
-}
-/* Change autofill text color */
-.light-mode .login-form input:-webkit-autofill {
-  -webkit-text-fill-color: #000000 !important; /* Your desired text color */
-  transition: background-color 5000s ease-in-out 0s; /* Prevent yellow flash */
-}
-
-/* Optional: customize autofill background */
-input:-webkit-autofill {
-  box-shadow: 0 0 0px 1000px #0b1320 inset !important; /* background color */
-  -webkit-box-shadow: 0 0 0px 1000px #0b1320 inset !important;
-}
-
-/* Optional: border color or style */
-input:-webkit-autofill {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* page */
-.light-mode .login-page {
-  background: transparent;
-  backdrop-filter: blur(var(--glass-blur));
-  color: var(--text);
-}
-
-/* card */
-.light-mode .login-card {
-  background: #ffffff;
-  border: 1px solid var(--border);
-  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
-}
-
-/* top / brand */
-.light-mode .brand-mark {
-  background: linear-gradient(135deg, var(--theme-color), #9e8bff);
-  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.06), 0 2px 8px rgba(0,0,0,0.06);
-  border: 1px solid rgba(0,0,0,0.04);
-}
-
-.light-mode .brand-text {
-  background: linear-gradient(90deg, #4f46e5, var(--theme-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* header */
-.light-mode .login-head h2 {
-  color: var(--text);
-}
-.light-mode .login-head .sub {
-  color: var(--muted);
-}
-
-/* fields */
-.light-mode .field {
-  background: #f8fafc;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
-  color: var(--text);
-}
-
-.light-mode .field:focus-within {
-  border-color: rgba(37,99,235,0.95);
-  box-shadow: 0 10px 30px rgba(37,99,235,0.06);
-  transform: translateY(-1px);
-}
-
-.light-mode .field input {
-  color: var(--text);
-   box-shadow: none;
-  background: none;
-}
-.light-mode .login-form .field input::placeholder {
-  color: rgba(15,23,42,0.4);
- 
-}
-
-.light-mode .field .icon,
-.light-mode .pwd-toggle {
-  color: var(--muted);
-}
-
-/* row between / links */
-.light-mode .remember-label {
-  color: var(--muted);
-}
-.light-mode .link-btn {
-  color: var(--theme-color);
-}
-.light-mode .link-btn:hover {
-  background: rgba(37,99,235,0.06);
-}
-
-/* error */
-.light-mode .form-error {
-  color: #b91c1c;
-}
-
-/* submit */
-.light-mode .login-btn-submit {
-  background: linear-gradient(90deg, rgba(37,99,235,0.95), #60a5fa);
-  color: #07101a;
-  box-shadow: 0 8px 26px rgba(37,99,235,0.16);
-}
-
-.light-mode .login-btn-submit:hover {
-  transform: translateY(-2px);
-  opacity: 0.98;
-}
-
-.light-mode .login-btn-submit:disabled {
-  opacity: 0.6;
-  box-shadow: none;
-}
-
-/* alt text */
-.light-mode .alt {
-  color: var(--muted);
-}
-.light-mode .alt a {
-  color: var(--theme-color);
-}
-.light-mode .alt a:hover {
-  background: rgba(37,99,235,0.06);
-}
-
-/* modal */
-.light-mode .modal-overlay {
-  background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(10px);
-}
-.light-mode .modal-card {
-  background: #ffffff;
-  border: 1px solid var(--border);
-  color: var(--text);
-  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
-}
-.light-mode .modal-close {
-  color: var(--muted);
-}
-.light-mode .modal-heading {
-  color: var(--text);
-}
-.light-mode .muted {
-  color: var(--muted);
-}
-
-/* modal actions / buttons */
-.light-mode .btn {
-  background: transparent;
-  border: 1px solid rgba(0,0,0,0.06);
-  color: var(--text);
-}
-.light-mode .btn:hover {
-  transform: translateY(-2px);
-}
-.light-mode .btn.primary {
-  background: linear-gradient(90deg, var(--theme-color), #60a5fa);
-  border-color: rgba(37,99,235,0.95);
-  color: #07101a;
-}
-.light-mode .btn.cancel {
-  color: var(--muted);
-  background: #f8fafc;
-}
-
-/* small screens adjustments (inherit same look) */
-@media (max-width: 640px) {
-  .light-mode .login-card { padding: 16px; }
-  .light-mode .brand-mark { width: 42px; height: 42px; font-size: 16px; }
-  .light-mode .brand { top: 12px; left: 12px; }
-}
-

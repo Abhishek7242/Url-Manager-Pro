@@ -1,7 +1,11 @@
-// src/UrlmgrLanding.jsx
+// FILE: src/UrlmgrLanding.jsx
+// Full React component (JSX). Save as src/UrlmgrLanding.jsx
+
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import './CSS/URLMgrLanding.css'
+import "./CSS/URLMgrLanding.css";
+import Login from "./auth/Login";
+import Signup from "./auth/Signup";
 import {
   ArrowRight,
   Settings,
@@ -10,25 +14,16 @@ import {
   Copy,
   Menu,
   X,
-  Sun,
-  Moon,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import dashboardPreview from "../assets/dashboard-preview.png";
 import dashboardPreviewDark from "../assets/dashboard-preview-dark.png";
 import UrlContext from "../context/url_manager/UrlContext";
-import Login from "./auth/Login";
-import Signup from "./auth/Signup";
-import ThemeDropdown from "./navbar/ThemeDropdown";
 
-/**
- * URLMgr Landing Page (React JSX)
- * - Uses Tailwind utility classes for layout & styling
- * - Uses Framer Motion for animations
- * - Plain JS / JSX (no TypeScript)
- *
- * Replace placeholder images and wire APIs as needed.
- */
+import ThemeDropdown from "./navbar/ThemeDropdown";
+import { Helmet } from "react-helmet";
+import { useRef } from "react";
+import { useCallback } from "react";
 
 export default function URLMgrLanding() {
   const context = React.useContext(UrlContext);
@@ -37,7 +32,6 @@ export default function URLMgrLanding() {
     getAllUrls,
     setUrls,
     showNotify,
-    filtered,
     archive,
     fetchAndLogUser,
     logout,
@@ -47,46 +41,81 @@ export default function URLMgrLanding() {
     setUserInfoData,
     themeImage,
     setThemeImage,
-  } = context;
+  } = context || {};
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [managed, setManaged] = useState(null);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [isQuickAddLoading, setIsQuickAddLoading] = useState(false);
   const [isManageLoading, setIsManageLoading] = useState(false);
-  const [openverifyOTPModel, setOpenVerifyOTPModel] = useState(false);
+  const [openVerifyOTPModel, setOpenVerifyOTPModel] = useState(false);
   const [openLoginModel, setOpenLoginModel] = useState(false);
   const [openSignupModel, setOpenSignupModel] = useState(false);
 
   const [url, setUrl] = useState("");
 
   const navigate = useNavigate();
+
   // set theme from localStorage / system
-useEffect(() => {
-  if (typeof window === "undefined") return;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storedTheme = localStorage.getItem("site-theme");
+    if (storedTheme) setThemeImage && setThemeImage(storedTheme);
+  }, [setThemeImage]);
+  // inside URLMgrLanding component (add near other useEffect's)
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (mobileOpen) {
+      document.body.classList.add("sidebar-open");
+    } else {
+      document.body.classList.remove("sidebar-open");
+    }
+    return () => document.body.classList.remove("sidebar-open");
+  }, [mobileOpen]);
 
-  const storedTheme = localStorage.getItem("site-theme");
+  const wrapperRef = useRef(null);
 
-    setThemeImage(storedTheme);
+  const triggerDropdownToggle = useCallback(() => {
+    if (!wrapperRef.current) return;
 
-}, [themeImage]);
+    // 1️⃣ Find internal toggle button from ThemeDropdown
+    const internalBtn =
+      wrapperRef.current.querySelector('button[aria-haspopup="true"]') ||
+      wrapperRef.current.querySelector("button");
+    if (!internalBtn) return;
 
+    // 2️⃣ Check if dropdown menu is open (exists in DOM)
+    const dropdownMenu = document.querySelector(".absolute.right-0.mt-2.w-44");
 
+    // 3️⃣ Click the internal button to toggle opposite state
+    // (if open -> close, if closed -> open)
+    if (dropdownMenu) {
+      // Dropdown is currently open, so close it
+      internalBtn.click();
+    } else {
+      // Dropdown is closed, so open it
+      setTimeout(() => internalBtn.click(), 0);
+    }
+
+    // Ensure focus is on the dropdown button for accessibility
+    internalBtn.focus();
+  }, []);
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      triggerDropdownToggle();
+    }
+  };
 
   async function handleManage(e) {
     e.preventDefault();
-
-    // Prevent multiple submissions
     if (isManageLoading) return;
-
-    // Basic validation
     if (!url.trim()) {
-      showNotify("error", "Please enter a URL.");
+      showNotify && showNotify("error", "Please enter a URL.");
       return;
     }
-
     setIsManageLoading(true);
 
     const newLink = {
@@ -99,33 +128,29 @@ useEffect(() => {
       status: archive ? "archived" : "active",
       tags: [],
       url_clicks: 0,
-      id: Date.now().toString(), // Add temporary ID for immediate display
+      id: Date.now().toString(),
     };
 
     try {
-      // Add to URLs array immediately for real-time update
-      setUrls((prevUrls) => [newLink, ...prevUrls]);
-
-      // Then send to API
-      let res = await addUrl(newLink);
+      setUrls && setUrls((prevUrls) => [newLink, ...(prevUrls || [])]);
+      let res = addUrl ? await addUrl(newLink) : null;
       navigate(`/dashboard`);
       if (res) {
-        showNotify("success", "URL added successfully!");
-
-        // Refresh URLs from server to get the proper ID
-        const refreshedUrls = await getAllUrls();
+        showNotify && showNotify("success", "URL added successfully!");
+        const refreshedUrls = getAllUrls ? await getAllUrls() : null;
         if (refreshedUrls && refreshedUrls.data) {
-          setUrls(refreshedUrls.data);
+          setUrls && setUrls(refreshedUrls.data);
         }
       }
     } catch (error) {
-      // console.error("Error adding URL:", error);
-      showNotify("error", "Failed to add URL");
-      // Remove the temporary URL if there was an error
-      setUrls((prevUrls) => prevUrls.filter((u) => u.id !== newLink.id));
+      showNotify && showNotify("error", "Failed to add URL");
+      setUrls &&
+        setUrls((prevUrls) =>
+          (prevUrls || []).filter((u) => u.id !== newLink.id)
+        );
     } finally {
       setIsManageLoading(false);
-      setUrls("");
+      setUrl("");
     }
   }
 
@@ -134,7 +159,6 @@ useEffect(() => {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(text);
       } else {
-        // fallback
         const el = document.createElement("textarea");
         el.value = text;
         document.body.appendChild(el);
@@ -152,12 +176,10 @@ useEffect(() => {
   function handleSubscribe(e) {
     e?.preventDefault();
     if (!email) return;
-    // mock subscribe; replace with backend
     setSubscribed(true);
     setEmail("");
   }
 
-  // motion variants
   const heroText = {
     hidden: { opacity: 0, y: 18 },
     show: (i = 1) => ({
@@ -175,9 +197,92 @@ useEffect(() => {
     }),
   };
 
+  // canonical url (update if deploying to subpath)
+  const canonicalUrl = "https://urlmg.com/";
 
   return (
-    <div className={` min-h-screen antialiased uml-root`}>
+    <div id="landing_page" className={`min-h-screen antialiased uml-root`}>
+      {/* SEO Meta + Structured Data */}
+      <Helmet>
+        <html lang="en" />
+        <title>URLMgr — Manage, Brand & Measure Short Links</title>
+        <meta
+          name="description"
+          content="URLMgr centralises link operations: custom domains, campaign tracking, governance and team workflows — fast and delightful UI."
+        />
+        <meta
+          name="keywords"
+          content="url manager, save link, save url, short links, link management, link analytics, custom domains, campaign tracking"
+        />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta name="robots" content="index, follow" />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:title"
+          content="URLMgr — Manage, Brand & Measure Short Links"
+        />
+        <meta
+          property="og:description"
+          content="Centralise link operations: custom domains, campaign tracking, governance and team workflows."
+        />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:site_name" content="URLMgr" />
+        <meta property="og:image" content={`${canonicalUrl}og-image.png`} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="URLMgr — Manage, Brand & Measure Short Links"
+        />
+        <meta
+          name="twitter:description"
+          content="Centralise link operations: custom domains, campaign tracking, governance and team workflows."
+        />
+        <meta name="twitter:image" content={`${canonicalUrl}og-image.png`} />
+
+        {/* JSON-LD structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebSite",
+                "@id": `${canonicalUrl}#website`,
+                url: canonicalUrl,
+                name: "URLMgr",
+                description:
+                  "URLMgr centralises link operations: custom domains, campaign tracking, governance and team workflows.",
+                publisher: {
+                  "@type": "Organization",
+                  name: "URLMgr",
+                  url: canonicalUrl,
+                },
+              },
+              {
+                "@type": "Organization",
+                "@id": `${canonicalUrl}#org`,
+                name: "URLMgr",
+                url: canonicalUrl,
+                logo: `${canonicalUrl}logo.png`,
+              },
+              {
+                "@type": "SoftwareApplication",
+                name: "URLMgr",
+                operatingSystem: "Web",
+                applicationCategory: "BusinessApplication",
+                url: canonicalUrl,
+                description:
+                  "Link management, analytics and brand controls for teams and enterprises.",
+              },
+            ],
+          })}
+        </script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+      </Helmet>
+
       {/* NAV */}
       {openLoginModel && (
         <Login
@@ -228,21 +333,13 @@ useEffect(() => {
             >
               Pricing
             </a>
-            <a
-              href="#integrations"
-              className="text-sm hover:text-indigo-400 transition uml-nav-link"
-            >
-              Integrations
-            </a>
-
-            <div className="uml-theme-dropdown"></div>
 
             <button
-              // onClick={() => setOpenSignupModel(true)}
               onClick={() => {
                 setOpenLoginModel(true);
               }}
               className="px-4 py-2 text-white rounded-full shadow-lg font-semibold uml-signin-btn"
+              aria-label="Sign in"
             >
               Sign In
             </button>
@@ -250,6 +347,7 @@ useEffect(() => {
             <Link
               to="/dashboard"
               className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white rounded-full shadow-lg font-semibold uml-getstarted-btn"
+              aria-label="Get started — dashboard"
             >
               Get Started
             </Link>
@@ -261,32 +359,144 @@ useEffect(() => {
               onClick={() => setMobileOpen((o) => !o)}
               className="p-2 rounded-full bg-white/5 uml-mobile-menu-toggle"
               aria-expanded={mobileOpen}
+              aria-label="Toggle menu"
             >
               {mobileOpen ? <X /> : <Menu />}
             </button>
           </div>
         </div>
 
+        {/* ========= MOBILE SIDEBAR (moved outside <nav>) ========= */}
         <AnimatePresence>
           {mobileOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden border-t border-white/5 bg-white/90 dark:bg-slate-900/90 uml-mobile-menu"
-            >
-              <div className="px-6 py-4 flex flex-col gap-2 uml-mobile-menu-inner">
-                <a href="#features" className="py-2 uml-mobile-link">
-                  Features
-                </a>
-                <a href="#pricing" className="py-2 uml-mobile-link">
-                  Pricing
-                </a>
-                <a href="#integrations" className="py-2 uml-mobile-link">
-                  Integrations
-                </a>
-              </div>
-            </motion.div>
+            <>
+              {/* overlay */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="uml-mobile-overlay"
+                onClick={() => setMobileOpen(false)}
+                style={{ position: "fixed", inset: 0, zIndex: 9998 }}
+              />
+
+              {/* sidebar */}
+              <motion.aside
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "spring", stiffness: 260, damping: 30 }}
+                className="uml-mobile-sidebar"
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  height: "100vh",
+                  zIndex: 9999,
+                  width: "100%",
+                  maxWidth: "320px",
+                  overflowY: "auto",
+                  WebkitOverflowScrolling: "touch",
+                }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center font-bold bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white">
+                      UM
+                    </div>
+                    <div>
+                      <div className="font-semibold">URLMgr</div>
+                      <div className="text-xs text-slate-400">
+                        Manage • Brand • Analyze
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setMobileOpen(false)}
+                    aria-label="Close menu"
+                    className="p-2 rounded-full uml-mobile-close-btn"
+                  >
+                    <X />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <a
+                    href="#features"
+                    onClick={() => setMobileOpen(false)}
+                    className="py-2 uml-mobile-link"
+                  >
+                    Features
+                  </a>
+                  <a
+                    href="#pricing"
+                    onClick={() => setMobileOpen(false)}
+                    className="py-2 uml-mobile-link"
+                  >
+                    Pricing
+                  </a>
+                  {/* <a
+                    href="#integrations"
+                    onClick={() => setMobileOpen(false)}
+                    className="py-2 uml-mobile-link"
+                  >
+                    Integrations
+                  </a> */}
+                </div>
+
+                <div className="mt-6 border-t border-slate-100 dark:border-slate-700 pt-6 uml-mobile-actions">
+                  <div
+                    ref={wrapperRef}
+                    className="mb-4 actions-links"
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      // Prevent double-trigger if the actual ThemeDropdown button was clicked directly
+                      const targetTag =
+                        e.target && e.target.tagName?.toLowerCase();
+                      if (
+                        targetTag === "button" ||
+                        e.target.closest?.("button")
+                      )
+                        return;
+
+                      triggerDropdownToggle();
+                    }}
+                    onKeyDown={onKeyDown}
+                    aria-label="Toggle theme dropdown"
+                  >
+                    <span className="theme-label" style={{ marginRight: 8 }}>
+                      🎨 Themes
+                    </span>
+
+                    <ThemeDropdown />
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setOpenLoginModel(true);
+                      setMobileOpen(false);
+                    }}
+                    className="w-full px-4 py-2 rounded-full text-sm font-semibold uml-signin-btn"
+                  >
+                    Sign In
+                  </button>
+
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="block mt-3 w-full text-center px-4 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-semibold uml-getstarted-btn"
+                    aria-label="Get started — dashboard"
+                  >
+                    Get Started
+                  </Link>
+                </div>
+
+                <div className="mt-6 text-xs text-slate-400">
+                  © {new Date().getFullYear()} URLMgr
+                </div>
+              </motion.aside>
+            </>
           )}
         </AnimatePresence>
       </nav>
@@ -309,12 +519,22 @@ useEffect(() => {
             animate="show"
             custom={1}
             variants={heroText}
-            className="mt-6 text-lg max-w-xl text-slate-400 uml-hero-sub"
+            className="mt-6 text-lg text-slate-400 uml-hero-sub"
           >
             URLMgr centralises link operations: custom domains, campaign
             tracking, governance and team workflows — all in a fast, delightful
             UI.
           </motion.p>
+
+          {/* When mobile menu is open on very small screens — show prominent Get Started above the manage form as requested */}
+          <div className="mt-6 mobile-get-Started-btn justify-center">
+            <Link
+              to="/dashboard"
+              className="inline-block px-5 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-semibold uml-getstarted-mobile"
+            >
+              Get Started
+            </Link>
+          </div>
 
           <motion.form
             initial="hidden"
@@ -323,6 +543,7 @@ useEffect(() => {
             variants={heroText}
             onSubmit={handleManage}
             className="mt-8 flex gap-3 max-w-xl uml-hero-form"
+            role="search"
           >
             <input
               aria-label="URL"
@@ -338,6 +559,7 @@ useEffect(() => {
               className={`px-5 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-semibold shadow-lg flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition ${
                 isManageLoading ? "opacity-75 cursor-not-allowed" : ""
               } uml-hero-manage-btn`}
+              aria-label="Manage URL"
             >
               {isManageLoading ? (
                 <>
@@ -421,6 +643,7 @@ useEffect(() => {
                     <button
                       onClick={() => copyToClipboard(managed.url)}
                       className="px-3 py-1 rounded-full bg-indigo-600 text-white flex items-center gap-2 uml-copy-btn"
+                      aria-label="Copy managed url"
                     >
                       Copy <Copy size={14} />
                     </button>
@@ -428,7 +651,7 @@ useEffect(() => {
                       className="px-3 py-1 rounded-full border uml-open-btn"
                       href={managed.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                     >
                       Open
                     </a>
@@ -453,9 +676,12 @@ useEffect(() => {
             className="rounded-3xl overflow-hidden shadow-2xl border border-white/5 bg-gradient-to-br from-white/5 to-transparent uml-preview-card"
           >
             <img
-              src="/"
-              alt="Dashboard preview"
+              src={
+                themeImage === "dark" ? dashboardPreviewDark : dashboardPreview
+              }
+              alt="URLMgr dashboard preview showing analytics and links list"
               className="w-full h-[360px] object-cover uml-preview-image"
+              loading="lazy"
             />
           </motion.div>
 
@@ -490,7 +716,7 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* SOCIAL PROOF */}
+      {/* SOCIAL PROOF, FEATURES, PRICING, RESOURCES, FOOTER */}
       <section className="max-w-7xl mx-auto px-6 py-8 uml-social-proof">
         <motion.div
           initial={{ opacity: 0 }}
@@ -503,6 +729,7 @@ useEffect(() => {
               whileHover={{ y: -4 }}
               key={s}
               className="text-slate-400 text-sm uml-social-item"
+              aria-hidden
             >
               {s}
             </motion.div>
@@ -510,7 +737,6 @@ useEffect(() => {
         </motion.div>
       </section>
 
-      {/* FEATURES */}
       <section
         id="features"
         className="max-w-7xl mx-auto px-6 py-12 uml-features-section"
@@ -571,7 +797,6 @@ useEffect(() => {
         </motion.div>
       </section>
 
-      {/* PRICING */}
       <section
         id="pricing"
         className="max-w-7xl mx-auto px-6 py-12 bg-gradient-to-b from-white/0 to-transparent uml-pricing-section"
@@ -591,6 +816,12 @@ useEffect(() => {
           </p>
         </motion.div>
 
+        <div className="mt-6 max-w-xl mx-auto text-center">
+          <div className="inline-block bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-semibold uml-pricing-coming-soon">
+            Pricing coming soon — join the waitlist
+          </div>
+        </div>
+
         <motion.div
           className="mt-8 grid md:grid-cols-3 gap-6 uml-pricing-grid"
           initial="hidden"
@@ -602,6 +833,7 @@ useEffect(() => {
             price="$0"
             features={["500 links / mo", "Basic analytics"]}
             highlight={false}
+            comingSoon
           />
           <PricingCard
             title="Pro"
@@ -612,17 +844,18 @@ useEffect(() => {
               "Custom domains",
             ]}
             highlight={true}
+            comingSoon
           />
           <PricingCard
             title="Enterprise"
             price="Contact"
             features={["Unlimited links", "SAML SSO", "Priority support"]}
             highlight={false}
+            comingSoon
           />
         </motion.div>
       </section>
 
-      {/* RESOURCES / NEWSLETTER */}
       <section className="max-w-7xl mx-auto px-6 py-12 uml-resources-section">
         <div className="grid md:grid-cols-2 gap-8 items-center uml-resources-grid">
           <div className="uml-resources-left">
@@ -678,7 +911,6 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="border-t border-white/6 py-8 uml-footer">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-6 uml-footer-inner">
           <div className="uml-footer-brand">
@@ -712,16 +944,15 @@ useEffect(() => {
   );
 }
 
-/* Helper components (JSX) */
+/* Helper components (JSX) - keep in same file or split out if preferred */
 
-function PricingCard({ title, price, features, highlight }) {
-  // adjusted dark background to avoid "too dark" panels
+function PricingCard({ title, price, features, highlight, comingSoon }) {
   const baseBg = highlight
     ? "bg-gradient-to-br from-indigo-600 to-violet-600 text-white"
     : "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200";
   return (
     <motion.div
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: comingSoon ? 1 : 1.03 }}
       className={`relative z-0 p-6 rounded-2xl shadow-lg ${baseBg} uml-pricingcard`}
     >
       {highlight && (
@@ -749,13 +980,21 @@ function PricingCard({ title, price, features, highlight }) {
       </ul>
       <div className="mt-6 uml-pricingcard-cta-wrap">
         <button
+          disabled
           className={`${
             highlight ? "bg-white text-indigo-600" : "border"
           } px-5 py-2 rounded-full font-semibold uml-pricingcard-cta`}
+          aria-disabled="true"
+          title={comingSoon ? "Coming soon" : ""}
         >
-          {highlight ? "Get Pro" : "Choose"}
+          {comingSoon ? "Coming soon" : highlight ? "Get Pro" : "Choose"}
         </button>
       </div>
+      {comingSoon && (
+        <div className="absolute top-3 right-3 text-xs bg-slate-900/10 rounded-full px-2 py-1">
+          Coming soon
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -768,6 +1007,7 @@ function ResourceCard({ title, desc }) {
       <a
         className="mt-3 inline-block text-indigo-400 font-medium uml-resourcecard-link"
         href="#"
+        aria-label={`Read ${title}`}
       >
         Read
       </a>

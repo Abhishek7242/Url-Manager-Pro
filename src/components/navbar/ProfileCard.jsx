@@ -1,25 +1,13 @@
+// src/components/ProfileCard.jsx
 import React, { useState, useEffect, useRef } from "react";
-import {
-  FiEdit2,
-  FiUser,
-  FiMail,
-  FiLock,
-  FiCamera,
-  FiCheck,
-  FiX,
-} from "react-icons/fi";
+import { FiEdit2, FiMail, FiLock, FiX, FiCheck } from "react-icons/fi";
 import EditProfileModal from "./EditProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
+import "../CSS/ProfileCard.css";
+
 
 /**
- * ProfileCard (modal)
- *
- * Props:
- *  - isOpen: boolean           // controls open/close (animated)
- *  - onClose: () => void       // called on backdrop click, ESC, or close button
- *  - user, onSaveProfile, onChangePassword, onUploadAvatar (same as before)
- *
- * Keep the component name as `ProfileCard`.
+ * ProfileCard (modal) — fixed edit buttons to open EditProfileModal
  */
 export default function ProfileCard({
   isOpen = true,
@@ -45,37 +33,51 @@ export default function ProfileCard({
 
   const backdropRef = useRef(null);
 
-  // sync when parent user changes
+  // keep local copy in sync when parent user changes
   useEffect(() => setLocalUser(user), [user]);
 
   // ESC closes modal
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const openModal = (field) => setModalField(field);
+  // open/close helpers for edit modal
+  const openModal = (field) => {
+    console.debug("openModal ->", field);
+    setModalField(field);
+  };
   const closeModal = () => setModalField(null);
 
   const handleBackdropClick = (e) => {
     if (e.target === backdropRef.current) onClose();
   };
 
-  // avatar upload handler (unchanged)
+  // avatar upload handler
   const handleAvatarChange = async (file) => {
     if (!file) return;
     if (onUploadAvatar) {
       setStatus({ loading: true, success: "", error: "" });
-      const res = await onUploadAvatar(file);
-      if (res && res.ok && res.avatarUrl) {
-        setLocalUser((s) => ({ ...s, avatarUrl: res.avatarUrl }));
-        setStatus({ loading: false, success: "Avatar updated", error: "" });
-      } else {
+      try {
+        const res = await onUploadAvatar(file);
+        if (res && res.ok && res.avatarUrl) {
+          setLocalUser((s) => ({ ...s, avatarUrl: res.avatarUrl }));
+          setStatus({ loading: false, success: "Avatar updated", error: "" });
+        } else {
+          setStatus({
+            loading: false,
+            success: "",
+            error: res?.message || "Upload failed",
+          });
+        }
+      } catch (err) {
         setStatus({
           loading: false,
           success: "",
-          error: res?.message || "Upload failed",
+          error: err?.message || "Upload failed",
         });
       }
     } else {
@@ -89,10 +91,11 @@ export default function ProfileCard({
     }
   };
 
-  // change password handler (unchanged)
+  // password change handler
   const submitChangePassword = async (e) => {
     e.preventDefault();
     setStatus({ loading: true, success: "", error: "" });
+
     if (!pw.currentPassword || !pw.newPassword || pw.newPassword.length < 8) {
       setStatus({
         loading: false,
@@ -109,6 +112,7 @@ export default function ProfileCard({
       });
       return;
     }
+
     try {
       if (onChangePassword) {
         const res = await onChangePassword({
@@ -149,7 +153,7 @@ export default function ProfileCard({
     }
   };
 
-  // animation variants
+  // motion variants
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -167,7 +171,7 @@ export default function ProfileCard({
         <motion.div
           key="profile-modal"
           ref={backdropRef}
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="profile-card-backdrop fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6"
           onClick={handleBackdropClick}
           initial="hidden"
           animate="visible"
@@ -177,265 +181,262 @@ export default function ProfileCard({
           aria-modal="true"
           role="dialog"
         >
-          {/* backdrop blur + layer */}
           <motion.div
-            className="absolute inset-0 backdrop-blur-md bg-black/40"
+            className="profile-card-overlay absolute inset-0 backdrop-blur-md bg-black/40"
             variants={backdropVariants}
           />
 
-          {/* Card / Panel */}
           <motion.div
             variants={panelVariants}
             transition={{ duration: 0.14 }}
-            className="relative z-10 w-[min(96%,900px)] max-h-[94vh] overflow-auto rounded-2xl p-6 shadow-2xl ring-1 ring-black/30 bg-gradient-to-br from-white/4 to-white/2"
             role="document"
             onClick={(e) => e.stopPropagation()}
+            className="profile-card-panel relative z-10 w-full max-w-xl sm:max-w-3xl md:max-w-4xl max-h-[92vh] overflow-hidden rounded-2xl"
           >
-            {/* Header: title + close button (separate, non-overlapping) */}
-            <div className="flex items-start justify-between gap-4 mb-3">
-              <div>
-                <h2 className="text-xl font-semibold text-white">Profile</h2>
-                {/* "Member since" placed under title so it won't collide with close button */}
-                <div className="text-xs text-gray-400">Member since</div>
-                <div className="text-sm text-gray-200">Oct 2024</div>
-              </div>
-
-              {/* Close button placed in header area, visually separated */}
-              <button
-                onClick={onClose}
-                aria-label="Close profile"
-                className="ml-auto p-2 rounded-full hover:bg-white/6 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <FiX />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="flex gap-6 items-start">
-              {/* Avatar */}
-              <div className="relative">
-                <div className="h-24 w-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-2xl text-gray-700">
-                  {localUser.avatarUrl ? (
-                    <img
-                      src={localUser.avatarUrl}
-                      alt="avatar"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <FiUser />
-                  )}
-                </div>
-
-                <label
-                  htmlFor="avatar-input"
-                  className="absolute -bottom-1 -right-1 bg-indigo-600 hover:bg-indigo-500 p-2 rounded-full text-white shadow-md cursor-pointer"
-                  title="Change avatar"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <FiCamera />
-                </label>
-                <input
-                  id="avatar-input"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    handleAvatarChange(e.target.files?.[0]);
-                  }}
-                />
-              </div>
-
-              {/* Info block */}
-              <div className="flex-1">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-white truncate">
-                        {localUser.name}
-                      </h3>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openModal("name");
-                        }}
-                        aria-label="Edit name"
-                        className="text-gray-300 hover:text-white p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      >
-                        <FiEdit2 />
-                      </button>
-                    </div>
-
-                    <p className="text-sm text-gray-300 mt-1 flex items-center gap-2">
-                      <FiMail />{" "}
-                      <span className="truncate">
-                        {localUser.email || "No email set"}
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openModal("email");
-                        }}
-                        aria-label="Edit email"
-                        className="text-gray-300 hover:text-white p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ml-2"
-                      >
-                        <FiEdit2 />
-                      </button>
-                    </p>
+            <div className="profile-card-inner bg-gradient-to-br from-white/4 to-white/2 shadow-2xl ring-1 ring-black/30 rounded-2xl overflow-auto max-h-[92vh]">
+              {/* HEADER */}
+              <div className="profile-card-header flex items-start justify-between gap-4 p-4 sm:p-6">
+                <div>
+                  <h2 className="profile-card-title text-lg sm:text-xl font-semibold text-white">
+                    Profile
+                  </h2>
+                  <div className="profile-card-member-label text-xs text-gray-400">
+                    Member since
+                  </div>
+                  <div className="profile-card-member-date text-sm text-gray-200">
+                    Oct 2024
                   </div>
                 </div>
 
-                {localUser.bio && (
-                  <div className="mt-4 flex items-start gap-2">
-                    <div className="text-sm text-gray-300 flex-1">
-                      {localUser.bio}
+                <button
+                  onClick={onClose}
+                  aria-label="Close profile"
+                  className="profile-card-close-btn ml-auto p-2 rounded-full hover:bg-white/6 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <FiX />
+                </button>
+              </div>
+
+              {/* BODY */}
+              <div className="profile-card-body flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-6">
+                {/* AVATAR */}
+                <div className="profile-card-avatar-wrapper flex-shrink-0 flex items-center sm:items-start justify-center sm:justify-start">
+                  <div className="profile-card-avatar h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-2xl text-gray-700">
+                    {localUser.avatarUrl ? (
+                      <img
+                        src={localUser.avatarUrl}
+                        alt="avatar"
+                        className="profile-card-avatar-img h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="profile-card-avatar-fallback h-full w-full flex items-center justify-center text-gray-700 font-medium">
+                        {(localUser.name || "U")[0]}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* INFO */}
+                <div className="profile-card-info flex-1 min-w-0">
+                  <div className="profile-card-info-header flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="profile-card-name-row flex items-center gap-3">
+                        <h3 className="profile-card-name text-base sm:text-lg font-semibold text-white truncate">
+                          {localUser.name}
+                        </h3>
+
+                        {/* FIXED: open edit modal using openModal helper (no stopPropagation) */}
+                        <button
+                          onClick={() => openModal("name")}
+                          aria-label="Edit name"
+                          className="profile-card-edit-btn text-gray-300 hover:text-white p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                          <FiEdit2 />
+                        </button>
+                      </div>
+
+                      <p className="profile-card-email text-sm text-gray-300 mt-1 flex items-center gap-2 truncate">
+                        <FiMail />
+                        <span className="truncate">
+                          {localUser.email || "No email set"}
+                        </span>
+                      </p>
                     </div>
+                  </div>
+
+                  {localUser.bio && (
+                    <div className="profile-card-bio mt-3 sm:mt-4 flex items-start gap-2">
+                      <div className="profile-card-bio-text text-sm text-gray-300 flex-1">
+                        {localUser.bio}
+                      </div>
+
+                      {/* FIXED: open edit modal using openModal helper (no stopPropagation) */}
+                      <button
+                        onClick={() => openModal("bio")}
+                        className="profile-card-edit-bio-btn text-gray-300 hover:text-white p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        aria-label="Edit bio"
+                      >
+                        <FiEdit2 />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* CONTROLS */}
+                  <div className="profile-card-controls mt-4 sm:mt-5 flex flex-col sm:flex-row sm:items-center gap-3">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        openModal("bio");
+                        setShowPasswordForm((s) => !s);
                       }}
-                      className="text-gray-300 hover:text-white p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      aria-label="Edit bio"
+                      className="profile-card-change-password-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white/6 hover:bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
-                      <FiEdit2 />
+                      <FiLock /> Change Password
                     </button>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="profile-card-status-success text-sm text-green-400 truncate">
+                        {status.success}
+                      </div>
+                      <div className="profile-card-status-error text-sm text-red-400 truncate">
+                        {status.error}
+                      </div>
+                    </div>
                   </div>
-                )}
 
-                {/* controls */}
-                <div className="mt-5 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowPasswordForm((s) => !s);
-                    }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/6 hover:bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <FiLock /> Change Password
-                  </button>
+                  {/* PASSWORD FORM */}
+                  <AnimatePresence>
+                    {showPasswordForm && (
+                      <motion.form
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.18 }}
+                        onSubmit={submitChangePassword}
+                        className="profile-card-password-form mt-4 bg-white/3 p-3 sm:p-4 rounded-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="profile-card-password-grid grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <input
+                            type="password"
+                            placeholder="Current password"
+                            value={pw.currentPassword}
+                            onChange={(e) =>
+                              setPw((p) => ({
+                                ...p,
+                                currentPassword: e.target.value,
+                              }))
+                            }
+                            className="profile-card-password-input w-full px-3 py-2 rounded-md bg-transparent border border-white/12 focus:ring-2 focus:ring-indigo-500"
+                          />
+                          <input
+                            type="password"
+                            placeholder="New password"
+                            value={pw.newPassword}
+                            onChange={(e) =>
+                              setPw((p) => ({
+                                ...p,
+                                newPassword: e.target.value,
+                              }))
+                            }
+                            className="profile-card-password-input w-full px-3 py-2 rounded-md bg-transparent border border-white/12 focus:ring-2 focus:ring-indigo-500"
+                          />
+                          <input
+                            type="password"
+                            placeholder="Confirm new"
+                            value={pw.confirmPassword}
+                            onChange={(e) =>
+                              setPw((p) => ({
+                                ...p,
+                                confirmPassword: e.target.value,
+                              }))
+                            }
+                            className="profile-card-password-input w-full px-3 py-2 rounded-md bg-transparent border border-white/12 focus:ring-2 focus:ring-indigo-500"
+                          />
+                        </div>
 
-                  <div className="text-sm text-green-400">{status.success}</div>
-                  <div className="text-sm text-red-400">{status.error}</div>
+                        <div className="profile-card-password-actions mt-3 flex flex-col sm:flex-row sm:items-center gap-3">
+                          <button
+                            type="submit"
+                            className="profile-card-save-password-btn w-full sm:w-auto px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white inline-flex items-center gap-2 justify-center"
+                            disabled={status.loading}
+                          >
+                            <FiCheck />{" "}
+                            {status.loading ? "Saving..." : "Save password"}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowPasswordForm(false);
+                              setPw({
+                                currentPassword: "",
+                                newPassword: "",
+                                confirmPassword: "",
+                              });
+                            }}
+                            className="profile-card-cancel-password-btn w-full sm:w-auto px-3 py-2 rounded-md bg-white/5 hover:bg-white/8 text-white"
+                          >
+                            Cancel
+                          </button>
+
+                          <div className="sm:ml-auto">
+                            <div className="profile-card-status-success text-sm text-green-400">
+                              {status.success}
+                            </div>
+                            <div className="profile-card-status-error text-sm text-red-400">
+                              {status.error}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.form>
+                    )}
+                  </AnimatePresence>
                 </div>
-
-                {/* password form */}
-                <AnimatePresence>
-                  {showPasswordForm && (
-                    <motion.form
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.18 }}
-                      onSubmit={submitChangePassword}
-                      className="mt-4 bg-white/3 p-4 rounded-lg"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <input
-                          type="password"
-                          placeholder="Current password"
-                          value={pw.currentPassword}
-                          onChange={(e) =>
-                            setPw((p) => ({
-                              ...p,
-                              currentPassword: e.target.value,
-                            }))
-                          }
-                          className="px-3 py-2 rounded-md bg-transparent border border-white/12 focus:ring-2 focus:ring-indigo-500"
-                        />
-                        <input
-                          type="password"
-                          placeholder="New password"
-                          value={pw.newPassword}
-                          onChange={(e) =>
-                            setPw((p) => ({
-                              ...p,
-                              newPassword: e.target.value,
-                            }))
-                          }
-                          className="px-3 py-2 rounded-md bg-transparent border border-white/12 focus:ring-2 focus:ring-indigo-500"
-                        />
-                        <input
-                          type="password"
-                          placeholder="Confirm new"
-                          value={pw.confirmPassword}
-                          onChange={(e) =>
-                            setPw((p) => ({
-                              ...p,
-                              confirmPassword: e.target.value,
-                            }))
-                          }
-                          className="px-3 py-2 rounded-md bg-transparent border border-white/12 focus:ring-2 focus:ring-indigo-500"
-                        />
-                      </div>
-
-                      <div className="mt-3 flex items-center gap-3">
-                        <button
-                          type="submit"
-                          className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white inline-flex items-center gap-2"
-                          disabled={status.loading}
-                        >
-                          <FiCheck />{" "}
-                          {status.loading ? "Saving..." : "Save password"}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowPasswordForm(false);
-                            setPw({
-                              currentPassword: "",
-                              newPassword: "",
-                              confirmPassword: "",
-                            });
-                          }}
-                          className="px-3 py-2 rounded-md bg-white/5 hover:bg-white/8 text-white"
-                        >
-                          Cancel
-                        </button>
-
-                        <div className="text-sm text-green-400">
-                          {status.success}
-                        </div>
-                        <div className="text-sm text-red-400">
-                          {status.error}
-                        </div>
-                      </div>
-                    </motion.form>
-                  )}
-                </AnimatePresence>
               </div>
-            </div>
 
-            {/* EditProfileModal */}
-            <EditProfileModal
-              open={!!modalField}
-              field={modalField}
-              value={modalField ? localUser[modalField] : ""}
-              onClose={closeModal}
-              onSave={async (updated) => {
-                setStatus({ loading: true, success: "", error: "" });
-                if (onSaveProfile) {
-                  const res = await onSaveProfile(updated);
-                  if (!res || !res.ok) {
-                    setStatus({
-                      loading: false,
-                      success: "",
-                      error: res?.message || "Save failed",
-                    });
-                    return false;
-                  }
-                }
-                setLocalUser((lu) => ({ ...lu, ...updated }));
-                setStatus({ loading: false, success: "Saved!", error: "" });
-                closeModal();
-                return true;
-              }}
-            />
+              {/* footer spacing */}
+              <div className="p-4 sm:p-6" />
+            </div>
           </motion.div>
         </motion.div>
       )}
+      <div className="edit-profile">
+      {/* EditProfileModal */}
+      <EditProfileModal
+        open={!!modalField}
+        field={modalField}
+        value={modalField ? localUser[modalField] : ""}
+        onClose={closeModal}
+        onSave={async (updated) => {
+          setStatus({ loading: true, success: "", error: "" });
+          try {
+            if (onSaveProfile) {
+              const res = await onSaveProfile(updated);
+              // Accept either { success: true } or truthy res.ok
+              if (!(res && (res.success === true || res.ok))) {
+                setStatus({
+                  loading: false,
+                  success: "",
+                  error: res?.message || "Save failed",
+                });
+                return false;
+              }
+            }
+            setLocalUser((lu) => ({ ...lu, ...updated }));
+            setStatus({ loading: false, success: "Saved!", error: "" });
+            closeModal();
+            return true;
+          } catch (err) {
+            setStatus({
+              loading: false,
+              success: "",
+              error: err?.message || "Save failed",
+            });
+            return false;
+          }
+        }}
+        />
+        </div>
     </AnimatePresence>
   );
 }

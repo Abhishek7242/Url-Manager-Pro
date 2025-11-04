@@ -1,54 +1,355 @@
-/* Base button */
+/* FILE: src/CSS/URLMgrLanding.css */
+/* Save as: src/CSS/URLMgrLanding.css */
+.theme-dropdown{
+  background: linear-gradient(90deg,rgb(0, 0, 0),rgba(8, 34, 87, 0.603));
+
+}
+/* Base / root */
+.uml-root {
+  width: 100%;
+  background: var(--theme-color, #0f172a);
+  color: var(--text-color, #e6eef8);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NAV */
+.uml-nav {
+  backdrop-filter: blur(6px);
+}
+.uml-nav-inner {
+  max-width: 1120px;
+}
+.uml-brand-mark {
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08);
+}
 .uml-signin-btn {
   transition: all 0.25s ease;
   transform-origin: center;
-  background:transparent;
-  color: #fff;
-  border: none;
+}
+.uml-getstarted-btn {
+  border-radius: 999px;
 }
 
-/* Light mode base */
-.light-mode .uml-signin-btn {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: #fff;
+/* Mobile controls */
+.uml-mobile-controls .uml-mobile-menu-toggle {
+  background: rgba(255, 255, 255, 0.04);
+}
+.mobile-get-Started-btn{
+  display: none;
+}
+/* HERO */
+.uml-hero {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+.uml-hero-title {
+  line-height: 1.03;
+}
+.uml-hero-input {
+  min-width: 0;
+}
+.uml-hero-form {
+  align-items: center;
+}
+.uml-hero-manage-btn {
+  white-space: nowrap;
 }
 
-/* Hover effects */
-.uml-signin-btn:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.25),
-              0 0 12px rgba(59, 130, 246, 0.2);
-  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+/* PREVIEW CARD */
+.uml-preview-card {
+  border-radius: 24px;
 }
-
-/* Light mode hover */
-.light-mode .uml-signin-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15),
-              0 0 8px rgba(59, 130, 246, 0.25);
-  background: linear-gradient(135deg, #2563eb, #60a5fa);
-}
-
-/* Optional subtle active press effect */
-.uml-signin-btn:active {
-  transform: scale(0.98);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
-}
-
-/* Right preview column */
- .uml-preview-card{
-background: url('') no-repeat center  center/cover;
-}
-/* Default (dark mode) image */
 .uml-preview-image {
-  content: url("../../assets/dashboard-preview-dark.png");
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.uml-preview-stat {
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.24);
+}
+.uml-preview-topreferrer {
+  border-radius: 16px;
 }
 
-/* Light mode version */
-.light-mode .uml-preview-image {
-  content: url("../../assets/dashboard-preview.png");
+/* FEATURES */
+.uml-feature-card {
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
+/* PRICING */
+.uml-pricingcard {
+  transition: transform 0.12s ease;
+}
+
+/* NEWSLETTER */
+.uml-newsletter-card {
+  display: flex;
+  flex-direction: column;
+}
+.uml-newsletter-input {
+  border-radius: 999px;
+}
+
+/* FOOTER */
+.uml-footer {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* MOBILE SIDEBAR */
+.uml-mobile-overlay {
+  background: rgba(2, 6, 23, 0.45);
+}
+.uml-mobile-sidebar {
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.24);
+}
+.uml-mobile-link {
+  color: inherit;
+  text-decoration: none;
+}
+.uml-mobile-actions {
+  margin-top: 1rem;
+}
+.uml-mobile-close-btn {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* MANAGED CARD */
+.uml-managed-card {
+  border-radius: 16px;
+}
+.uml-copy-btn {
+  border-radius: 999px;
+}
+
+/* RESPONSIVE: very small screens (down to 280px) */
+@media (max-width: 770px) {
+  .theme-dropdown{
+    left: -70px;
+  background: linear-gradient(90deg,rgb(255, 0, 255),rgba(0, 24, 104, 0.66));
+}
+.mobile-get-Started-btn{
+  display: flex;
+}
+.uml-hero-title{
+  text-align: center;
+}
+.uml-hero-sub{
+  text-align: center;
+  width: 100%;
+
+}
+.actions-links {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #8d0b66, #7c3aed);
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  gap: 6px;
+  margin: 12px auto;
+  transition: all 0.3s ease;
+}
+.uml-signin-btn{
+  border: 1px solid gray;
+}
+
+}
+@media (max-width: 500px) {
+.uml-resources-cards{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.uml-resourcecard{
+  width: 100%;
+}
+.uml-newsletter-form{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+}
+}
+@media (max-width: 420px) {
+  .uml-nav .uml-mobile-controls {
+    display: flex;
+  }
+  .uml-nav .uml-nav-links {
+    display: none;
+  }
+
+  .uml-hero {
+    padding: 16px;
+    grid-template-columns: 1fr;
+  }
+  .uml-hero-title {
+    font-size: 1.5rem;
+  }
+  .uml-hero-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .uml-hero-input {
+    width: 100%;
+  }
+  .uml-hero-manage-btn {
+    width: 100%;
+  }
+
+  /* make sidebar comfortable on tiny screens */
+  .uml-mobile-sidebar {
+    width: 86%;
+    max-width: 280px;
+    padding: 18px;
+  }
+  .uml-mobile-link {
+    font-size: 15px;
+    padding: 12px 6px;
+    display: block;
+  }
+  .uml-mobile-actions button,
+  .uml-mobile-actions a {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+.uml-hero-title{
+  font-size: 30px;
+}
+.uml-hero-sub{
+  font-size: 13px;
+}
+  /* hide preview for compact layout */
+.uml-social-list{
+  display: flex;
+  flex-wrap: wrap;
+}
+.uml-preview-topreferrer{
+  width: 50%;
+  right: -10px;
+}
+.uml-resources-section{
+  padding: 10px;
+}
+
+.uml-preview-image {
+    height: 100%;
+}
+.uml-preview-stat{
+}
+.mobile-get-Started-btn{
+  display: flex;
+}
+}
+
+/* LIGHT MODE (optional) - apply .light-mode on body to toggle) */
+.light-mode {
+  --uml-accent: #2563eb;
+  --uml-accent-2: #06b6d4;
+  --uml-bg: #f8fafc;
+  --uml-surface: #ffffff;
+  --uml-muted: #64748b;
+  --uml-text: #0f172a;
+  --uml-border: rgba(15, 23, 42, 0.08);
+}
+.light-mode .uml-root {
+  background: var(--uml-bg);
+  color: var(--uml-text);
+}
+.light-mode .uml-nav {
+  background: rgba(255, 255, 255, 0.85);
+}
+.light-mode .uml-getstarted-btn {
+  background: linear-gradient(90deg, var(--uml-accent), var(--uml-accent-2));
+  color: #fff;
+}
+
+/* Accessibility focus states */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.14);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Small utilities */
+.uml-copied-notice {
+  font-weight: 600;
+}
+
+/* End of CSS */
+/* MOBILE SIDEBAR: top-level overlay & aside */
+.uml-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.45);
+  z-index: 9998;
+  touch-action: none;
+}
+
+/* Sidebar itself */
+.uml-mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh; /* full viewport height */
+  width: 84%;
+  max-width: 320px;
+  background: var(--side-bg, #0f172a);
+  color: var(--side-text, #e6eef8);
+  padding: 20px;
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.24);
+  z-index: 9999;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* small tweaks for light/dark */
+.uml-mobile-sidebar.dark {
+  background: #0b1220;
+}
+
+/* ensure nav doesn't block the overlay/sidebar */
+.uml-nav {
+  z-index: 60;
+}
+
+/* Prevent background scrolling while mobileOpen */
+body.sidebar-open {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+/* small screen adjustments */
+@media (max-width: 420px) {
+  .uml-mobile-sidebar {
+    width: 86%;
+    max-width: 300px;
+    padding: 18px;
+  }
+  .uml-mobile-link {
+    font-size: 15px;
+    padding: 12px 6px;
+    display: block;
+  }
+  .uml-mobile-actions button,
+  .uml-mobile-actions a {
+    padding: 12px;
+    font-size: 15px;
+  }
+}
+@media (max-width: 340px) {
+  .uml-nav-inner{
+    padding: 10px;
+  }
+}
 /* ======================================================
    LIGHT MODE — URLMgrLanding (uml-* classnames)
    Paste at end of stylesheet or inside a global .light-mode
@@ -259,6 +560,11 @@ background: url('') no-repeat center  center/cover;
 .light-mode button, .light-mode input, .light-mode select, .light-mode textarea {
   transition: box-shadow 160ms ease, transform 120ms ease, background 120ms ease;
 }
+.light-mode .cut-btn{
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.516);
+  color: black;
+
+}
 .light-mode input:focus, .light-mode .uml-hero-input:focus {
   outline: none;
   box-shadow: 0 8px 26px rgba(37,99,235,0.10);
@@ -295,4 +601,279 @@ background: url('') no-repeat center  center/cover;
 /* Cosmetic: reduce heavy shadows on very light backgrounds */
 .light-mode .shadow-2xl, .light-mode .shadow-lg, .light-mode .shadow-2xl {
   box-shadow: var(--uml-shadow) !important;
+}
+/* =========================================================
+   🌤️ LIGHT MODE STYLES (Modal)
+   ========================================================= */
+.light-mode .modal-overlay {
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(0px);
+  animation: lightFadeIn 0.3s forwards;
+}
+
+@keyframes lightFadeIn {
+  from {
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.light-mode .modal-overlay.closing {
+  animation: lightFadeOut 0.3s forwards;
+}
+
+@keyframes lightFadeOut {
+  from {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+    opacity: 1;
+  }
+  to {
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+}
+
+/* --- Modal Card --- */
+.light-mode.uml-root{
+  width: 100%;
+  background: #ffffff;
+
+}
+.light-mode .modal-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
+}
+
+.light-mode .modal-heading {
+  color: #0f172a;
+}
+
+/* --- Close Button --- */
+.light-mode .modal-close {
+  color: #64748b;
+}
+
+.light-mode .modal-close:hover {
+  color: #1e293b;
+  transform: rotate(90deg);
+}
+
+/* --- Form Fields --- */
+.light-mode .field-label {
+  color: #475569;
+}
+
+.light-mode .add-link-field.field input,
+.light-mode .add-link-field.field textarea {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #111827;
+  background: #f8fafc;
+  box-shadow: none;
+}
+
+.light-mode .field input:focus,
+.light-mode .field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.light-mode .field textarea {
+  background: #ffffff;
+}
+
+/* --- Date Input / Row --- */
+.light-mode .date-row.clickable {
+  background: #f8fafc;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.light-mode .date-row.clickable:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.light-mode .date-icon {
+  color: #475569;
+}
+
+.light-mode .date-input {
+  color: #111827;
+  background: transparent;
+}
+
+.light-mode .date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0);
+  opacity: 0.7;
+}
+
+/* --- Modal Actions --- */
+.light-mode .modal-actions {
+  background: transparent;
+}
+
+.light-mode .btn.cancel {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light-mode .btn.cancel:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+/* --- Primary Add Button --- */
+.light-mode .addbtn.btn.primary {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+}
+
+.light-mode .addbtn.btn.primary:hover {
+  transform: translateY(-2px);
+  background: #1d4ed8;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+}
+
+/* --- Error States --- */
+.light-mode .field input.error,
+.light-mode .field textarea.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.light-mode .field-error {
+  color: #dc2626;
+}
+
+/* --- Disabled States --- */
+.light-mode .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #e2e8f0 !important;
+  color: #64748b !important;
+  box-shadow: none !important;
+}
+/* ========== Light Mode Styles ========== */
+.light-mode .uml-mobile-overlay {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(3px);
+}
+
+/* Sidebar base */
+.light-mode .uml-mobile-sidebar {
+  background: #ffffff;
+  color: #1e293b;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #e2e8f0;
+}
+
+/* Header and title area */
+.light-mode .uml-mobile-sidebar .font-semibold {
+  color: #0f172a;
+}
+
+.light-mode .uml-mobile-sidebar .text-xs.text-slate-400 {
+  color: #64748b;
+}
+
+/* Close button */
+.light-mode .uml-mobile-close-btn {
+  color: #334155;
+  background: rgba(241, 245, 249, 0.8);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.light-mode .uml-mobile-close-btn:hover {
+  background: rgba(226, 232, 240, 1);
+  transform: rotate(90deg);
+}
+
+/* Navigation links */
+.light-mode .uml-mobile-link {
+  display: block;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.light-mode .uml-mobile-link:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Divider and section */
+.light-mode .uml-mobile-actions {
+  background: #ffffff;
+}
+
+.light-mode .uml-mobile-actions .actions-links {
+  color: #334155;
+  font-weight: 500;
+}
+
+.light-mode .uml-mobile-actions .theme-label {
+  color: #ffffff;
+}
+
+/* Buttons */
+.light-mode .uml-signin-btn {
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.light-mode .uml-signin-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Get Started Button */
+.light-mode .uml-getstarted-btn {
+  background: linear-gradient(to right, #4f46e5, #06b6d4);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.light-mode .uml-getstarted-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+}
+
+/* Footer text */
+.light-mode .uml-mobile-sidebar .text-xs.text-slate-400 {
+  color: #94a3b8;
+}
+
+/* Scrollbar styling */
+.light-mode .uml-mobile-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.light-mode .uml-mobile-sidebar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.light-mode .uml-mobile-sidebar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* UM Logo box */
+.light-mode .uml-mobile-sidebar .w-9.h-9 {
+  background: linear-gradient(to top right, #4f46e5, #06b6d4);
+  color: #ffffff;
 }

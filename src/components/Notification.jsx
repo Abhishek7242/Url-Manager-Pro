@@ -26,7 +26,7 @@ export default function Notification({
       onClose?.();
     }, duration);
     return () => clearTimeout(timer);
-  }, [duration, onClose]);
+  }, [duration, onClose,message]);
 
   const icons = {
     success: <FiCheckCircle />,

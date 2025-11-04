@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState, useContext } from "react";
-import { FiAlertTriangle, FiTag, FiTrendingUp, FiLoader } from "react-icons/fi";
+import { FiAlertTriangle, FiTag, FiBell, FiTrendingUp, FiLoader } from "react-icons/fi";
+
 import "./CSS/Suggestions.css";
 import UrlContext from "../context/url_manager/UrlContext";
 import AddTagsLinksModal from "./suggestion/AddTagsLinksModel";
 import EditUrlModal from "./dashboard/EditUrlModal";
 import NeonOrbitalLoader from "./NeonOrbitalLoader";
 import OptimizedCard from "./suggestion/OptimizedCard";
-
+import { Lightbulb } from "lucide-react";
 export default function Suggestions() {
   const {
     getAllUrls,
@@ -110,7 +111,8 @@ export default function Suggestions() {
       // Only apply results if this check is the latest
       if (checkIdRef.current === myCheckId) {
         setBrokenUrls(brokenLocal);
-        setChecking(false);
+          
+          setChecking(false);
       }
     };
 
@@ -193,9 +195,7 @@ export default function Suggestions() {
   // If we're still fetching initial data, show the full page loader (no flicker from checking)
   if (initialLoading) {
     return (
-      <div className="relative h-full pt-32 w-full flex items-center justify-center">
         <NeonOrbitalLoader />
-      </div>
     );
   }
 
@@ -203,10 +203,10 @@ export default function Suggestions() {
   return (
     <div className="sugg-root-container">
       <EditUrlModal
-              isOpen={isEditOpen}
-              onClose={() => setIsEditOpen(false)}
-              onAdd={(link) => handleAddUrl(link)}
-            />
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        onAdd={(link) => handleAddUrl(link)}
+      />
       <AddTagsLinksModal
         isOpen={open}
         onClose={() => {
@@ -215,13 +215,25 @@ export default function Suggestions() {
         }}
         links={selectedLinks}
       />
-   
 
       {!suggestions || (suggestions.length === 0 && !checking) ? (
-        <OptimizedCard/>
+        <OptimizedCard />
       ) : (
-          
-        <div className="sugg-grid">
+        <div className="sugg-container flex-col flex">
+          <div className="suggestion-header">
+            <div className="suggestion-header-left">
+              <div className="suggestion-icon-wrap">
+                <Lightbulb className="suggestion-icon" />
+              </div>
+              <div className="suggestion-titles">
+                <h2>Suggestions</h2>
+                <p className="suggestion-subtitle">
+                  Get AI-powered recommendations & never miss a useful link
+                </p>
+              </div>
+            </div>
+          </div>
+
           {suggestions.map((s) => (
             <div key={s.id} className="sugg-card">
               <div className="sugg-card-top">

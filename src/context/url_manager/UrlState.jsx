@@ -1,12 +1,13 @@
 import { useMemo, useState, useEffect } from "react";
 import AuthLimitModal from "../../components/AuthLimitModal.jsx";
 import UrlContext from "./UrlContext";
+import AuthFeatureModal from "../../components/AuthFeatureModal.jsx";
 const UrlState = (props) => {
   // http://localhost:8000/
-  const API_BASE = "http://localhost:8000/api"; // Laravel backend
-  const BASE = "http://localhost:8000/"; // Laravel backend
-  // const API_BASE = "https://rosybrown-frog-380446.hostingersite.com/api"; // Laravel backend
-  // const BASE = "https://rosybrown-frog-380446.hostingersite.com/"; // Laravel backend
+  // const API_BASE = "http://localhost:8000/api"; // Laravel backend
+  // const BASE = "http://localhost:8000"; // Laravel backend
+  const API_BASE = "https://urlmg.com/backend/api"; // Laravel backend
+  const BASE = "https://urlmg.com/backend"; // Laravel backend
   const [formData, setFormData] = useState({
     id: "",
     title: "",
@@ -23,6 +24,7 @@ const UrlState = (props) => {
   const [notify, setNotify] = useState(null);
   const [search, setSearch] = useState("");
   const [showAuthLimit, setShowAuthLimit] = useState(false);
+  const [showAuthFeature, setShowAuthFeature] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [exportLoading, setExportLoading] = useState(false);
@@ -33,6 +35,27 @@ const UrlState = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp_token, setOtpToken] = useState("");
+  const [openLoginModel, setOpenLoginModel] = useState(false);
+  const [openSignupModel, setOpenSignupModel] = useState(false);
+  const [openverifyOTPModel, setOpenVerifyOTPModel] = useState(false);
+  const [statsView, setStatsView] = useState("");
+  const [tagsView, setTagsView] = useState("");
+  const [urlsView, setUrlsView] = useState("");
+  const [openProfileModel, setOpenProfileModel] = useState(false);
+  const [showDetailsView, setShowDetailsView] = useState(false);
+  const [showDetails, setShowDetails] = useState([]);
+  const [openSettings, setSettingsOpen] = useState(false);
+
+
+  const updateRootBackground = (bg) => {
+    const root = document.querySelector("#root");
+    if (!root) return;
+
+    root.style.setProperty(
+      "--bg-image",
+      bg.startsWith("http") ? `url(${bg})` : bg
+    );
+  };
 
   const [user, setUser] = useState(null);
   async function fetchAndLogUser() {
@@ -49,6 +72,7 @@ const UrlState = (props) => {
         setUser(null);
         return null;
       }
+      setIsLoggedIn(true)
       setUser(JSON.parse(bodyText));
       // console.log(res.status, bodyText);
       return JSON.parse(bodyText);
@@ -188,6 +212,7 @@ const UrlState = (props) => {
 
   // ✅ Add new URL (POST)
   const addUrl = async (data) => {
+    console.log( data);
     try {
       let url = await buildGetUrlsUrl(
         `${API_BASE}/url/add`,
@@ -322,6 +347,55 @@ const UrlState = (props) => {
 
     return fetch(url, mergedOptions);
   }
+
+  // updateUserName.js
+async function updateUserName(updated) {
+  try {
+    // Determine which field we’re updating
+    const hasName = Object.prototype.hasOwnProperty.call(updated, "name");
+    const hasEmail = Object.prototype.hasOwnProperty.call(updated, "email");
+
+    let endpoint = `${API_BASE}/user/update-profile`; // default fallback
+    let body = {};
+
+    if (hasName) {
+      endpoint = `${API_BASE}/user/update-name`;
+      body = { name: updated.name };
+    } else if (hasEmail) {
+      endpoint = `${API_BASE}/user/update-email`;
+      body = { email: updated.email };
+    } else {
+      throw new Error("Invalid update type. Must include name or email.");
+    }
+
+    // 🔹 Make the request
+    const response = await fetch(endpoint, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...getXsrfHeader(),
+      },
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to update user");
+    }
+    let user = await fetchAndLogUser()
+    
+    console.log("✅ User updated successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("❌ Error updating user:", error.message);
+    throw error;
+  }
+}
+
+
   // Logout function
   async function logout() {
     try {
@@ -357,7 +431,6 @@ const UrlState = (props) => {
       if (refreshedUrls && refreshedUrls.data) {
         setUrls(refreshedUrls.data);
       }
-
       return data;
     } catch (error) {
       // console.error("Logout failed:", error);
@@ -573,6 +646,7 @@ const UrlState = (props) => {
       // throw err;
     }
   };
+  
 
   const batchUpdateUrlStatus = async (urlIds, status = "archived") => {
     try {
@@ -735,11 +809,46 @@ const UrlState = (props) => {
         setOtpToken,
         themeImage,
         setThemeImage,
+        openLoginModel,
+        setOpenLoginModel,
+        openSignupModel,
+        setOpenSignupModel,
+        openverifyOTPModel,
+        setOpenVerifyOTPModel,
+        updateRootBackground,
+        statsView,
+        setStatsView,
+        tagsView,
+        setTagsView,
+        openProfileModel,
+        setOpenProfileModel,
+        updateUserName,
+        getXsrfHeader,
+        setShowAuthFeature,
+        urlsView,
+        setUrlsView,
+        showDetails,
+        setShowDetails,
+        showDetailsView,
+        setShowDetailsView,
+        openSettings,
+        setSettingsOpen,
       }}
     >
       {props.children}
       {showAuthLimit && (
-        <AuthLimitModal onClose={() => setShowAuthLimit(false)} />
+        <AuthLimitModal
+          setOpenSignupModel={setOpenSignupModel}
+          setOpenLoginModel={setOpenLoginModel}
+          onClose={() => setShowAuthLimit(false)}
+        />
+      )}
+      {showAuthFeature && (
+        <AuthFeatureModal
+          setOpenSignupModel={setOpenSignupModel}
+          setOpenLoginModel={setOpenLoginModel}
+          onClose={() => setShowAuthFeature(false)}
+        />
       )}
     </UrlContext.Provider>
   );

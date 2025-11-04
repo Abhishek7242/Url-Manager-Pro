@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FiX, FiSave } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import "../CSS/EditProfileModal.css";
+
 
 /**
  * Props:
@@ -73,7 +75,7 @@ export default function EditProfileModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.45 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black z-40"
+            className="edit-profile-modal fixed inset-0 bg-black z-40"
             onClick={onClose}
           />
 

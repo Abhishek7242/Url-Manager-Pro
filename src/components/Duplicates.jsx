@@ -95,9 +95,7 @@ export default function Duplicates() {
   // LOADING VIEW: uses FiLoader + .loading-icon (your CSS spin rule targets .loading-icon svg)
   if (loading) {
     return (
-      <div className="relative h-full pt-32 w-full flex items-center justify-center">
         <NeonOrbitalLoader />
-      </div>
     );
   }
 
@@ -111,94 +109,109 @@ export default function Duplicates() {
   // MAIN DUPLICATES VIEW
   return (
     <div className="dups-root">
-      <div className="dups-header">
-        <div className="dups-title">
-          <FiAlertTriangle className="warning-icon" />
-          <div>
-            <h3>Duplicate URLs Detected</h3>
-            <p className="sub">
-              Found {data.length} group{data.length > 1 ? "s" : ""} with
-              duplicate URLs
-            </p>
+      <div className="dups-inner-root">
+        <div className="dups-header">
+          <div className="dups-title">
+            <FiAlertTriangle className="warning-icon" />
+            <div>
+              <h3>Duplicate URLs Detected</h3>
+              <p className="sub">
+                Found {data.length} group{data.length > 1 ? "s" : ""} with
+                duplicate URLs
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="dups-list">
-        {data.map((g) => (
-          <div className="dup-group" key={g.key}>
-            <div className="group-top">
-              {data.length > 0 && (
-                <p className="group-key">
-                  {g.key}
-                  <span className="badge">{g.count} duplicates</span>
-                </p>
-              )}
-            </div>
+        <div className="dups-list">
+          {data.map((g) => (
+            <div className="dup-group" key={g.key}>
+              <div className="group-top">
+                {data.length > 0 && (
+                  <p className="group-key">
+                    {/* {g.key} */}
+                    <span className="badge">{g.count} duplicates</span>
+                  </p>
+                )}
+              </div>
 
-            <div className="group-items">
-              {Array.isArray(g.items)
-                ? g.items.map((it) => (
-                    <div className="dup-item" key={it.id}>
-                      <div className="item-left">
-                        <input
-                          type="checkbox"
-                          aria-label={`select ${it.title}`}
-                        />
+              <div className="group-items">
+                {Array.isArray(g.items)
+                  ? g.items.map((it) => (
+                      <div className="dup-item" key={it.id}>
+                        <div className="item-left">
+                          {/* <input
+                            type="checkbox"
+                            aria-label={`select ${it.title}`}
+                          /> */}
 
-                        <div className="item-content">
-                          <div className="item-title-row">
-                            <div className="item-title">{it.title}</div>
-                            {it.isLatest && (
-                              <span className="pill latest">Latest</span>
-                            )}
-                          </div>
+                          <div className="item-content">
+                            <div className="item-title-row">
+                              <div className="item-title">{it.title}</div>
+                              {it.isLatest && (
+                                <span className="pill latest">Latest</span>
+                              )}
+                            </div>
 
-                          <a
-                            onClick={() => updateClickCount(it.id)}
-                            className="item-url"
-                            href={it.url}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <FiExternalLink className="link-icon" /> {it.url}
-                          </a>
+                            <a
+                              onClick={() => updateClickCount(it.id)}
+                              className="item-url"
+                              href={it.url}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <FiExternalLink className="link-icon" /> {it.url}
+                            </a>
 
-                          <div className="item-meta">
-                            <span className="meta-created flex gap-2 items-center">
-                              <FiClock className="meta-icon" /> {it.formatted_created_at}
-                            </span>
-                            {it.tags && it.tags.length > 0 && (
-                              <span className="meta-tags">
-                                Tags: {it.tags.join(", ")}
+                            <div className="item-meta">
+                              <span className="meta-created flex gap-2 items-center">
+                                <FiClock className="meta-icon" />{" "}
+                                {it.formatted_created_at}
                               </span>
-                            )}
+                              {it.tags &&
+                                Array.isArray(it.tags) &&
+                                it.tags.length > 0 && (
+                                  <p
+                                    className="meta-tags"
+                                    aria-label={`Tags: ${it.tags.join(", ")}`}
+                                  >
+                                    <span className="meta-tags-label">
+                                      Tags:
+                                    </span>
+                                    {it.tags.map((tag, i) => (
+                                      <span key={i} className="meta-tag">
+                                        {String(tag).trim()}
+                                      </span>
+                                    ))}
+                                  </p>
+                                )}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="item-actions">
-                        <button
-                          className="btn keep"
-                          onClick={() => handleKeep(it.id)}
-                          disabled={keepingId !== null}
-                          title="Keep this (preserve)"
-                        >
-                          {keepingId === it.id ? (
-                            <>
-                              <FiLoader className="spin-icon" /> Keeping...
-                            </>
-                          ) : (
-                            "Keep This"
-                          )}
-                        </button>
+                        <div className="item-actions">
+                          <button
+                            className="btn keep"
+                            onClick={() => handleKeep(it.id)}
+                            disabled={keepingId !== null}
+                            title="Keep this (preserve)"
+                          >
+                            {keepingId === it.id ? (
+                              <>
+                                <FiLoader className="spin-icon" /> Keeping...
+                              </>
+                            ) : (
+                              "Keep This"
+                            )}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                : null}
+                    ))
+                  : null}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

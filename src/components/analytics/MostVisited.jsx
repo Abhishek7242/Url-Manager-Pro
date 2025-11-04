@@ -1,5 +1,6 @@
 import React from "react";
 import "../CSS/Analytics.css";
+import "../CSS/AnalyticsLists.css";
 import { FiTrendingUp } from "react-icons/fi";
 import UrlContext from "../../context/url_manager/UrlContext";
 

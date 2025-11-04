@@ -1,0 +1,355 @@
+/* FavoritesGrid.css
+   All classes prefixed with lnk- to avoid collisions
+   Includes: tile styles, scroll-snap carousel, hidden scrollbar, pill-style dots
+*/
+
+/* base wrapper */
+.lnk-fav-carousel-wrap {
+  width: 83%;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--lnk-text, #e6eef8);
+  position: relative;
+}
+
+/* responsive tile-size variants */
+.lnk-fav-carousel-small .lnk-fav-tile { width: 64px; }
+/* .lnk-fav-carousel-medium .lnk-fav-tile { width: 88px; } */
+.lnk-fav-carousel-large .lnk-fav-tile { width: 112px; }
+
+/* scrollable viewport (hidden scrollbar) */
+.lnk-fav-carousel-viewport {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+}
+.lnk-fav-carousel-viewport::-webkit-scrollbar { display: none; } /* Chrome/Safari/Edge */
+
+/* track: enable scroll snapping */
+.lnk-fav-carousel-scroll-snap {
+  display: flex;
+  scroll-snap-type: x mandatory;
+  gap: 0;
+}
+
+/* each slide */
+.lnk-fav-carousel-slide {
+  scroll-snap-align: center;
+  flex: 0 0 100%;
+  box-sizing: border-box;
+}
+
+/* grid inside slides: 6 items (2 rows x 3 cols on wide screens) */
+.lnk-fav-grid.lnk-fav-grid-6 {
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+}
+
+/* mobile adjustments */
+@media (max-width: 900px) {
+  .lnk-fav-grid.lnk-fav-grid-6 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .lnk-fav-grid.lnk-fav-grid-6 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* tile */
+.lnk-fav-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  position: relative;
+  text-align: center;
+  user-select: none;
+}
+
+/* clickable area */
+.lnk-fav-tile-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 14px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    filter 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+/* hover lift */
+.lnk-fav-tile-link:hover .lnk-fav-tile-surface {
+  background-color: rgba(255, 255, 255, 0.521);
+  filter: brightness(1.02);
+}
+
+/* favicon surface */
+.lnk-fav-tile-surface {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.33), rgba(255,255,255,0.18));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+   transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    filter 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+/* icon image */
+.lnk-fav-tile-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.25));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* placeholder */
+.lnk-fav-tile-placeholder {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity: 0.78;
+}
+
+/* label */
+.lnk-fav-tile-label {
+  font-size: 12px;
+  /* max-width: 88px; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: white;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+}
+
+/* star toggle overlay */
+.lnk-fav-tile-star {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 0;
+  background: rgba(0,0,0,0.42);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+.lnk-fav-tile-star:hover { transform: translateY(-2px); background: rgba(0,0,0,0.55); }
+.lnk-fav-tile-star.is-fav {
+  background: linear-gradient(180deg, rgba(255,215,0,0.95), rgba(220,165,0,0.95));
+  color: #111;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+}
+
+/* empty state */
+.lnk-fav-grid-empty {
+  padding: 14px;
+  color: var(--lnk-muted, #9aa6b2);
+  font-size: 13px;
+}
+
+/* small screens */
+@media (max-width: 480px) {
+  .lnk-fav-tile-surface { width: 56px; height:56px; border-radius: 14px; }
+  .lnk-fav-grid { gap: 10px; padding: 6px 4px; }
+}
+
+/* dots container (centered) */
+.lnk-fav-carousel-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px 0 0;
+  align-items: center;
+  pointer-events: auto;
+}
+
+/* base dot button */
+.lnk-fav-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08) inset;
+  cursor: pointer;
+  transition: width 260ms cubic-bezier(.2,.9,.2,1), transform 160ms, opacity 160ms, background 160ms;
+  opacity: 0.9;
+}
+
+/* active dot becomes a rounded pill */
+.lnk-fav-dot.active {
+  width: 28px;            /* pill length */
+  height: 10px;           /* pill height */
+  border-radius: 999px;   /* fully rounded */
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+/* subtle hover for accessibility */
+.lnk-fav-dot:not(.active):hover {
+  transform: scale(1.15);
+  opacity: 1;
+}
+
+/* ensure focus visible for keyboard users */
+.lnk-fav-dot:focus {
+  outline: 2px solid rgba(0,0,0,0.12);
+  outline-offset: 2px;
+}
+/* ===========================
+   FavoritesGrid — Responsive Overrides
+   (append to FavoritesGrid.css)
+   =========================== */
+
+/* Fluid container padding so carousel doesn't hug edges on small screens */
+.lnk-fav-carousel-wrap {
+  padding: 8px 12px;
+  box-sizing: border-box;
+}
+
+/* Slightly smaller default tiles on medium devices */
+@media (max-width: 900px) {
+  .lnk-fav-carousel-medium .lnk-fav-tile,
+  .lnk-fav-tile {
+    /* keep layout but reduce base tile footprint */
+    --fav-surface-size: 56px;
+  }
+  .lnk-fav-tile-surface {
+    width: var(--fav-surface-size);
+    height: var(--fav-surface-size);
+    border-radius: 12px;
+  }
+  .lnk-fav-tile-icon { width: 36px; height: 36px; }
+  .lnk-fav-tile-label { font-size: 11px; max-width: 72px; }
+}
+
+/* Tablet: more compact */
+@media (max-width: 640px) {
+  .lnk-fav-carousel-wrap { padding: 6px 10px; }
+  .lnk-fav-carousel-small .lnk-fav-tile,
+  .lnk-fav-carousel-medium .lnk-fav-tile,
+  .lnk-fav-carousel-large .lnk-fav-tile,
+  .lnk-fav-tile {
+    --fav-surface-size: 52px;
+  }
+
+  .lnk-fav-tile-surface {
+    width: var(--fav-surface-size);
+    height: var(--fav-surface-size);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10));
+  }
+
+  .lnk-fav-tile-icon { width: 32px; height: 32px; }
+  .lnk-fav-tile-label {
+    font-size: 11px;
+    max-width: 64px;
+    line-height: 1.05;
+  }
+
+  /* reduce star overlay size */
+  .lnk-fav-tile-star { width: 26px; height: 26px; right: 6px; bottom: 6px; }
+  .lnk-fav-grid { gap: 8px; padding: 6px 4px; }
+}
+
+/* Small phones: make tiles small and compact */
+@media (max-width: 480px) {
+  .lnk-fav-carousel-wrap { padding: 6px 8px; }
+  .lnk-fav-tile-surface {
+    --fav-surface-size: 48px;
+    width: var(--fav-surface-size);
+    height: var(--fav-surface-size);
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  }
+
+  .lnk-fav-tile-icon { width: 28px; height: 28px; }
+  .lnk-fav-tile-label {
+    font-size: 10px;
+    max-width: 56px;
+  }
+
+  .lnk-fav-tile { gap: 6px; }
+  .lnk-fav-tile-link:hover .lnk-fav-tile-surface { transform: translateY(0); box-shadow: none; }
+
+  /* Dots smaller and tighter */
+  .lnk-fav-dot { width: 6px; height: 6px; }
+  .lnk-fav-dot.active { width: 20px; height: 8px; }
+}
+
+/* Very small phones: ultra compact */
+@media (max-width: 360px) {
+  .lnk-fav-carousel-wrap { padding: 4px 6px; }
+  .lnk-fav-tile-surface {
+    --fav-surface-size: 44px;
+    width: var(--fav-surface-size);
+    height: var(--fav-surface-size);
+    border-radius: 10px;
+  }
+
+  .lnk-fav-tile-icon { width: 24px; height: 24px; }
+  .lnk-fav-tile-label {
+    font-size: 9px;
+    max-width: 48px;
+  }
+
+  .lnk-fav-tile-star { width: 22px; height: 22px; right: 4px; bottom: 4px; }
+  .lnk-fav-grid { gap: 6px; padding: 4px; }
+  .lnk-fav-grid-empty { padding: 8px; font-size: 12px; }
+
+  .lnk-fav-dot { width: 5px; height: 5px; }
+  .lnk-fav-dot.active { width: 18px; height: 7px; }
+}
+
+/* Ultra tiny (<=280px) — keep layout usable */
+@media (max-width: 280px) {
+  .lnk-fav-carousel-wrap { padding: 4px; }
+  .lnk-fav-tile-surface { --fav-surface-size: 40px; width: 40px; height: 40px; border-radius: 8px; }
+  .lnk-fav-tile-icon { width: 20px; height: 20px; }
+  .lnk-fav-tile-label { font-size: 9px; max-width: 44px; }
+  .lnk-fav-tile-star { width: 20px; height: 20px; right: 4px; bottom: 4px; }
+  .lnk-fav-grid { gap: 6px; }
+}
+
+/* Utility: ensure snap slides don't overflow padding on small screens */
+.lnk-fav-carousel-viewport {
+  padding: 6px 4px;
+  box-sizing: content-box;
+}
+
+/* Make tiles slightly denser by reducing outer spacing */
+.lnk-fav-tile { padding: 4px 6px; }
+
+/* Accessibility: keep focus visible even when small */
+.lnk-fav-tile-link:focus { outline: 3px solid rgba(99,102,241,0.12); outline-offset: 2px; }
+
+/* end responsive overrides */

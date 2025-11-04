@@ -107,9 +107,7 @@ export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
 
   if (loading) {
     return (
-      <div className="relative h-full pt-32 w-full flex items-center justify-center">
         <NeonOrbitalLoader />
-      </div>
     );
   }
 
@@ -174,7 +172,7 @@ export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
               <h3>Local Storage</h3>
             </div>
             <p className="storage-desc">
-              Export your URLs to a JSON file or import from a backup file.
+              Export your URLs to a Excel file or import from a backup file.
             </p>
 
             <div className="storage-buttons">

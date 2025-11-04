@@ -1,69 +1,44 @@
-/* overlay */
-.modal-overlay {
+/* --------------------------------------------------
+   ADD URL MODAL — Redesigned for modern glass style
+   -------------------------------------------------- */
+
+.add.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 8, 12, 0);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 60px;
-  z-index: 1000;
-  backdrop-filter: blur(0px);
-  transition: background 0.3s ease, backdrop-filter 0.3s ease;
-  animation: fadeIn 0.3s forwards;
+  z-index: 11111;
+  background: rgba(6, 10, 15, 0.6);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  transition: background 0.3s ease;
+  overflow: hidden;
 }
 
-@keyframes fadeIn {
-  from {
-    background: rgba(5, 8, 12, 0);
-    backdrop-filter: blur(0px);
-  }
-  to {
-    background: rgba(5, 8, 12, 0.55);
-    backdrop-filter: blur(8px);
-  }
-}
-
-.modal-overlay.closing {
-  animation: fadeOut 0.3s forwards;
-}
-
-@keyframes fadeOut {
-  from {
-    background: rgba(5, 8, 12, 0.55);
-    backdrop-filter: blur(8px);
-    opacity: 1;
-  }
-  to {
-    background: rgba(5, 8, 12, 0);
-    backdrop-filter: blur(0px);
-    opacity: 0;
-  }
-}
-
-/* modal card */
-.modal-card {
-  width: 520px;
-  max-width: calc(100% - 32px);
+.add .modal-card {
+  width: 700px;
+  max-width: calc(100% - 40px);
   background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.01),
-    rgba(255, 255, 255, 0)
+    145deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
   );
-  border: 1px solid var(--border);
-  padding: 22px;
-  border-radius: 10px;
-  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  color: #f3f6ff;
+  font-family: "Inter", system-ui, sans-serif;
+  animation: add-modal-in 0.3s ease;
   position: relative;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.6);
-  transform-origin: center top;
-  animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes modalEnter {
+@keyframes add-modal-in {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(-20px);
+    transform: scale(0.96) translateY(-15px);
   }
   to {
     opacity: 1;
@@ -71,274 +46,319 @@
   }
 }
 
-.modal-card.closing {
-  animation: modalExit 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes modalExit {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95) translateY(-20px);
-  }
-}
-
-/* close */
-.modal-close {
+/* close button */
+.add .modal-close {
   position: absolute;
-  right: 12px;
-  top: 10px;
-  background: transparent;
+  top: 14px;
+  right: 14px;
   border: none;
-  color: var(--muted);
-  font-size: 1.05rem;
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
   cursor: pointer;
-  z-index: 11111111;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: all 0.25s;
 }
-
-.modal-close:hover {
-  color: var(--text);
+.add .modal-close:hover {
+  background: rgba(255, 255, 255, 0.15);
   transform: rotate(90deg);
 }
 
 /* heading */
-.modal-heading {
-  margin: 0 0 12px;
-  font-size: 1.1rem;
+.add .modal-heading {
+  font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text);
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.4s 0.1s forwards;
+  margin-bottom: 16px;
+  text-align: left;
+  color: white;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* form fields */
-.modal-form {
+/* scrollable form */
+.add .modal-form {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  max-height: calc(80vh - 80px);
+  padding-right: 6px;
 }
 
-.add-link-field.field {
+/* scrollbar */
+.add .modal-form::-webkit-scrollbar {
+  width: 6px;
+}
+.add .modal-form::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+}
+
+/* field rows */
+.add .field-row {
+  display: grid;
+  gap: 16px;
+}
+.add .two-col-row {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 760px) {
+  .add .two-col-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* field structure */
+.add .add-link-field.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+/* field labels */
+.add .field-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: left;
+}
+
+/* text + url + textarea inputs */
+.add input[type="text"],
+.add input[type="url"],
+.add textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: 0.25s all;
+}
+.add input:focus,
+.add textarea:focus {
+  border-color: rgba(59, 130, 246, 0.9);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+}
+
+/* textarea resize */
+.add textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* tags + date on one row */
+.add .tags-date-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (min-width: 880px) {
+  .add .tags-date-row {
+    grid-template-columns: 1fr 280px;
+  }
+}
+
+/* TAG FIELD */
+.add .tags-field {
+  min-width: 0;
+}
+
+/* tags container */
+.add .tag-input-wrap {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  align-items: start;
-  background: transparent;
+}
+.add .tags-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 8px;
+  min-height: 42px;
+  overflow-x: auto;
+}
+
+/* small tags */
+.add .tag-chip {
+  font-size: 0.78rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #fff;
+}
+.add .tag-cut-btn {
   border: none;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.4s forwards;
-}
-
-.add-link-field.field:nth-child(1) {
-  animation-delay: 0.15s;
-}
-
-.add-link-field.field:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.add-link-field.field:nth-child(3) {
-  animation-delay: 0.25s;
-}
-
-.add-link-field.field:nth-child(4) {
-  animation-delay: 0.3s;
-}
-
-.field-label {
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.add-link-field.field input,
-.add-link-field.field textarea {
-  border: 2px solid rgba(255, 255, 255, 0.06);
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: 8px;
-  outline: none;
-  font-size: 0.95rem;
   background: transparent;
-  width: 100%;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: #ddd;
+  font-size: 0.75rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+.add .tag-cut-btn:hover {
+  color: #ff8f8f;
 }
 
-.field input:focus,
-.field textarea:focus {
-  border-color: var(--n);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.12);
+/* tag input inline */
+.add .tag-input {
+  min-width: 100px;
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-size: 0.9rem;
 }
 
-.field textarea {
-  resize: vertical;
-  min-height: 72px;
+/* tag buttons row */
+.add .tag-actions {
+  display: flex;
+  gap: 8px;
+}
+.add .btn.add-tag-btn,
+.add .btn.clear-tags-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.add .btn.add-tag-btn:hover,
+.add .btn.clear-tags-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-/* date row */
-.date-row {
+/* tag limit text */
+.add .tag-limit {
+  text-align: left;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+.add .tag-limit.has-error {
+  color: #ff7777;
+}
+
+/* DATE FIELD */
+.add .date-field {
+  min-width: 0;
+}
+.add .date-row {
   display: flex;
   align-items: center;
   gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: 0.2s;
 }
-.date-icon {
-  color: var(--muted);
+.add .date-row:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+}
+.add .date-icon {
+  color: rgba(255, 255, 255, 0.85);
   font-size: 1rem;
 }
-.date-input {
-  background: transparent;
+.add .date-input {
   border: none;
-  color: var(--text);
-  padding: 8px 10px;
   outline: none;
-  font-size: 0.95rem;
+  background: transparent;
+  color: white;
+  font-size: 0.9rem;
+  flex: 1;
 }
 
-/* actions */
-.modal-actions {
+/* DATE PICKER glass look */
+.add .react-datepicker {
+  background: rgba(30, 35, 45, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  color: white;
+}
+.add .react-datepicker__day--selected {
+  background: #2563eb;
+  color: white;
+}
+.add .react-datepicker__header {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* FORM ACTIONS */
+.add .modal-actions {
   display: flex;
+  position: absolute;
+  bottom: 12px;
+  right: 42px;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 6px;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.4s 0.35s forwards;
+  margin-top: 12px;
 }
-
-.btn {
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
+.add .btn {
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   cursor: pointer;
   font-weight: 700;
   font-size: 0.95rem;
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
 }
-
-.btn.cancel {
+.add .btn.cancel {
   background: transparent;
-  color: var(--muted);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.65);
 }
-
-.btn.cancel:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
+.add .btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
 }
-
-.addbtn.btn.primary {
-  background: white;
+.add .addbtn.btn.primary {
+  background: rgba(255, 255, 255, 0.9);
   color: #0b1220;
-  box-shadow: 0 8px 22px rgba(11, 18, 32, 0.18);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
 }
-
-.addbtn.btn.primary:hover {
+.add .addbtn.btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(11, 18, 32, 0.25);
+  box-shadow: 0 12px 28px rgba(255, 255, 255, 0.25);
 }
 
-/* responsive */
-@media (max-width: 640px) {
-  .modal-card {
-    width: 92%;
-    padding: 16px;
-  }
-  .modal-actions {
-    flex-direction: column-reverse;
-    gap: 8px;
-  }
-  .btn {
-    width: 100%;
-  }
-}
-
-/* make entire row clickable */
-.date-row.clickable {
-  background: #0b111600;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.date-row.clickable:hover {
-  border-color: var(--n);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* dark style for input inside */
-.date-input {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  width: 100%;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-/* hide default calendar icon (Chrome) and use our FiCalendar icon */
-.date-input::-webkit-calendar-picker-indicator {
-  filter: invert(1) opacity(0.7);
-  cursor: pointer;
-  outline: none;
-  border: none;
-}
-
-.add-link-field.field .reminder-date-input {
-  border: none;
-  outline: none;
-}
-
-.field input:focus,
-.field textarea:focus {
-  border: none;
-  user-select: none;
-  outline: none;
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.12);
-}
-
-/* dark theme pop-up (works on browsers supporting color-scheme) */
-input[type="date"] {
-  color-scheme: dark;
-}
-
-/* Error states */
-.field input.error,
-.field textarea.error {
+/* error styles */
+.add input.error,
+.add textarea.error {
   border-color: #ef4444 !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
 }
-
-.field-error {
-  color: #ef4444;
-  font-size: 0.8rem;
+.add .field-error {
+  color: #ff8f8f;
+  font-size: 0.82rem;
   margin-top: 4px;
   font-weight: 500;
 }
 
-/* Loading animation */
-.animate-spin {
+/* loading animation */
+.add .animate-spin {
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -348,193 +368,27 @@ input[type="date"] {
   }
 }
 
-/* Disabled button states */
-.btn:disabled {
+/* disabled buttons */
+.add .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none !important;
 }
-
-.btn:disabled:hover {
+.add .btn:disabled:hover {
   transform: none !important;
   box-shadow: none !important;
 }
 
-/* =========================================================
-   🌤️ LIGHT MODE STYLES (Modal)
-   ========================================================= */
-.light-mode .modal-overlay {
-  background: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(0px);
-  animation: lightFadeIn 0.3s forwards;
-}
-
-@keyframes lightFadeIn {
-  from {
-    background: rgba(255, 255, 255, 0);
-    backdrop-filter: blur(0px);
+/* responsive stacking */
+@media (max-width: 600px) {
+  .add .modal-card {
+    width: 92%;
+    padding: 18px;
   }
-  to {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(8px);
+  .add .modal-actions {
+    flex-direction: column-reverse;
   }
-}
-
-.light-mode .modal-overlay.closing {
-  animation: lightFadeOut 0.3s forwards;
-}
-
-@keyframes lightFadeOut {
-  from {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(8px);
-    opacity: 1;
-  }
-  to {
-    background: rgba(255, 255, 255, 0);
-    backdrop-filter: blur(0px);
-    opacity: 0;
-  }
-}
-
-/* --- Modal Card --- */
-.light-mode .modal-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  color: #0f172a;
-  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
-}
-
-.light-mode .modal-heading {
-  color: #0f172a;
-}
-
-/* --- Close Button --- */
-.light-mode .modal-close {
-  color: #64748b;
-}
-
-.light-mode .modal-close:hover {
-  color: #1e293b;
-  transform: rotate(90deg);
-}
-
-/* --- Form Fields --- */
-.light-mode .field-label {
-  color: #475569;
-}
-
-.light-mode .add-link-field.field input,
-.light-mode .add-link-field.field textarea {
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  color: #111827;
-  background: #f8fafc;
-  box-shadow: none;
-}
-
-.light-mode .field input:focus,
-.light-mode .field textarea:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.light-mode .field textarea {
-  background: #ffffff;
-}
-
-/* --- Date Input / Row --- */
-.light-mode .date-row.clickable {
-  background: #f8fafc;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.light-mode .date-row.clickable:hover {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.light-mode .date-icon {
-  color: #475569;
-}
-
-.light-mode .date-input {
-  color: #111827;
-  background: transparent;
-}
-
-.light-mode .date-input::-webkit-calendar-picker-indicator {
-  filter: invert(0);
-  opacity: 0.7;
-}
-
-/* --- Modal Actions --- */
-.light-mode .modal-actions {
-  background: transparent;
-}
-
-.light-mode .btn.cancel {
-  background: #f1f5f9;
-  color: #0f172a;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.light-mode .btn.cancel:hover {
-  background: rgba(37, 99, 235, 0.08);
-  color: #2563eb;
-}
-
-/* --- Primary Add Button --- */
-.light-mode .addbtn.btn.primary {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
-}
-
-.light-mode .addbtn.btn.primary:hover {
-  transform: translateY(-2px);
-  background: #1d4ed8;
-  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
-}
-
-/* --- Error States --- */
-.light-mode .field input.error,
-.light-mode .field textarea.error {
-  border-color: #ef4444 !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
-}
-
-.light-mode .field-error {
-  color: #dc2626;
-}
-
-/* --- Disabled States --- */
-.light-mode .btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background: #e2e8f0 !important;
-  color: #64748b !important;
-  box-shadow: none !important;
-}
-
-/* --- Animation Colors (consistency) --- */
-@keyframes modalEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes modalExit {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95) translateY(-20px);
+  .add .btn {
+    width: 100%;
   }
 }

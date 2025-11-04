@@ -29,7 +29,7 @@ export default function RecentlyAdded() {
         </h3>
       </div>
 
-      <div className="recent-list">
+      <div className="recent-analytics-list">
         {list.length > 0 ? (
           list.map((it) => (
             <div className="recent-row" key={it.id}>

@@ -32,6 +32,11 @@ export default function ProfileDropdown({
   setOpenSignupModel = () => {},
   openSignupModel,
   onSignup = () => {},
+  collapsed = true,
+  openSettings,
+  setSettingsOpen,
+  mobileOpen,
+  closeMobile,
   isLoggedIn = () => false, // 👈 Pass this directly or from context
 }) {
   // const { isLoggedIn } = useContext(AuthContext); // optional if using context
@@ -98,6 +103,21 @@ export default function ProfileDropdown({
   }, [open]);
 
   const avatar = user.avatarUrl || "";
+  // inside the component, add these near other hooks/refs:
+  const [showDetails, setShowDetails] = useState(!collapsed); // initially visible when not collapsed
+  const expandDelayMs = 100; // match this with your sidebar CSS transition duration
+
+  useEffect(() => {
+    let t;
+    if (!collapsed) {
+      // Sidebar is expanding -> delay showing name/chevron until expand is done
+      t = setTimeout(() => setShowDetails(true), expandDelayMs);
+    } else {
+      // Sidebar is collapsed -> hide details immediately
+      setShowDetails(false);
+    }
+    return () => clearTimeout(t);
+  }, [collapsed]);
 
   return (
     <div className="relative inline-block text-left pd-root">
@@ -106,7 +126,7 @@ export default function ProfileDropdown({
         aria-haspopup="true"
         aria-expanded={open}
         onClick={() => setOpen((s) => !s)}
-        className="flex items-center gap-3 rounded-full px-3 py-1.5 bg-white/6 backdrop-blur-sm hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 pd-toggle-btn"
+        className="flex items-center gap-3 rounded-full px-1.5 py-1.5 bg-white/6 backdrop-blur-sm hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 pd-toggle-btn"
       >
         {/* Avatar */}
         <div className="h-9 w-9 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 pd-avatar">
@@ -127,11 +147,20 @@ export default function ProfileDropdown({
           )}
         </div>
 
-        <FiChevronDown
-          className={`ml-1 text-gray-300 ${
-            open ? "rotate-180" : ""
-          } transition-transform pd-chevron`}
-        />
+        {/* Render name + chevron only after the expansion delay */}
+        {showDetails && (
+          <>
+            <span className="pd-name-wrap text-sm font-medium text-white">
+              {isLoggedIn ? user.name : "Guest"}
+            </span>
+
+            <FiChevronDown
+              className={`ml-1 text-gray-300 ${
+                open ? "rotate-180" : ""
+              } transition-transform pd-chevron`}
+            />
+          </>
+        )}
       </button>
 
       {/* Dropdown menu */}
@@ -143,7 +172,7 @@ export default function ProfileDropdown({
             exit={{ opacity: 0, scale: 0.96, y: -6 }}
             transition={{ duration: 0.14 }}
             ref={menuRef}
-            className="origin-top-right border border-gray-600 absolute right-0 mt-2 w-56 rounded-lg backdrop-blur-md shadow-lg ring-1 ring-black/30 focus:outline-none z-50 pd-menu"
+            className="proflie-module origin-bottom-left border border-gray-600 absolute left-10 bottom-12 mt-2 w-56 rounded-lg backdrop-blur-md shadow-lg ring-1 ring-black/30 focus:outline-none z-50 pd-menu"
             role="menu"
             aria-orientation="vertical"
             aria-label="Profile options"
@@ -192,7 +221,7 @@ export default function ProfileDropdown({
                     <span className="pd-menu-item-label">Profile</span>
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={() => {
                       setOpen(false);
                       onSettings();
@@ -201,7 +230,7 @@ export default function ProfileDropdown({
                   >
                     <FiSettings className="pd-icon" />
                     <span className="pd-menu-item-label">Settings</span>
-                  </button>
+                  </button> */}
 
                   <button
                     onClick={() => {
@@ -213,7 +242,20 @@ export default function ProfileDropdown({
                     <FiBell className="pd-icon" />
                     <span className="pd-menu-item-label">Notifications</span>
                   </button>
+                  <div
+                    className="profile-settings w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-settings-btn"
+                    onClick={() => {
+                      setSettingsOpen(!openSettings);
+                      if (mobileOpen) closeMobile();
+                    }}
+                    title="Settings"
+                  >
+                    <button>
+                      <FiSettings />
+                    </button>
 
+                    <span className="pd-menu-item-label">Settings</span>
+                  </div>
                   <div className="h-px bg-white/6 my-1 rounded pd-divider" />
 
                   <button
@@ -247,13 +289,29 @@ export default function ProfileDropdown({
                     onClick={() => {
                       setOpen(false);
                       setOpenSignupModel(true);
-                      console.log(openSignupModel);
+                      // console.log(openSignupModel);
                     }}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-signup-btn"
                   >
                     <FiUserPlus className="pd-icon" />
                     <span className="pd-menu-item-label">Sign Up</span>
                   </button>
+                  <div
+                    className="more-settings w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-signup-btn"
+                    onClick={() => {
+                      setSettingsOpen(!openSettings);
+                      if (mobileOpen) closeMobile();
+                    }}
+                    title="Settings"
+                  >
+                    <button>
+                      <FiSettings />
+                    </button>
+
+                    <span className="settings-label text-xs sm:text-">
+                      Settings
+                    </span>
+                  </div>
                 </div>
               </>
             )}

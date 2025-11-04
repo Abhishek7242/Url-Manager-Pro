@@ -1,457 +1,602 @@
-/* Main Navbar Container */
+/* Navbar.css - styles for collapsible vertical sidebar */
+
+/* Root styling */
 .navbar-pro {
-  width: 100%;
-
-  color: var(--text);
-  font-family: "Inter", system-ui, sans-serif;
-  padding: 20px 30px 10px;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-}
-
-/* Top Row */
-.navbar-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
-/* Left Section */
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--n), #9e8bff);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  color: white;
-  font-size: 18px;
-  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3);
-}
-
-
-.brand-text h2 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-.dark-mode .brand-text h2 {
-
-  color: #000000;
-}
-
-.brand-text p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-/* Right Section Buttons */
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text);
-  font-size: 0.9rem;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-.dark-mode .nav-btn {
- 
-  color: black;
-
-  border: 1px solid var(--border);
-
-}
-
-.nav-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-.dark-mode .nav-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.nav-icon-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  color: var(--text);
-  cursor: pointer;
-}
-.dark-mode .nav-icon-btn {
-
-  border: 1px solid black;
-
-  color:black;
-
-}
-
-.nav-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* Quick Add Section */
-.quick-add {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 14px;
-  margin-top: 40px;
+  --sidebar-width: 300px;
+  --sidebar-collapsed-width: 72px;
+  --bg: rgba(18,18,20,0.55);
+  --glass: rgba(255,255,255,0.04);
+  --accent: rgba(96,165,250,0.18);
+  --text: #e6eef8;
+  position: sticky;
+  top: 16px;
+  left: 16px;
+  bottom: 16px;
+  width: var(--sidebar-width);
+  max-height: calc(100vh - 32px);
+  border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-.dark-mode .quick-add {
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid ;
+  padding: 12px;
+  gap: 12px;
+transition: width 300ms cubic-bezier(.2,.9,.2,1);
 
-}
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-.input-icon {
-  color: var(--muted);
-  font-size: 1.2rem;
-}
-
-.quick-input {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 10px 14px;
+  z-index: 99999;
   color: var(--text);
-  font-size: 0.95rem;
-  outline: none;
+    /* overflow-x: hidden;
+  overflow-y: auto; */
 }
 
-.quick-input::placeholder {
-  color: var(--muted);
+
+.navbar-pro:not(.collapsed) .tab-vertical,
+.navbar-pro:not(.collapsed) .brand-text,
+.navbar-pro:not(.collapsed) .sidebar-bottom,
+.navbar-pro:not(.collapsed) .quick-add {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  transition-delay: 120ms; /* was 80ms */
 }
 
-.quick-btn {
-  background: #f3f4f6;
-  color: #111827;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+/* Collapsed width */
+.navbar-pro.collapsed {
+  width: var(--sidebar-collapsed-width);
 }
 
-.quick-btn:hover {
-  background: #e5e7eb;
+/* Disable pointer flicker during animation */
+.navbar-pro.animating * {
+  pointer-events: none;
 }
 
-.tip {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.tip span {
-  color: var(--theme-color);
-  font-weight: 600;
-}
-
-/* Tabs */
-.nav-tabs {
+/* Top area */
+.sidebar-top {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.tab {
-  display: inline-flex;
-  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
   gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 0.9rem;
+      background: #0000003d;
+    border-radius: 10px;
+    backdrop-filter: blur(22px);
+}
+.mobile-toggle-btn.hide{
+  display: none;
+}
+/* Collapse button — visible only when expanded */
+.collapse-btn {
+  position: absolute;
+  right: 10px;
+  top: 6px;
   background: transparent;
   border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  color: var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  cursor:pointer;
+  transition: 
+    background 120ms ease,
+    transform 120ms ease,
+    opacity 200ms ease,
+    visibility 200ms ease;
+  z-index: 20;
 }
 
-.tab:hover {
-  background: rgba(255, 255, 255, 0.05);
+.collapse-btn:hover {
+  background: rgba(255,255,255,0.03);
+  transform: translateX(2px);
+}
+
+.collapse-btn svg {
+  transition: transform 300ms cubic-bezier(.2,.9,.2,1);
+  color: var(--text);
+  width: 1em;
+  height: 1em;
+}
+
+/* When collapsed, hide the button completely */
+.navbar-pro.collapsed .collapse-btn {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(10px);
+}
+
+
+/* Brand area */
+.brand-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  font-size: 20px;
+}
+.brand-icon svg {
   color: var(--text);
 }
-
-.tab.active {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+.brand-text h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.brand-text p {
+  margin:0;
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
 }
 
-.tab .count {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 2px 8px;
+/* Center brand icon when collapsed */
+.navbar-pro.collapsed .brand-name {
+  justify-content: center;
+  width: 100%;
+}
+.navbar-pro.collapsed .brand-icon {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Quick add section */
+.quick-add {
+  padding: 8px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+.input-wrapper {
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.input-icon {
+  opacity: 0.9;
+  font-size: 18px;
+}
+.quick-input {
+  flex:1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  padding: 8px 6px;
+  font-size: 13px;
+}
+.quick-btn {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgba(96,165,250,0.16), rgba(139,92,246,0.14));
+  font-weight: 600;
+  color: #fff;
+  font-size: 13px;
+}
+.nav-settings {
+  /* position: absolute; */
+  right: 40px;
+  top: 21px;
+  padding: 12px;
+  font-size: 24px;
+  /* border-radius: 50%; */
+  cursor: pointer;
+  z-index: 1;
+
+  /* 🌞 Sun Glow Gradient */
+  color: #ffffff;
+
+  /* 🔆 Glow and Glass effect */
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+
+
+  /* Smooth transitions */
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+}
+.nav-settings button {
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+
+}
+
+/* 🌤️ Hover: gentle spin + radiant pulse */
+.nav-settings:hover button {
+  transform: rotate(90deg);
+
+}
+/* Hide quick add when collapsed */
+.navbar-pro.collapsed .quick-add {
+  opacity: 0;
+  transform: translateX(-8px);
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Nav links */
+.nav-tabs-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 6px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  transition: opacity 220ms ease;
+
+  /* Hide scrollbar visually but keep scroll functionality */
+  scrollbar-width: none; /* Firefox */
+}
+
+.nav-tabs-vertical::-webkit-scrollbar {
+  width: 0; /* Chrome, Safari */
+  height: 0;
+}
+
+.nav-tabs-vertical::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.collapsed .nav-tabs-vertical {
+ padding: 6px 0;
+}
+.tab-vertical {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding: 0 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  position: relative;
+ border: 2px solid rgba(0, 0, 255, 0);
+  transition: background 160ms ease, transform 120ms ease, opacity 200ms ease,border 160ms ease;
+
+}
+.tab-vertical:hover {
+ border: 2px solid rgba(0, 255, 238, 0.555);
+}
+.tab-icon {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  font-size:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));
+}
+.tab-icon svg {
+  color: var(--text);
+}
+.tab-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.tab-meta {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: bolder;
+  opacity: 0.85;
+  background: rgba(255, 255, 255, 0.13);
+  padding: 4px 8px;
   border-radius: 999px;
-  font-size: 0.8rem;
-  color: #fff;
 }
 
-/* Loading animation */
-.animate-spin {
-  animation: spin 1s linear infinite;
+/* Active link look */
+.tab-vertical.active {
+    background: linear-gradient(135deg, rgb(13 122 255 / 57%), rgb(127 20 20 / 52%));
+  box-shadow: 0 4px 18px rgba(96,165,250,0.08);
+  border: 2px solid rgba(96,165,250,0.22);
+}
+.tab-vertical.active::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #60a5fa, #8b5cf6);
+  box-shadow: 0 6px 18px rgba(96,165,250,0.15);
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Collapsed nav: keep icons visible */
+.navbar-pro.collapsed .tab-vertical {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+  opacity: 1;
+  transform: none;
+}
+.navbar-pro.collapsed .tab-label,
+.navbar-pro.collapsed .tab-meta {
+  display: none;
 }
 
-/* Disabled button states */
-.quick-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background: #9ca3af !important;
-  color: #6b7280 !important;
+/* Tooltip for collapsed state */
+.tab-vertical[title]:hover::before {
+  content: attr(title);
+  position: absolute;
+  left: calc(100% + 14px);
+  white-space: nowrap;
+  background: rgba(0,0,0,0.78);
+  color:#fff;
+  padding:6px 8px;
+  border-radius:8px;
+  font-size:12px;
+  z-index: 999999;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+.navbar-pro:not(.collapsed) .tab-vertical[title]:hover::before {
+  content: none;
 }
 
-.quick-btn:disabled:hover {
-  background: #9ca3af !important;
-  transform: none !important;
+/* Bottom section */
+.sidebar-bottom {
+  margin-top: auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.02);
+  transition: opacity 220ms ease, transform 240ms ease;
+}
+
+/* Collapsing: hide text/extra elements only */
+.navbar-pro.collapsed .tab-label,
+.navbar-pro.collapsed .tab-meta,
+.navbar-pro.collapsed .brand-text,
+.navbar-pro.collapsed .quick-add {
+  opacity: 0;
+  transform: translateX(-8px);
+  pointer-events: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Expanded: fade in smoothly */
+.navbar-pro:not(.collapsed) .tab-vertical,
+.navbar-pro:not(.collapsed) .brand-text,
+.navbar-pro:not(.collapsed) .sidebar-bottom,
+.navbar-pro:not(.collapsed) .quick-add {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  transition-delay: 80ms;
+}
+
+/* Glow when expanding */
+@keyframes expandGlow {
+  0% { box-shadow: 0 0 0 rgba(96,165,250,0); }
+  40% { box-shadow: 0 0 20px rgba(96,165,250,0.12); }
+  100% { box-shadow: 0 0 0 rgba(96,165,250,0); }
+}
+.navbar-pro:not(.collapsed) {
+  animation: expandGlow 0.42s ease-out;
+}
+
+/* Scrollbar styling */
+.nav-tabs-vertical::-webkit-scrollbar {
+  width: 8px;
+}
+.nav-tabs-vertical::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
 }
 
 /* Responsive */
 @media (max-width: 900px) {
-  .navbar-top {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .nav-tabs {
-    flex-wrap: wrap;
-  }
-
-  .quick-btn {
-    padding: 8px 10px;
-    font-size: 0.9rem;
+  .navbar-pro {
+    left: 12px;
+    top: 12px;
+    bottom: 12px;
   }
 }
 
-/* Auth Buttons */
-.auth-btn {
-  font-weight: 600;
-  transition: all 0.2s ease;
+/* Loader spin helper */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.login-btn {
-  background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
+/* Focus accessibility */
+.tab-vertical:focus {
+  outline: 3px solid rgba(96,165,250,0.12);
+  outline-offset: 2px;
 }
+/* Navbar.responsive.css
+   Adds responsive slide-in sidebar for screens < 1000px.
+   Keeps original desktop styles untouched.
+*/
 
-.login-btn:hover {
-  background: rgba(59, 130, 246, 0.1);
-}
-
-.signup-btn {
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  color: white;
-}
-
-.signup-btn:hover {
-  background: #2563eb;
-  border-color: #2563eb;
-}
-/* =========================================================
-   🌤️ Light Mode Styles
-   ========================================================= */
-.light-mode {
-  background-color: #FAFBFD;
-  color: #111827;
-}
-
-/* Navbar */
-.light-mode .navbar-pro {
-  background: #FAFBFD;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-  color: #111827;
-}
-
-/* Brand */
-.light-mode .brand-icon {
-  background: linear-gradient(135deg, #3b82f6, #9e8bff);
-  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.25);
-}
-
-.light-mode .brand-text h2 {
-  color: #111827;
-}
-
-.light-mode .brand-text p {
-  color: #4b5563;
-}
-
-/* Buttons */
-.light-mode .nav-btn {
-  color: #111827;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: #ffffff;
-}
-
-.light-mode .nav-btn:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.light-mode .nav-icon-btn {
-  color: #111827;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: #ffffff;
-}
-
-.light-mode .nav-icon-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-/* Quick Add */
-.light-mode .quick-add {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.light-mode .quick-input {
-  background: rgba(0, 0, 0, 0.02);
-  border: 2px solid rgba(0, 0, 0, 0.08);
-  color: #111827;
-}
-
-.light-mode .quick-input::placeholder {
-  color: #6b7280;
-}
-
-.light-mode .quick-btn {
-  background: #2563eb;
-  color: #ffffff;
-}
-.light-mode .quick-input {
-  background: none;
-}
-.light-mode .quick-input:focus {
-  background: none;
+/* Mobile toggle (arrow-like button) */
+.mobile-toggle {
+  position: fixed;
+  top: 12px;
+  z-index: 100002;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   border: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text, #e6eef8);
+  cursor: pointer;
+  transition: transform 200ms ease, opacity 180ms ease, left 220ms ease;
 }
 
-.light-mode .quick-btn:hover {
-  background: #1d4ed8;
+/* Slight transform when open for tactile feedback */
+.mobile-toggle.open {
+  transform: translateX(2px) scale(1.02);
 }
 
-/* Tabs */
-.light-mode .nav-tabs {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+/* Backdrop behind mobile drawer */
+.mobile-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+.mobile-backdrop.visible {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-toggle.open{
+  right: 12px;
+}
+.mobile-toggle.hide{
+  left: 12px;
+}
+/* Mobile drawer specifics */
+@media (max-width: 1000px) {
+  /* Make the toggle visible on small screens */
+  .mobile-toggle.hide {
+    display: inline-flex;
+  }
+
+  /* Convert your sticky sidebar into a fixed, off-canvas drawer */
+  .navbar-pro {
+    /* keep your vars; override positioning for mobile */
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px; /* slightly narrower on mobile */
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0 12px 12px 0;
+    transform: translateX(-110%);
+    transition: all 320ms cubic-bezier(.2,.9,.2,1);
+    z-index: 100001; /* over content but under toggle/backdrop */
+    /* visually match desktop but slightly stronger glass */
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    padding: 12px;
+  }
+.mobile-toggle-btn{
+  display: flex;
+}
+.sidebar-bottom {
+
+    align-items: flex-start;
+ 
+}
+  /* When open (mobile) slide in */
+  .navbar-pro.mobile.open {
+    transform: translateX(0);
+  }
+
+  /* When mobile drawer is present, keep collapse-btn visible inside drawer
+     (we don't hide collapse button here because it's helpful on mobile too) */
+  .navbar-pro.collapsed {
+    /* Keep collapsed look OK on mobile: no change to width (we use fixed width) */
+  }
+
+  /* Keep brand centered at top in mobile drawer when collapsed */
+  .navbar-pro .brand-name.compact {
+  }
+
+  /* nav tabs spacing tweak for mobile */
+  .nav-tabs-vertical {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  /* ensure tooltips don't overflow off-canvas when closed */
+  .tab-vertical[title]:hover::before {
+    left: calc(100% + 8px);
+  }
+
+  /* tweak for mobile: make tab contents slightly larger and touch friendly */
+  .tab-vertical {
+    padding: 10px;
+    gap: 14px;
+    height: 56px;
+    align-items: center;
+  }
+  .tab-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  /* ensure the collapse button (desktop) remains inside drawer and visible */
+  .collapse-btn {
+    right: 10px;
+    top: 8px;
+    width: 40px;
+    height: 40px;
+  }
+
+  /* subtle entrance animation for items when opening mobile drawer */
+  .navbar-pro.mobile.open .tab-vertical {
+    transform: translateX(-6px);
+    opacity: 0;
+    animation: slideInItem 300ms ease forwards;
+    animation-delay: 120ms;
+  }
+  @keyframes slideInItem {
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* ensure backdrop sits above everything except toggle button (toggle intentionally sits above) */
+  .mobile-backdrop {
+    z-index: 100000;
+  }
+
+  /* small screens -- slightly narrower toggle placement on tiny displays */
+  @media (max-width: 420px) {
+    .mobile-toggle {
+      top: 8px;
+      width: 40px;
+      height: 40px;
+    }
+    .navbar-pro {
+      width: 260px;
+    }
+  }
 }
 
-.light-mode .tab {
-  color: #4b5563;
-}
-
-.light-mode .tab:hover {
-  background: rgba(0, 0, 0, 0.04);
-  color: #111827;
-}
-
-.light-mode .tab.active {
-  backdrop-filter: blur(12px);
-  background: #e0e0e071;
-  color: #4167ffb3;
-  border: 1px solid rgba(165, 165, 165, 0.06);
-
-  box-shadow: 0 6px 18px rgba(145, 145, 145, 0.262);
-
-}
-
-.light-mode .tab .count {
-  background: rgba(37, 99, 235, 0.15);
-  color: #2563eb;
-}
-
-/* Auth Buttons */
-.light-mode .login-btn {
-  border: 1px solid #2563eb;
-  color: #2563eb;
-}
-
-.light-mode .login-btn:hover {
-  background: rgba(37, 99, 235, 0.1);
-}
-
-.light-mode .signup-btn {
-  background: #2563eb;
-  border: 1px solid #2563eb;
-  color: #ffffff;
-}
-
-.light-mode .signup-btn:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-}
-
-/* Tips and Muted Text */
-.light-mode .tip {
-  color: #6b7280;
-}
-
-.light-mode .tip span {
-  color: #2563eb;
-}
-
-/* Disabled Buttons */
-.light-mode .quick-btn:disabled {
-  background: #d1d5db !important;
-  color: #6b7280 !important;
-}
-
-/* Adjust for inputs and placeholders */
-.light-mode input,
-.light-mode textarea {
-  background: #ffffff;
-  color: #111827;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+/* Accessibility: focus outlines for toggle */
+.mobile-toggle:focus {
+  outline: 3px solid rgba(96,165,250,0.12);
+  outline-offset: 2px;
 }

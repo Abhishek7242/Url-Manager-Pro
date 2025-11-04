@@ -89,14 +89,12 @@ setScreenLoading(false);
   // Show loading state while fetching data (same style as Dashboard)
   if (loading) {
     return (
-      <div className="relative h-full pt-32 w-full flex items-center justify-center">
         <NeonOrbitalLoader />
-      </div>
     );
   }
 
   return (
-    <div className="reminders-page">
+    <div className={`reminders-page ${reminders.length === 0 ? 'justify-center':'justify-start'}`}>
       {reminders.length === 0 ? (
        <ReminderEmptyCard/>
       ) : (

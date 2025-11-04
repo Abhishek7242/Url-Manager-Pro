@@ -5,8 +5,6 @@ import UrlContext from "../../context/url_manager/UrlContext";
 
 // Enhanced Animated ThemeDropdown with Light-mode on body behavior
 export default function ThemeDropdown() {
-
-  
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
 
@@ -69,7 +67,7 @@ export default function ThemeDropdown() {
   // Note: When theme === "system" we follow prefersDark but DON'T overwrite localStorage.
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const body = document.body;
+    const body = document.getElementById("landing_page");
 
     const apply = (t) => {
       if (t === "light") {
@@ -118,7 +116,7 @@ export default function ThemeDropdown() {
     theme === "system" ? (prefersDark ? "dark" : "light") : theme;
 
   return (
-    <div className="relative inline-block text-sm" ref={containerRef}>
+    <div className="relative inline-block text-sm " ref={containerRef}>
       <motion.button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-all duration-200 focus:outline-none"
@@ -149,7 +147,7 @@ export default function ThemeDropdown() {
             animate={{ opacity: 1, scale: 1, y: 6 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="absolute right-0 mt-2 w-44 border border-gray-800 rounded-xl shadow-xl overflow-hidden z-50 backdrop-blur-md"
+            className="theme-dropdown absolute right-0 mt-2 w-44 border border-gray-800 rounded-xl shadow-xl overflow-hidden z-50 backdrop-blur-md"
             role="menu"
           >
             {options.map((opt) => (

@@ -1,10 +1,8 @@
+// Navbar.jsx
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import {
-  FiRefreshCcw,
-  FiCommand,
-  FiMoon,
   FiLink,
   FiBell,
   FiBarChart2,
@@ -13,8 +11,28 @@ import {
   FiCopy,
   FiZap,
   FiLoader,
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiCommand,
+  FiSettings,
 } from "react-icons/fi";
+import {
+  Link2,
+  Bell,
+  BarChart3,
+  Lightbulb,
+  Copy,
+  Tag,
+  Database,
+  Command,
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  Loader2,
+} from "lucide-react";
+
 import "./CSS/Navbar.css";
+import "./CSS/Navbar.css"; // new responsive CSS (load after base styles)
 import UrlContext from "../context/url_manager/UrlContext";
 import ProfileDropdown from "./navbar/ProfileDropdown";
 import ProfileCard from "./navbar/ProfileCard";
@@ -22,7 +40,7 @@ import Login from "./auth/Login";
 import Signup from "./auth/Signup";
 import VerifyOtp from "./auth/VerifyOtp";
 import ThemeDropdown from "./navbar/ThemeDropdown";
-
+import { span } from "framer-motion/client";
 
 export default function Navbar() {
   const context = React.useContext(UrlContext);
@@ -39,31 +57,48 @@ export default function Navbar() {
     setUser,
     userInfoData,
     setUserInfoData,
+    openLoginModel,
+    setOpenLoginModel,
+    openSignupModel,
+    setOpenSignupModel,
+    openverifyOTPModel,
+    setOpenVerifyOTPModel,
+    updateRootBackground,
+    openProfileModel,
+    setOpenProfileModel,
+    openSettings,
+    setSettingsOpen,
   } = context;
 
   const location = useLocation();
-  const navigate = useNavigate();
- 
 
   useEffect(() => {
+    // let background =
+    //   localStorage.getItem("appBackground") ||
+    //   "linear-gradient(135deg, #0f0c29, #302b63, #24243e)";
+    // updateRootBackground(background);
+
     async function getUser() {
       const fetchedUser = await fetchAndLogUser();
-setUserInfoData(fetchedUser);
-      // console.log("Fetched user in Navbar:", fetchedUser);
-      if (fetchedUser) setUser(fetchedUser); // 👈 Set user here
+      setUserInfoData(fetchedUser);
+      if (fetchedUser) setUser(fetchedUser);
     }
-
     getUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [url, setUrl] = useState("");
-  const [openProfileModel, setOpenProfileModel] = useState(false);
-  const [openLoginModel, setOpenLoginModel] = useState(false);
-  const [openSignupModel, setOpenSignupModel] = useState(false);
-  const [openverifyOTPModel, setOpenVerifyOTPModel] = useState(false);
-  const [isQuickAddLoading, setIsQuickAddLoading] = useState(false);
-     const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const totalClicks = filtered.reduce((sum, u) => sum + (u.url_clicks || 0), 0);
-  
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
+  const [animating, setAnimating] = useState(false);
+
+  // NEW: mobile open state (controls slide-in on small screens)
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const totalClicks = (filtered || []).reduce(
+    (sum, u) => sum + (u.url_clicks || 0),
+    0
+  );
+
   const remindersCount = React.useMemo(() => {
     try {
       return (filtered || []).filter((u) => !!u.reminder_at).length;
@@ -71,260 +106,219 @@ setUserInfoData(fetchedUser);
       return 0;
     }
   }, [filtered]);
-  const handleQuickSubmit = async (e) => {
-    e.preventDefault();
 
-    // Prevent multiple submissions
-    if (isQuickAddLoading) return;
-
-    // Basic validation
-    if (!url.trim()) {
-      showNotify("error", "Please enter a URL.");
-      return;
-    }
-
-    setIsQuickAddLoading(true);
-
-    const newLink = {
-      title: `Link ${new Date().toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`,
-      url: url.trim(),
-      description: "no Note added",
-      status: archive ? "archived" : "active",
-      tags: [],
-      url_clicks: 0,
-      id: Date.now().toString(), // Add temporary ID for immediate display
-    };
-
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
-      // Add to URLs array immediately for real-time update
-      setUrls((prevUrls) => [newLink, ...prevUrls]);
+      const result = await logout();
+      console.log("Logout successful:", result);
 
-      // Then send to API
-      let res = await addUrl(newLink);
-      if (res) {
-        showNotify("success", "URL added successfully!");
-
-        // Refresh URLs from server to get the proper ID
-        const refreshedUrls = await getAllUrls();
-        if (refreshedUrls && refreshedUrls.data) {
-          setUrls(refreshedUrls.data);
-        }
+      if (!result.success == true) {
+        showNotify("error", "Logout failed");
+      } else {
+        showNotify("success", "Logged out successfully!");
       }
-    } catch (error) {
-      // console.error("Error adding URL:", error);
-      showNotify("error", "Failed to add URL");
-      // Remove the temporary URL if there was an error
-      setUrls((prevUrls) => prevUrls.filter((u) => u.id !== newLink.id));
+    } catch (e) {
+      // noop
     } finally {
-      setIsQuickAddLoading(false);
-      setUrl("");
+      setIsLoggingOut(false);
     }
   };
 
-const handleLogout = async () => {
-  if (isLoggingOut) return;
-  setIsLoggingOut(true);
+  const toggleCollapse = () => {
+    if (animating) return;
+    setAnimating(true);
 
-  try {
-    const result = await logout();
-    if (!result.ok) {
-      showNotify("error", "Logout failed");
+    if (collapsed) {
+      // EXPANDING
+      setCollapsed(false);
+
+      // Delay content reflow (showing labels) until width transition finishes
+      setTimeout(() => {
+        setAnimating(false);
+        document.querySelector(".navbar-pro")?.classList.add("expanded-ready");
+      }, 300); // match your CSS transition time
+    } else {
+      // COLLAPSING
+      document.querySelector(".navbar-pro")?.classList.remove("expanded-ready");
+      setCollapsed(true);
+      setTimeout(() => setAnimating(false), 300);
     }
-    // console.log("Logout successful:", result);
-    showNotify("success", "Logged out successfully!");
-  
-  } catch (e) {
-    // add later
-  } finally {
-    setIsLoggingOut(false);
-  }
-};
- const handleThemeChange = () => {
-   const root = document.documentElement;
-   
-  //  root.style.setProperty("--theme-color", "#ef7faff"); // bluish white
-  //  root.style.setProperty("--secondary-color", "#8fa8d6"); // soft blue-gray
-  document.body.classList.toggle("light-mode");
+  };
 
- };
+  // NEW: toggle mobile drawer
+  const toggleMobile = () => {
+    setMobileOpen((s) => !s);
+    // keep desktop collapsed state in sync on open for consistent look
+    if (!mobileOpen) {
+      // when opening mobile drawer, ensure it's not visually collapsed content-wise
+      // but do not change your collapse logic — only visual helper here
+      // (no state change to `collapsed` so your original logic remains unchanged)
+    }
+  };
+
+  const closeMobile = () => setMobileOpen(false);
+
+  const links = [
+    {
+      to: "/dashboard",
+      icon: <Link2 color="#b0b8ff" />,
+      label: "URLs",
+      meta: `${(filtered || []).length}`,
+    },
+    {
+      to: "/reminders",
+      icon: <Bell color="#ff6b6b" />,
+      label: "Reminders",
+      meta: `${remindersCount}`,
+    },
+    {
+      to: "/analytics",
+      icon: <BarChart3 color="#5ad2ff" />,
+      label: "Analytics",
+    },
+    {
+      to: "/suggestions",
+      icon: <Lightbulb color="#facc15" />,
+      label: "Suggestions",
+    },
+    { to: "/duplicates", icon: <Copy color="#fbbf24" />, label: "Duplicates" },
+    { to: "/tags", icon: <Tag color="#fb923c" />, label: "Tags" },
+    { to: "/storage", icon: <Database color="#a78bfa" />, label: "Storage" },
+  ];
+
   return (
-    <header className="navbar-pro">
-      {/* Login Modal */}
-      {openLoginModel && (
-        <Login
-          isOpen={openLoginModel}
-          setOpenSignupModel={setOpenSignupModel}
-          isSignUp={openSignupModel}
-          onClose={() => setOpenLoginModel(false)}
-        />
-      )}
-      {openSignupModel && (
-        <Signup
-          isLogin={openLoginModel}
-          isSignUp={openSignupModel}
-          onClose={() => setOpenSignupModel(false)}
-          setOpenLoginModel={setOpenLoginModel}
-          setOpenVerifyOTPModel={setOpenVerifyOTPModel}
-        />
-      )}
-      {openverifyOTPModel && (
-        <VerifyOtp
-          isOpen={openverifyOTPModel}
-          onClose={() => setOpenVerifyOTPModel(false)}
-          setOpenVerifyOTPModel={setOpenVerifyOTPModel}
-        />
-      )}
+    <>
+      {/* Mobile toggle (visible below 1000px via CSS) */}
+      <button
+        className={`mobile-toggle mobile-toggle-btn ${
+          mobileOpen ? "open" : "hide"
+        }`}
+        aria-expanded={mobileOpen}
+        aria-label={mobileOpen ? "Close sidebar" : "Open sidebar"}
+        onClick={toggleMobile}
+      >
+        {/* Not a classic hamburger — arrow-like icon using chevrons */}
+        {mobileOpen ? <FiChevronsLeft /> : <FiChevronsRight />}
+      </button>
 
-      {/* Top Row */}
-      <div className="navbar-top">
-        <div className="nav-left">
-          <div className="brand">
-            <div className="brand-icon">
-              <FiLink />
+      {/* backdrop for mobile when drawer open */}
+      <div
+        className={`mobile-backdrop ${mobileOpen ? "visible" : ""}`}
+        onClick={() => toggleCollapse && closeMobile}
+        aria-hidden={!mobileOpen}
+      />
+
+      {/* main sidebar — gets .open on mobile when mobileOpen true */}
+      <aside
+        className={`navbar-pro ${collapsed ? "collapsed" : ""} ${
+          animating ? "animating" : ""
+        } ${mobileOpen ? "mobile open" : ""}`}
+        aria-hidden={false}
+      >
+        {/* Top area */}
+        <div className="sidebar-top">
+          <div onClick={toggleCollapse} className="brand-name compact">
+            <div className="brand-icon" aria-hidden>
+              <FiCommand />
             </div>
-            <div className="brand-text">
-              <h2>URL Manager Pro</h2>
-              <p>
-                {filtered.length} URLs • {totalClicks} clicks • {remindersCount}{" "}
-                reminders
-              </p>
-            </div>
+            {!collapsed && (
+              <div className="brand-text" aria-hidden={collapsed}>
+                <h2>URL Manager</h2>
+                <span className="text-xs align-super">(BETA)</span>
+              </div>
+            )}
           </div>
+
+          {/* Collapse toggle - positioned on right to match image */}
+          <button
+            className="collapse-btn"
+            onClick={toggleCollapse}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand" : "Collapse"}
+          >
+            {/* rotate icon using CSS */}
+            {collapsed ? <FiChevronsRight /> : <FiChevronsLeft />}
+          </button>
         </div>
 
-        <div className="nav-right">
-          {/* <button className="nav-btn">
-            <FiRefreshCcw /> Health Check
-          </button> */}
-          {/* <button className="nav-btn">
-            <FiCommand /> Shortcuts
-          </button> */}
-          <ThemeDropdown />
+        {/* Links list */}
+        <nav className="nav-tabs-vertical" aria-label="Main navigation">
+          {links.map((l) => {
+            const active =
+              location.pathname === l.to ||
+              location.pathname.startsWith(`${l.to}/`);
+
+            return (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={`tab-vertical ${active ? "active" : ""}`}
+                title={l.label}
+                aria-current={active ? "page" : undefined}
+                onClick={() => {
+                  // Close mobile drawer when navigating on small screens
+                  if (mobileOpen) closeMobile();
+                }}
+              >
+                <div className="tab-icon">{l.icon}</div>
+                {!collapsed && (
+                  <>
+                    <div className="tab-label">{l.label}</div>
+                    {l.meta && <div className="tab-meta">{l.meta}</div>}
+                  </>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Bottom area: theme & profile */}
+        <div className="sidebar-bottom flex-col">
+          {/* {!collapsed && <ThemeDropdown />} */}
+          {/* <div
+            className="nav-settings flex items-center rounded-full justify-center gap-3"
+            onClick={() => {
+              setSettingsOpen(!openSettings);
+              if (mobileOpen) closeMobile();
+            }}
+            title="Settings"
+          >
+            <button>
+              <FiSettings />
+            </button>
+            {!collapsed && (
+              <span className="settings-label text-xs sm:text-">Settings</span>
+            )}
+          </div> */}
           {user !== null ? (
-            <>
-              <ProfileDropdown
-                onLogout={handleLogout}
-                user={user}
-                isLoggedIn={true}
-                onProfile={() => setOpenProfileModel(true)}
-              />
-              {openProfileModel ? (
-                <ProfileCard
-                  isOpen={openProfileModel}
-                  onClose={() => setOpenProfileModel(false)}
-                  user={user}
-                />
-              ) : null}
-            </>
+            <ProfileDropdown
+              onLogout={handleLogout}
+              user={user}
+              isLoggedIn={true}
+              onProfile={() => setOpenProfileModel(true)}
+              collapsed={collapsed}
+              openSettings={openSettings}
+              setSettingsOpen={setSettingsOpen}
+              mobileOpen
+              closeMobile
+            />
           ) : (
             <ProfileDropdown
               isLoggedIn={false}
               setOpenLoginModel={setOpenLoginModel}
               setOpenSignupModel={setOpenSignupModel}
               setOpenVerifyOTPModel={setOpenVerifyOTPModel}
+              collapsed={collapsed}
+              openSettings={openSettings}
+              setSettingsOpen={setSettingsOpen}
+              closeMobile
+              mobileOpen
             />
           )}
         </div>
-      </div>
-
-      {/* Quick Add Section */}
-      <div className="quick-add">
-        <form className="input-wrapper" onSubmit={handleQuickSubmit}>
-          <FiLink className="input-icon" />
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="Paste URL here for quick add..."
-            className="quick-input"
-          />
-          <button
-            type="submit"
-            className="quick-btn"
-            disabled={isQuickAddLoading || !url.trim()}
-          >
-            {isQuickAddLoading ? (
-              <>
-                <FiLoader className="animate-spin" />
-                Adding...
-              </>
-            ) : (
-              <>
-                <FiZap /> Quick Add
-              </>
-            )}
-          </button>
-        </form>
-        <p className="tip">
-          <span>Tip:</span> Press Enter to add quickly, or use the full form for
-          detailed entries
-        </p>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex justify-center">
-        <div className="nav-tabs">
-          <Link
-            to="/dashboard"
-            className={`tab ${
-              location.pathname === "/dashboard" ? "active" : ""
-            }`}
-          >
-            <FiLink /> URLs <span className="count">{filtered.length} </span>
-          </Link>
-          <Link
-            to="/reminders"
-            className={`tab ${
-              location.pathname.startsWith("/reminders") ? "active" : ""
-            }`}
-          >
-            <FiBell /> Reminders <span className="count">{remindersCount}</span>
-          </Link>
-          <Link
-            to="/analytics"
-            className={`tab ${
-              location.pathname.startsWith("/analytics") ? "active" : ""
-            }`}
-          >
-            <FiBarChart2 /> Analytics
-          </Link>
-          <Link
-            to="/suggestions"
-            className={`tab ${
-              location.pathname.startsWith("/suggestions") ? "active" : ""
-            }`}
-          >
-            <FiZap /> Suggestions
-          </Link>
-          <Link
-            to="/duplicates"
-            className={`tab ${
-              location.pathname.startsWith("/duplicates") ? "active" : ""
-            }`}
-          >
-            <FiCopy /> Duplicates
-          </Link>
-          <Link
-            to="/tags"
-            className={`tab ${
-              location.pathname.startsWith("/tags") ? "active" : ""
-            }`}
-          >
-            <FiTag /> Tags
-          </Link>
-          <Link
-            to="/storage"
-            className={`tab ${
-              location.pathname.startsWith("/storage") ? "active" : ""
-            }`}
-          >
-            <FiDatabase /> Storage
-          </Link>
-        </div>
-      </div>
-    </header>
+      </aside>
+    </>
   );
 }

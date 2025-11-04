@@ -1,360 +1,294 @@
-/* overlay */
-.modal-overlay {
+/* --------------------------------------------------
+   EDIT URL MODAL — Glassy modern design (namespaced .edit)
+   -------------------------------------------------- */
+
+.edit.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 8, 12, 0);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 60px;
-  z-index: 1000;
-  backdrop-filter: blur(0px);
-  transition: background 0.3s ease, backdrop-filter 0.3s ease;
-  animation: fadeIn 0.3s forwards;
+  z-index: 12000;
+  background: rgba(6, 10, 15, 0.6);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  transition: background 0.3s ease;
+  overflow: hidden;
 }
 
-@keyframes fadeIn {
-  from {
-    background: rgba(5, 8, 12, 0);
-    backdrop-filter: blur(0px);
-  }
-  to {
-    background: rgba(5, 8, 12, 0.55);
-    backdrop-filter: blur(8px);
-  }
-}
-
-.modal-overlay.closing {
-  animation: fadeOut 0.3s forwards;
-}
-
-@keyframes fadeOut {
-  from {
-    background: rgba(5, 8, 12, 0.55);
-    backdrop-filter: blur(8px);
-    opacity: 1;
-  }
-  to {
-    background: rgba(5, 8, 12, 0);
-    backdrop-filter: blur(0px);
-    opacity: 0;
-  }
-}
-
-/* modal card */
-.modal-card {
-  width: 520px;
-  max-width: calc(100% - 32px);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.01),
-    rgba(255, 255, 255, 0)
-  );
-  border: 1px solid var(--border);
-  padding: 22px;
-  border-radius: 10px;
-  color: var(--text);
+.edit .modal-card {
+  width: 700px;
+  max-width: calc(100% - 40px);
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  color: #f3f6ff;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  animation: edit-modal-in 0.28s ease;
   position: relative;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.6);
-  transform-origin: center top;
-  animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes modalEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+@keyframes edit-modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-12px); }
+  to { opacity: 1; transform: none; }
 }
 
-.modal-card.closing {
-  animation: modalExit 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes modalExit {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95) translateY(-20px);
-  }
-}
-
-/* close */
-.modal-close {
+/* Close button */
+.edit .modal-close {
   position: absolute;
-  right: 12px;
-  top: 10px;
-  background: transparent;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
   border: none;
-  color: var(--muted);
-  font-size: 1.05rem;
+  background: rgba(255,255,255,0.07);
+  color: white;
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: all 0.22s;
 }
-
-.modal-close:hover {
-  color: var(--text);
+.edit .modal-close:hover {
+  background: rgba(255,255,255,0.15);
   transform: rotate(90deg);
 }
 
-/* heading */
-.modal-heading {
-  margin: 0 0 12px;
-  font-size: 1.1rem;
+/* Heading */
+.edit .modal-heading {
+  font-size: 1.35rem;
   font-weight: 700;
-  color: var(--text);
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.4s 0.1s forwards;
+  margin-bottom: 14px;
+  color: white;
+  text-align: left;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* form fields */
-.modal-form {
+/* Scrollable form area */
+.edit .modal-form {
   display: flex;
   flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  max-height: calc(80vh - 90px);
+  padding-right: 6px;
 }
 
-.add-link-field.field {
+/* scrollbar */
+.edit .modal-form::-webkit-scrollbar { width: 6px; }
+.edit .modal-form::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.14);
+  border-radius: 8px;
+}
+
+/* Field row utilities */
+.edit .field-row { display: grid; gap: 14px; }
+.edit .two-col-row { grid-template-columns: 1fr; }
+@media (min-width: 760px) {
+  .edit .two-col-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* Basic field layout */
+.edit .add-link-field.field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  align-items: start;
-  background: transparent;
-  border: none;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.4s forwards;
+  gap: 6px;
+  align-items: flex-start; /* labels start-aligned */
 }
 
-.add-link-field.field:nth-child(1) {
-  animation-delay: 0.15s;
-}
-
-.add-link-field.field:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.add-link-field.field:nth-child(3) {
-  animation-delay: 0.25s;
-}
-
-.add-link-field.field:nth-child(4) {
-  animation-delay: 0.3s;
-}
-
-.field-label {
-  color: var(--muted);
-  font-size: 0.9rem;
+/* Labels */
+.edit .field-label {
   font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.9);
+  text-align: left;
 }
 
-.add-link-field.field input,
-.add-link-field.field textarea {
-  border: 2px solid rgba(255, 255, 255, 0.06);
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: 8px;
-  outline: none;
-  font-size: 0.95rem;
-  background: transparent;
+/* Inputs / textarea */
+.edit input[type="text"],
+.edit input[type="url"],
+.edit textarea,
+.edit .date-input {
   width: 100%;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.field input:focus,
-.field textarea:focus {
-  border-color: var(--n);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.12);
-}
-
-.field textarea {
-  resize: vertical;
-  min-height: 72px;
-}
-
-/* date row */
-.date-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.date-icon {
-  color: var(--muted);
-  font-size: 1rem;
-}
-.date-input {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  padding: 8px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
   outline: none;
-  font-size: 0.95rem;
+  transition: 0.22s all;
+  box-sizing: border-box;
+}
+.edit textarea { min-height: 88px; resize: vertical; }
+
+/* Focus */
+.edit input:focus, .edit textarea:focus, .edit .date-input:focus {
+  border-color: rgba(59,130,246,0.9);
+  box-shadow: 0 0 10px rgba(59,130,246,0.12);
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.03);
 }
 
-/* actions */
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 6px;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.4s 0.35s forwards;
+/* Error state */
+.edit input.error, .edit textarea.error {
+  border-color: rgba(239,68,68,0.95) !important;
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.06) !important;
 }
 
-.btn {
-  padding: 8px 14px;
-  border-radius: 8px;
+/* Tags + Date row (shared line on wide screens) */
+.edit .tags-date-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (min-width: 880px) {
+  .edit .tags-date-row { grid-template-columns: 1fr 260px; }
+}
+
+/* Tags container */
+.edit .tags-field { min-width: 0; }
+.edit .tag-input-wrap { display:flex; flex-direction:column; gap:8px; width:100%; }
+.edit .tags-list {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 6px 8px;
+  min-height: 42px;
+  overflow-x: auto;
+}
+
+/* small tag chips */
+.edit .tag-chip {
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color: #fff;
+}
+.edit .tag-cut-btn {
   border: none;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.95rem;
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn.cancel {
   background: transparent;
-  color: var(--muted);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: #ddd;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.edit .tag-cut-btn:hover { color: #ff8f8f; }
+
+/* inline tag input */
+.edit .tag-input {
+  min-width: 120px;
+  flex: 1 0 120px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-size: 0.92rem;
 }
 
-.btn.cancel:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
+/* Tag action buttons */
+.edit .tag-actions { display:flex; gap:8px; margin-top:6px; }
+.edit .btn.add-tag-btn, .edit .btn.clear-tags-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: white;
+  cursor: pointer;
+  font-weight:600;
 }
+.edit .btn.add-tag-btn:hover, .edit .btn.clear-tags-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
 
-.addbtn.btn.primary {
-  background: white;
+/* Tag limit / helper */
+.edit .tag-limit { font-size: 0.82rem; color: rgba(255,255,255,0.7); }
+.edit .tag-limit.has-error { color: #ff7777; }
+
+/* Date field */
+.edit .date-field { min-width: 0; }
+.edit .date-row {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px;
+  border-radius:10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+}
+.edit .date-row:hover { border-color: rgba(59,130,246,0.5); }
+.edit .date-icon { color: rgba(255,255,255,0.9); font-size:1rem; }
+.edit .date-input { border:none; background:transparent; outline:none; color:white; font-size:0.92rem; flex:1; }
+
+/* Datepicker styling */
+.edit .react-datepicker {
+  background: rgba(30,35,45,0.98);
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+}
+.edit .react-datepicker__day--selected { background: #2563eb; color: #fff; border-radius:8px; }
+.edit .react-datepicker__header { background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+/* Form actions */
+.edit .modal-actions {
+  display:flex;
+  gap:12px;
+    position: absolute;
+  bottom: 12px;
+  right: 42px;
+  justify-content:flex-end;
+  margin-top: 12px;
+}
+.edit .btn {
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: transparent;
+  color: white;
+  font-weight:700;
+  cursor:pointer;
+  transition: all .16s;
+}
+.edit .btn.cancel:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+
+.edit .addbtn.btn.primary {
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.88));
   color: #0b1220;
-  box-shadow: 0 8px 22px rgba(11, 18, 32, 0.18);
+  box-shadow: 0 8px 24px rgba(255,255,255,0.18);
 }
+.edit .addbtn.btn.primary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,255,255,0.22); }
+.edit .addbtn.btn.primary:disabled { opacity:0.6; cursor:not-allowed; }
 
-.addbtn.btn.primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(11, 18, 32, 0.25);
-}
+/* Field error text */
+.edit .field-error { color: #ffb4b4; font-size:0.82rem; margin-top:6px; }
 
-/* responsive */
+/* Focus outline polish for accessibility */
+.edit :focus { outline: 3px solid rgba(59,130,246,0.12); outline-offset: 2px; border-radius: 8px; }
+
+/* Responsive adjustments */
 @media (max-width: 640px) {
-  .modal-card {
-    width: 92%;
-    padding: 16px;
-  }
-  .modal-actions {
-    flex-direction: column-reverse;
-    gap: 8px;
-  }
-  .btn {
-    width: 100%;
-  }
+  .edit .modal-card { width: 92%; padding: 18px; }
+  .edit .two-col-row { grid-template-columns: 1fr; gap: 12px; }
+  .edit .modal-actions { flex-direction: column-reverse; }
+  .edit .btn, .edit .addbtn.btn.primary { width: 100%; }
 }
 
-/* make entire row clickable */
-.date-row.clickable {
-  background: #0b111600;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+/* Loading spinner */
+.edit .animate-spin {
+  animation: edit-spin 1s linear infinite;
 }
-
-.date-row.clickable:hover {
-  border-color: var(--n);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* dark style for input inside */
-.date-input {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  width: 100%;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-/* hide default calendar icon (Chrome) and use our FiCalendar icon */
-.date-input::-webkit-calendar-picker-indicator {
-  filter: invert(1) opacity(0.7);
-  cursor: pointer;
-  outline: none;
-  border: none;
-}
-
-.add-link-field.field .reminder-date-input {
-  border: none;
-  outline: none;
-}
-
-.field input:focus,
-.field textarea:focus {
-  border: none;
-  user-select: none;
-  outline: none;
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.12);
-}
-
-/* dark theme pop-up (works on browsers supporting color-scheme) */
-input[type="date"] {
-  color-scheme: dark;
-}
-
-/* Error states */
-.field input.error,
-.field textarea.error {
-  border-color: #ef4444 !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-}
-
-.field-error {
-  color: #ef4444;
-  font-size: 0.8rem;
-  margin-top: 4px;
-  font-weight: 500;
-}
-
-/* Loading animation */
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Disabled button states */
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.btn:disabled:hover {
-  transform: none !important;
-  box-shadow: none !important;
+@keyframes edit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

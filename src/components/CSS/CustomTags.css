@@ -1,0 +1,626 @@
+/* CustomTags.css
+   Dark rounded pill tags with icon, quick-add, selection and remove button.
+   Responsive breakpoints added: desktop -> tablet -> mobile -> 360px -> 320px -> 280px
+*/
+
+:root {
+  --ct-bg: rgba(255, 255, 255, 0.02);
+  --ct-panel-bg: rgba(0, 0, 0, 0.4);
+  --ct-pill-bg: rgba(255, 255, 255, 0.03);
+  --ct-pill-border: rgba(255, 255, 255, 0.04);
+  --ct-text: #fff;
+  --ct-muted: rgba(255, 255, 255, 0.7);
+  --ct-accent: linear-gradient(90deg, #2563eb, #7c3aed);
+  --ct-radius: 20px;
+  --ct-gap: 12px;
+  font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system,
+    "Helvetica Neue", Arial;
+}
+
+/* Container */
+.ct-tags-wrap {
+  box-sizing: border-box;
+}
+
+/* small count badge */
+.ct-pill-count {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.18)
+  );
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  color: white;
+  font-weight: 600;
+  font-size: 10px;
+}
+.ct-pill-count .count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+/* tags container: allow wrap + horizontal scroll on larger single-row designs */
+.ct-tags {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-gap);
+  padding: 10px;
+  -webkit-overflow-scrolling: touch;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+/* example per-id custom icon colors (kept) */
+#Work .ct-pill-left svg {
+  color: #750048;
+}
+#Research .ct-pill-left svg {
+  color: #2563eb;
+}
+#Education .ct-pill-left svg {
+  color: #760c82;
+}
+
+/* pill base */
+.ct-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: var(--ct-radius);
+  background: var(--ct-pill-bg);
+  border: 1px solid var(--ct-pill-border);
+  color: var(--ct-text);
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.45);
+  cursor: pointer;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.18)
+  );
+  transition: transform 140ms ease, box-shadow 140ms ease, opacity 120ms ease;
+  flex: 0 0 auto; /* prevent stretching when wrapping */
+  margin-bottom: 8px; /* spacing when wrapping to multiple rows */
+}
+
+/* left icon area */
+.ct-pill-left {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* icon sizing */
+.ct-pill-icon {
+  width: 16px;
+  height: 16px;
+  color: yellow;
+}
+
+/* label */
+.ct-pill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  color: var(--ct-text);
+  font-size: 13px;
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* selected state */
+.ct-pill.selected {
+  background: var(--ct-accent);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.14);
+  transform: translateY(-3px);
+}
+
+/* Quick Add pill style */
+.ct-pill-quick {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: #fff;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* remove button (x) */
+.ct-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+.ct-remove-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* input pill */
+.ct-input-pill {
+  min-width: 140px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: var(--ct-radius);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  flex: 0 0 auto;
+  margin-bottom: 8px;
+}
+
+.ct-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ct-text);
+  font-size: 13px;
+  font-weight: 700;
+  width: 100%;
+  min-width: 40px;
+}
+
+/* visual polish */
+.ct-pill:hover,
+.ct-pill-quick:hover,
+.ct-remove-btn:hover {
+  transform: translateY(-3px);
+  opacity: 0.98;
+}
+.work-tag{
+  color: rgb(206, 0, 138);
+}
+.research-tag{
+  color: rgb(0, 4, 255);
+}
+.education-tag{
+  color: rgb(148, 0, 212);
+}
+/* scrollbar styling */
+.ct-tags::-webkit-scrollbar {
+  height: 8px;
+}
+.ct-tags::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.ct-add-more {
+  position: relative;
+  display: inline-block;
+  margin-left: 6px;
+  margin-bottom: 8px;
+}
+
+.ct-add-btn {
+  background: rgba(67, 67, 67, 0.267);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: #b5b5ff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.ct-add-btn:hover {
+  background: rgba(103, 84, 248, 0.15);
+  transform: rotate(90deg);
+}
+
+.ct-dropdown {
+  position: absolute;
+  top: 38px;
+  right: 0;
+  min-width: 180px;
+  background: rgb(137, 137, 137);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  color: #eaeaea;
+  z-index: 20;
+  padding: 6px 0;
+  animation: fadeIn 0.15s ease-in;
+}
+.ct-dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.ct-dropdown-item:hover {
+  background: rgba(103, 84, 248, 0.15);
+  color: #fff;
+}
+.ct-dropdown-empty {
+  padding: 8px 12px;
+  color: #777;
+  font-size: 13px;
+  text-align: center;
+}
+.ct-enable-text {
+  font-size: 12px;
+  color: #9d9dff;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus state (kept) */
+.ct-tags-wrap.focus {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* ----------------------------
+   Responsive adjustments
+   ---------------------------- */
+
+/* Large tablets / small laptops */
+@media (max-width: 1224px) {
+
+.ct-tags-wrap {
+  width: 800px;
+  overflow-x: auto;
+  scrollbar-width: thin;               /* Firefox */
+  scrollbar-color: rgba(255,255,255,0.3) transparent; /* Firefox colors */
+}
+
+/* For Chrome, Edge, and Safari */
+.ct-tags-wrap::-webkit-scrollbar {
+  height: 4px;                         /* Very thin horizontal bar */
+}
+
+.ct-tags-wrap::-webkit-scrollbar-track {
+  background: transparent;             /* Hide track background */
+}
+
+.ct-tags-wrap::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3);   /* Soft white thumb */
+  border-radius: 999px;                /* Rounded ends */
+}
+
+.ct-tags-wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.5);   /* Slightly brighter on hover */
+}
+
+
+}
+@media (max-width: 1024px) {
+  :root {
+    --ct-gap: 10px;
+  }
+  .ct-tags-wrap {
+  width:100%;
+}
+  .ct-pill {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+  .ct-pill-left {
+    width: 26px;
+    height: 26px;
+  }
+  .ct-pill-icon {
+    width: 14px;
+    height: 14px;
+  }
+  .ct-pill-label {
+    max-width: 180px;
+    font-size: 12px;
+  }
+  .ct-input-pill {
+    min-width: 120px;
+    height: 38px;
+  }
+  .ct-add-btn {
+    width: 28px;
+    height: 28px;
+  }
+  .ct-pill-count {
+    font-size: 9px;
+  }
+}
+
+/* Tablets and large phones */
+@media (max-width: 768px) {
+  :root {
+    --ct-gap: 8px;
+    --ct-radius: 16px;
+  }
+  .ct-tags {
+    padding: 8px;
+    gap: var(--ct-gap);
+  }
+  .ct-pill {
+    padding: 7px 10px;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .ct-pill-left {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+  }
+  .ct-pill-icon {
+    width: 13px;
+    height: 13px;
+  }
+  .ct-pill-label {
+    max-width: 140px;
+    font-size: 12px;
+  }
+  .ct-input-pill {
+    min-width: 110px;
+    height: 36px;
+  }
+  .ct-add-btn {
+    width: 26px;
+    height: 26px;
+  }
+  .ct-dropdown {
+    top: 34px;
+    min-width: 160px;
+  }
+}
+
+/* Narrow phones */
+@media (max-width: 480px) {
+  :root {
+    --ct-gap: 6px;
+    --ct-radius: 14px;
+  }
+  .ct-tags {
+    padding: 6px;
+    gap: var(--ct-gap);
+  }
+  .ct-pill {
+    padding: 6px 8px;
+    font-size: 12px;
+    border-radius: 14px;
+    gap: 0;
+  }
+  .ct-pill-left {
+    width: 22px;
+    height: 22px;
+  }
+  .ct-pill-icon {
+    width: 12px;
+    height: 12px;
+  }
+  .ct-pill-label {
+    max-width: 120px;
+    font-size: 12px;
+  }
+    .ct-pill .ct-pill-label {
+   display: none;
+  }
+  .ct-input-pill {
+    min-width: 90px;
+    height: 34px;
+    padding: 5px 8px;
+  }
+  .ct-add-btn {
+    width: 24px;
+    height: 24px;
+  }
+  .ct-remove-btn {
+    width: 22px;
+    height: 22px;
+  }
+  .ct-pill-count {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+}
+
+/* Very small phones (360px and similar) */
+@media (max-width: 360px) {
+  :root {
+    --ct-gap: 6px;
+  }
+  .ct-tags {
+    padding: 4px;
+    gap: 6px;
+  }
+  .ct-pill {
+    padding: 5px 8px;
+    font-size: 11px;
+    border-radius: 12px;
+  }
+
+  .ct-pill-left {
+    width: 20px;
+    height: 20px;
+  }
+  .ct-pill-icon {
+    width: 11px;
+    height: 11px;
+  }
+  .ct-pill-label {
+    max-width: 100px;
+    font-size: 11px;
+  }
+  .ct-input-pill {
+    min-width: 80px;
+    height: 32px;
+  }
+  .ct-add-btn {
+    width: 22px;
+    height: 22px;
+  }
+  .ct-dropdown {
+    right: -4px;
+    min-width: 140px;
+    top: 30px;
+  }
+  .stats-card {
+    padding: 0px;
+   justify-content: center;
+   width: 100%;
+}
+}
+
+/* Extra small / cramped phones (320px and below) */
+@media (max-width: 320px) {
+  :root {
+    --ct-gap: 5px;
+    --ct-radius: 10px;
+  }
+  .ct-tags {
+    padding: 4px 6px;
+    gap: var(--ct-gap);
+  }
+  .ct-pill {
+    padding: 4px 6px;
+    font-size: 10px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .ct-pill-left {
+    width: 18px;
+    height: 18px;
+  }
+  .ct-pill-icon {
+    width: 10px;
+    height: 10px;
+  }
+  .ct-pill-label {
+    max-width: 80px;
+    font-size: 10px;
+  }
+  .ct-input-pill {
+    min-width: 70px;
+    height: 30px;
+    padding: 4px 6px;
+  }
+  .ct-add-btn {
+    width: 20px;
+    height: 20px;
+    transform: none;
+  }
+  .ct-remove-btn {
+    width: 20px;
+    height: 20px;
+  }
+  .ct-pill-count {
+    font-size: 8px;
+    padding: 3px 6px;
+  }
+  .ct-dropdown {
+    min-width: 120px;
+    top: 28px;
+    right: -6px;
+  }
+  /* allow tags to become multiple lines - keep left alignment */
+  .ct-tags {
+    justify-content: flex-start;
+  }
+}
+
+/* Ultra small safe fallback for 280px width devices */
+@media (max-width: 280px) {
+  :root {
+    --ct-gap: 4px;
+  }
+  .ct-tags {
+    gap: var(--ct-gap);
+    padding: 3px;
+  }
+  .ct-pill {
+    padding: 4px 5px;
+    font-size: 10px;
+    border-radius: 9px;
+  }
+  .ct-pill-left {
+    width: 16px;
+    height: 16px;
+  }
+  .ct-pill-icon {
+    width: 9px;
+    height: 9px;
+  }
+  .ct-pill-label {
+    max-width: 72px;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ct-input-pill {
+    min-width: 60px;
+    height: 28px;
+    padding: 3px 5px;
+  }
+  .ct-add-btn {
+    width: 18px;
+    height: 18px;
+  }
+  .ct-remove-btn {
+    width: 18px;
+    height: 18px;
+  }
+  .ct-dropdown {
+    min-width: 110px;
+    top: 26px;
+    right: -8px;
+  }
+}
+
+/* Accessibility & touch targets: increase hit area invisibly where needed */
+.ct-add-more,
+.ct-remove-btn,
+.ct-add-btn {
+  /* keep visual sizes small but ensure a reasonable click/tap target */
+  position: relative;
+}
+@media (pointer: coarse) {
+  .ct-add-btn,
+  .ct-remove-btn {
+    touch-action: manipulation;
+  }
+}

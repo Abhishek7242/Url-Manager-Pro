@@ -1,0 +1,217 @@
+.clock-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #c9c9c9;
+  font-family: "Inter", sans-serif;
+}
+
+.clock-container {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 20px rgba(103, 84, 248, 0.15);
+}
+
+.clock {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  background: radial-gradient(circle, #1a1a1a 70%, #111);
+}
+
+.hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  transform: rotate(0deg);
+  transition: all 0.05s ease-in-out;
+}
+
+.hand.hour {
+  width: 4px;
+  height: 35px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+.hand.minute {
+  width: 3px;
+  height: 50px;
+  background: #a6a6ff;
+  border-radius: 2px;
+}
+
+.hand.second {
+  width: 2px;
+  height: 60px;
+  background: #ff4d4d;
+  border-radius: 2px;
+}
+
+.center-dot {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.clock-label {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #9d9d9d;
+  opacity: 0.85;
+  text-align: center;
+  font-style: italic;
+}
+/* =============================
+   Clock — Responsive Overrides
+   Append to bottom of clock CSS
+   ============================= */
+
+/* Make the clock container responsive using fluid sizing */
+.clock-container {
+  width: min(180px, 34vw); /* keeps the original 180px on desktop, scales on small screens */
+  height: min(180px, 34vw);
+}
+
+/* Keep inner clock proportional */
+.clock {
+  width: calc(72%);    /* relative to .clock-container */
+  height: calc(72%);
+  max-width: 140px;
+  max-height: 140px;
+}
+
+/* Scale hands proportionally using CSS variables for easy tuning */
+:root {
+  --hand-hour-w: 4px;
+  --hand-hour-h: 35px;
+  --hand-minute-w: 3px;
+  --hand-minute-h: 50px;
+  --hand-second-w: 2px;
+  --hand-second-h: 60px;
+}
+
+/* apply variables */
+.hand.hour { width: var(--hand-hour-w); height: var(--hand-hour-h); }
+.hand.minute { width: var(--hand-minute-w); height: var(--hand-minute-h); }
+.hand.second { width: var(--hand-second-w); height: var(--hand-second-h); }
+
+/* Desktop tweak */
+@media (min-width: 900px) {
+  .clock-container { width: 180px; height: 180px; }
+  .clock { width: 130px; height: 130px; }
+  :root {
+    --hand-hour-w: 4px;
+    --hand-hour-h: 35px;
+    --hand-minute-w: 3px;
+    --hand-minute-h: 50px;
+    --hand-second-w: 2px;
+    --hand-second-h: 60px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) and (min-width: 640px) {
+  .clock-container { width: 150px; height: 150px; }
+  .clock { width: 110px; height: 110px; }
+  :root {
+    --hand-hour-w: 3.5px;
+    --hand-hour-h: 32px;
+    --hand-minute-w: 2.8px;
+    --hand-minute-h: 46px;
+    --hand-second-w: 1.8px;
+    --hand-second-h: 54px;
+  }
+}
+
+/* Large phones */
+@media (max-width: 640px) and (min-width: 420px) {
+  .clock-container { width: 140px; height: 140px; }
+  .clock { width: 100px; height: 100px; }
+  .center-dot { width: 9px; height: 9px; }
+  .clock-label { font-size: 13px; }
+  :root {
+    --hand-hour-w: 3px;
+    --hand-hour-h: 28px;
+    --hand-minute-w: 2.6px;
+    --hand-minute-h: 42px;
+    --hand-second-w: 1.6px;
+    --hand-second-h: 48px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 420px) and (min-width: 320px) {
+  .clock-container { width: 120px; height: 120px; }
+  .clock { width: 86px; height: 86px; border-width: 1.5px; }
+  .center-dot { width: 8px; height: 8px; box-shadow: 0 0 6px rgba(255,255,255,0.35); }
+  .clock-label { font-size: 12px; }
+  :root {
+    --hand-hour-w: 2.6px;
+    --hand-hour-h: 24px;
+    --hand-minute-w: 2.2px;
+    --hand-minute-h: 36px;
+    --hand-second-w: 1.4px;
+    --hand-second-h: 40px;
+  }
+}
+
+/* Very small phones / tiny devices */
+@media (max-width: 320px) {
+  .clock-container { width: 100px; height: 100px; }
+  .clock { width: 72px; height: 72px; border-width: 1px; }
+  .center-dot { width: 7px; height: 7px; }
+  .clock-label { font-size: 11px; margin-top: 10px; }
+  :root {
+    --hand-hour-w: 2.2px;
+    --hand-hour-h: 20px;
+    --hand-minute-w: 1.8px;
+    --hand-minute-h: 30px;
+    --hand-second-w: 1.2px;
+    --hand-second-h: 34px;
+  }
+}
+
+/* Tiny fallback for extremely narrow (<=280px) */
+@media (max-width: 280px) {
+  .clock-container { width: 88px; height: 88px; padding: 6px; }
+  .clock { width: 64px; height: 64px; }
+  .clock-label { font-size: 10px; }
+  :root {
+    --hand-hour-w: 2px;
+    --hand-hour-h: 18px;
+    --hand-minute-w: 1.6px;
+    --hand-minute-h: 26px;
+    --hand-second-w: 1px;
+    --hand-second-h: 28px;
+  }
+}
+
+/* Accessibility: ensure contrast & focus */
+.clock-container:focus { outline: 3px solid rgba(103,84,248,0.12); outline-offset: 4px; }
+
+/* Prevent overflow and maintain layout in fluid containers */
+.clock-wrapper { box-sizing: border-box; padding: 12px; }
+
+/* Smooth hand transitions for small updates without jumping */
+.hand { transition: transform 0.08s linear; will-change: transform; }

@@ -28,10 +28,12 @@
     "Helvetica Neue", Arial;
   color: var(--text);
   z-index: 1111111111;
-  /* full page subtle frosted backdrop */
-  background: rgba(0, 0, 0, 0.3); /* translucent layer */
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.208));
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.6);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.516);
 
-  backdrop-filter: blur(20px);
 }
 
 /* card: lighter, more transparent glass with a soft outline and elegant shadow */
@@ -126,7 +128,7 @@
 
 .headline .sub {
   margin: 6px 0 0;
-  color: var(--muted);
+  color:rgb(234, 234, 234);
   font-size: 0.92rem;
 }
 
@@ -137,8 +139,11 @@
   gap: 12px;
   margin-top: 16px; /* gives space for absolute logo-block */
 }
-.signup-form input:focus{
-  box-shadow: none;
+.signup-form input:focus
+ {
+    box-shadow: none;
+    outline: none;
+    border: none;
 }
 /* fields: darker translucent background with inner glow and subtle border */
 .signup-form .field {
@@ -238,9 +243,9 @@
 .button:focus { outline: 3px solid rgba(96,165,250,0.12); outline-offset: 2px; }
 
 /* small muted helper text */
-.helper {
+.signup-form .helper {
   font-size: 0.86rem;
-  color: var(--muted);
+  color: white;
 }
 
 /* link style inside card */
@@ -272,7 +277,7 @@ a.card-link:hover { text-decoration: underline; }
 :focus {
   outline: none;
 }
-button:focus-visible, a:focus-visible, input:focus-visible {
+button:focus-visible, a:focus-visible{
   outline: 3px solid rgba(96,165,250,0.12);
   outline-offset: 2px;
   border-radius: 8px;
@@ -290,176 +295,4 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   background: radial-gradient(60% 40% at 50% 0%, rgba(59,130,246,0.06), transparent 40%);
   filter: blur(14px);
   opacity: 0.9;
-}
-/* =========================================================
-   LIGHT MODE — Signup Page Styles
-   (Structure unchanged — only colors and transparency tuned)
-   ========================================================= */
-
-.light-mode {
-  --n: #2563eb;
-  --bg: #f8fafc;
-  --card: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,247,250,0.86));
-  --muted: #64748b;
-  --text: #0f172a;
-  --border: rgba(15, 23, 42, 0.08);
-  --glass: rgba(255, 255, 255, 0.8);
-  --glass-strong: rgba(15, 23, 42, 0.1);
-  --glass-accent: rgba(37,99,235,0.08);
-  --shadow: 0 16px 60px rgba(15, 23, 42, 0.08);
-  --transition-fast: 180ms cubic-bezier(.2,.9,.2,1);
-}
-
-/* Page: soft light background with glassy backdrop */
-.light-mode .signup-page {
-  background: rgba(255, 255, 255, 0.081);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  color: var(--text);
-}
-
-/* Card: clean white base with gentle border and depth */
-.light-mode .signup-card {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
-  color: var(--text);
-}
-
-.light-mode .signup-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.12);
-  border-color: rgba(37, 99, 235, 0.16);
-}
-
-/* Logo */
-.light-mode .logo-mark {
-  background: linear-gradient(135deg, var(--n), #93c5fd);
-  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.15),
-              inset 0 2px 8px rgba(255,255,255,0.6);
-}
-
-.light-mode .logo-text {
-  background: linear-gradient(90deg, var(--n), #60a5fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Headline text */
-.light-mode .headline h1 {
-  color: var(--text);
-}
-
-.light-mode .headline .sub {
-  color: var(--muted);
-}
-
-/* Form Fields */
-.light-mode .signup-form .field {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.6);
-  color: var(--text);
-}
-
-.light-mode .signup-form .field:focus-within {
-  border-color: rgba(37, 99, 235, 0.25);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
-  background: #ffffff;
-}
-
-/* Input */
-.light-mode .field input {
-  color: var(--text);
-  background: transparent;
-  outline: none;
-}
-.light-mode .field input::placeholder {
-  color: #64748b;
-}
-
-.light-mode .signup-form input:-webkit-autofill {
-  -webkit-text-fill-color: #000000 !important; /* Your desired text color */
-  transition: background-color 5000s ease-in-out 0s; /* Prevent yellow flash */
-}
-
-/* Optional: customize autofill background */
-input:-webkit-autofill {
-  box-shadow: 0 0 0px 1000px #0b1320 inset !important; /* background color */
-  -webkit-box-shadow: 0 0 0px 1000px #0b1320 inset !important;
-}
-
-/* Optional: border color or style */
-input:-webkit-autofill {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* 
-.light-mode .field input:focus {
-  outline: none;
-  border: none;
-  box-shadow: none;
-}
-
-.light-mode .field .icon {
-  color: var(--muted);
-}
-
-/* Password toggle */
-.light-mode .pwd-toggle {
-  color: var(--muted);
-}
-.light-mode .pwd-toggle:hover {
-  background: rgba(37, 99, 235, 0.06);
-  color: #2563eb;
-}
-.light-mode .pwd-toggle:focus {
-  outline: 2px solid rgba(37, 99, 235, 0.25);
-  background: rgba(37, 99, 235, 0.06);
-}
-
-/* Buttons */
-.light-mode .button {
-  background: linear-gradient(180deg, rgba(59,130,246,0.15), rgba(59,130,246,0.08));
-  border: 1px solid rgba(59,130,246,0.12);
-  color: #0f172a;
-  box-shadow: 0 6px 20px rgba(59,130,246,0.15);
-}
-
-.light-mode .button:hover {
-  background: linear-gradient(180deg, rgba(59,130,246,0.18), rgba(59,130,246,0.12));
-  transform: translateY(-1px);
-}
-
-.light-mode .button:focus {
-  outline: 3px solid rgba(37, 99, 235, 0.18);
-}
-
-/* Helper + link */
-.light-mode .helper {
-  color: var(--muted);
-}
-
-.light-mode a.card-link {
-  color: var(--n);
-}
-.light-mode a.card-link:hover {
-  text-decoration: underline;
-}
-
-/* Decorative glow */
-.light-mode .signup-card::after {
-  background: radial-gradient(
-    60% 40% at 50% 0%,
-    rgba(59,130,246,0.12),
-    transparent 40%
-  );
-  filter: blur(12px);
-}
-
-/* Responsive */
-@media (max-width: 520px) {
-  .light-mode .signup-card {
-    border-radius: 12px;
-    margin: 16px;
-  }
 }

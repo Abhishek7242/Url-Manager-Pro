@@ -1,0 +1,62 @@
+/* Floating (portal) menu — prevents full-width takeover */
+.more-menu--floating {
+    
+  max-width: 160px!important;
+  box-sizing: border-box;
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  background: rgba(18,18,18,0.98);
+  color: #fff;
+  z-index: 99999;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+/* menu items */
+.more-menu--floating .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.more-menu--floating .menu-item:hover,
+.more-menu--floating .menu-item:focus {
+  background: rgba(255,255,255,0.03);
+  outline: none;
+}
+
+.more-menu--floating .menu-item.danger {
+  color: #ff6b6b;
+}
+
+.more-menu--floating .mi-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.more-menu--floating .mi-label {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ensure no global .more-menu rule accidentally expands width */
+.more-menu.more-menu--floating {
+  width: auto !important;
+}

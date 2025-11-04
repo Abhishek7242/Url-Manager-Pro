@@ -6,13 +6,20 @@
   font-family: Inter, system-ui, sans-serif;
   padding: 24px;
   min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
 }
 
 /* Container Grid */
 .storage-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
 }
 
 .storage-card {
@@ -24,6 +31,11 @@
   justify-content: space-between;
   box-shadow: 0 12px 40px rgba(2, 6, 23, 0.4);
   transition: all 0.3s ease;
+    border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
 }
 .storage-card:hover{
   box-shadow: 0 18px 60px rgba(2, 6, 23, 0.6);
@@ -42,18 +54,20 @@
   font-size: 1.1rem;
   font-weight: 700;
   color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .storage-icon {
   font-size: 1.2rem;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 /* Description */
 .storage-desc {
   font-size: 0.95rem;
-  color: var(--muted);
+  color:rgb(217, 217, 217);
   margin-bottom: 20px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* Buttons */
@@ -80,6 +94,7 @@
   outline: none;
   width: 100%;
   padding: 10px 18px;
+  color: white;
 }
 
 .btn.outline:hover {
@@ -105,7 +120,7 @@
 /* Footer */
 .storage-footer {
   font-size: 0.9rem;
-  color: var(--muted);
+  color: black;
 }
 
 .storage-footer span {
@@ -119,9 +134,7 @@
     grid-template-columns: 1fr;
   }
 
-  .storage-buttons {
-    flex-direction: column;
-  }
+
 
   .btn.outline {
     width: 100%;
@@ -216,7 +229,6 @@
 }
 
 .stat-label {
-  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -240,7 +252,7 @@
 }
 
 .preview-title {
-  color: var(--text);
+  color:white;
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -305,179 +317,10 @@
 .import-cancel-btn:hover{
   background: rgba(255, 255, 255, 0.05);
 }
-
-/* =========================================================
-   🌤️ LIGHT MODE STYLES (Storage / Import Preview)
-   Append this at the end of your stylesheet
-   ========================================================= */
-.light-mode .storage-wrapper {
-  background: #FAFBFD;
-  color: #0f1720;
+@media (max-width: 330px) {
+.storage-wrapper {
+  padding: 8px;
+  padding-top: 50px;
 }
 
-/* Container & cards */
-.light-mode .storage-container {
-  /* keep layout same */
 }
-
-.light-mode .storage-card {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
-  color: #0f1720;
-}
-
-.light-mode .storage-card:hover {
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-  transform: translateY(-4px);
-}
-
-/* Header / icon / desc */
-.light-mode .storage-header h3 {
-  color: #0b1220;
-}
-
-.light-mode .storage-icon { color: #2563eb; }
-
-.light-mode .storage-desc {
-  color: #475569;
-}
-
-/* Buttons */
-.light-mode .storage-buttons { gap: 10px; }
-
-.light-mode .btn.outline {
-  border: 2px solid rgba(15, 23, 42, 0.06);
-  background: #ffffff;
-  color: #0f1720;
-}
-
-.light-mode .btn.outline:hover {
-  background: rgba(37, 99, 235, 0.06);
-}
-
-.light-mode .btn.cloud-btn {
-  background: #ffffff;
-  color: #0f1720;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
-}
-
-.light-mode .btn.cloud-btn:hover {
-  background: #f1f5f9;
-}
-
-/* Footer / muted */
-.light-mode .storage-footer {
-  color: #475569;
-}
-
-.light-mode .storage-footer span {
-  color: #0f1720;
-}
-
-/* Loading */
-.light-mode .storage-loading {
-  color: #475569;
-  background: transparent;
-}
-
-.light-mode .storage-loading .loading-icon {
-  color: #2563eb;
-}
-
-/* Import preview card */
-.light-mode .import-preview {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
-  color: #0f1720;
-}
-
-.light-mode .preview-header h3 {
-  color: #0b1220;
-}
-
-.light-mode .close-btn {
-  color: #475569;
-}
-
-.light-mode .close-btn:hover {
-  background: rgba(15, 23, 42, 0.04);
-  color: #0b1220;
-}
-
-.light-mode .preview-content { color: #0f1720; }
-
-.light-mode .preview-stats {
-  background: #f8fafc;
-  border: 1px solid rgba(15, 23, 42, 0.04);
-}
-
-.light-mode .stat-label {
-  color: #6b7280;
-}
-
-.light-mode .stat-value {
-  color: #0f1720;
-}
-
-/* preview list items */
-.light-mode .preview-item {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.04);
-  color: #0f1720;
-}
-
-.light-mode .preview-title {
-  color: #0f1720;
-}
-
-.light-mode .preview-url {
-  color: #2563eb;
-}
-
-/* preview more + actions */
-.light-mode .preview-more {
-  background: #f8fafc;
-  color: #475569;
-}
-
-.light-mode .preview-actions .btn.primary {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
-}
-
-.light-mode .preview-actions .btn.primary:hover {
-  background: #1d4ed8;
-}
-
-.light-mode .preview-actions .import-cancel-btn {
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  background: #ffffff;
-  color: #0f1720;
-}
-
-.light-mode .preview-actions .import-cancel-btn:hover {
-  background: rgba(15, 23, 42, 0.04);
-}
-
-/* primary / disabled states */
-.light-mode .btn.primary {
-  background: var(--accent, #2563eb);
-  color: #ffffff;
-}
-
-.light-mode .btn.primary:disabled,
-.light-mode .btn.primary[disabled] {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* spinner icon */
-.light-mode .spin-icon {
-  color: #2563eb;
-}
-
-/* responsive behavior remains same - no changes needed */

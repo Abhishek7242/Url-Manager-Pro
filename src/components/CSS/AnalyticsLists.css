@@ -7,6 +7,8 @@
   border: 1px solid rgba(161, 161, 161, 0.545);
   box-sizing: border-box;
   padding: 20px;
+   background: linear-gradient(180deg, rgba(0, 0, 0, 0.253), rgba(255, 255, 255, 0.158));
+
 }
 
 /* heading */
@@ -78,7 +80,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 520px;
 }
 .mv-right {
   text-align: right;
@@ -136,7 +137,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 70ch;
 }
 .recent-tags {
   display: flex;
@@ -165,7 +165,6 @@
     min-width: 90px;
   }
   .mv-url {
-    max-width: 280px;
   }
 }
 @media (max-width: 640px) {
@@ -184,125 +183,7 @@
     align-self: flex-end;
     margin-top: 8px;
   }
-}
-/* =========================================================
-   🌤️ LIGHT MODE STYLES (Analytics Lists)
-   ========================================================= */
-.light-mode {
-  --bg: #FAFBFD;
-  --card: #ffffff;
-  --muted: #64748b;
-  --text: #0f172a;
-  --border: rgba(0, 0, 0, 0.08);
-  --accent: #2563eb;
-}
-
-/* Section wrapper */
-.light-mode .analytics-section {
-  background: #ffffff;
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
-  color: var(--text);
-}
-
-/* Section Heading */
-.light-mode .section-head h3 {
-  color: var(--text);
-}
-
-/* Most visited list */
-.light-mode .most-visited-list {
-  color: var(--text);
-}
-
-.light-mode .mv-row {
-  background: #ffffff;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-}
-
-.light-mode .mv-left {
-  color: var(--text);
-}
-
-.light-mode .mv-rank {
-  background: rgba(37, 99, 235, 0.08);
-  color: #2563eb;
-}
-
-.light-mode .mv-title {
-  color: var(--text);
-}
-
-.light-mode .mv-url {
-  color: #2563eb;
-}
-
-.light-mode .mv-clicks {
-  color: var(--text);
-}
-
-.light-mode .mv-last {
-  color: var(--muted);
-}
-
-/* Recently added */
-.light-mode .recent-row {
-  background: #ffffff;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-  color: var(--text);
-}
-
-.light-mode .recent-title {
-  color: var(--text);
-}
-
-.light-mode .recent-url {
-  color: #2563eb;
-}
-
-.light-mode .recent-tags {
-  color: var(--text);
-}
-
-.light-mode .tag {
-  background: rgba(37, 99, 235, 0.08);
-  border: 1px solid rgba(37, 99, 235, 0.1);
-  color: #2563eb;
-}
-
-/* Helper muted text */
-.light-mode .muted {
-  color: var(--muted);
-}
-
-/* Responsive tweaks remain unchanged */
-@media (max-width: 980px) {
-  .light-mode .mv-right {
-    min-width: 90px;
-  }
-  .light-mode .mv-url {
-    max-width: 280px;
-  }
-}
-
-@media (max-width: 640px) {
-  .light-mode .mv-row,
-  .light-mode .recent-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .light-mode .mv-right {
-    align-self: flex-end;
-    text-align: right;
-    margin-top: 8px;
-    width: 100%;
-  }
-
-  .light-mode .recent-right {
-    align-self: flex-end;
-    margin-top: 8px;
-  }
+  .mv-rank {
+    min-width: 13px;
+    height: 25px;}
 }

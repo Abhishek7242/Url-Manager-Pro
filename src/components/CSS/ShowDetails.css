@@ -1,0 +1,204 @@
+/* =======================================================
+   ShowDetails — Glassmorphic & Animated Design
+   Namespace: showdetails-
+   ======================================================= */
+
+/* Overlay background */
+.showdetails-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 20, 0.55);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: showdetails-fadeIn 0.35s ease forwards;
+  z-index: 99999;
+}
+
+/* Main card */
+.showdetails-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  color: #f3f7ff;
+  width: 92%;
+  max-width: 680px;
+  padding: 28px;
+  animation: showdetails-slideUp 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  transform-origin: center bottom;
+  opacity: 0;
+}
+
+/* Header */
+.showdetails-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.showdetails-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.showdetails-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Buttons - glass design */
+.showdetails-btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.04);
+}
+
+.showdetails-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.12);
+}
+
+.showdetails-btn-edit {
+  color: #d4e8ff;
+}
+.showdetails-btn-delete {
+  color: #ffc6c6;
+}
+.showdetails-btn-close {
+  font-weight: bold;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Sections */
+.showdetails-section {
+  margin-top: 18px;
+  animation: showdetails-fadeIn 0.5s ease both;
+}
+
+.showdetails-section-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+/* Description */
+.showdetails-desc-text {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Link */
+.showdetails-link-anchor {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: #a6d6ff;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.showdetails-link-anchor:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #d3e9ff;
+  text-decoration: underline;
+}
+
+/* Tags */
+.showdetails-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.showdetails-tag {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  color: #fff;
+  transition: all 0.25s ease;
+}
+
+.showdetails-tag:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.12);
+}
+
+/* Reminder */
+.showdetails-reminder-text {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #e7f1ff;
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.05);
+}
+
+/* Animations */
+@keyframes showdetails-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes showdetails-slideUp {
+  from {
+    transform: translateY(40px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .showdetails-card {
+    padding: 20px;
+    width: 90%;
+  }
+  .showdetails-title {
+    font-size: 1.15rem;
+  }
+  .showdetails-btn {
+    padding: 6px 10px;
+    font-size: 0.82rem;
+  }
+}

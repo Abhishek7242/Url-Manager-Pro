@@ -157,7 +157,7 @@ export default function Login({isOpen,isSignUp, onClose, setOpenSignupModel }) {
                 <div className="remember">
                   <label className="remember-label">
                     <input type="checkbox" />
-                    <span>Remember me</span>
+                    <span className="text-white">Remember me</span>
                   </label>
                 </div>
 

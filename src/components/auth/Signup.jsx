@@ -131,7 +131,6 @@ export default function Signup({ onClose,isLogin,setOpenSignupModel,setOpenLogin
             border: "none",
             fontSize: 18,
             cursor: "pointer",
-            color: "inherit",
             padding: 6,
             lineHeight: 1,
           }}

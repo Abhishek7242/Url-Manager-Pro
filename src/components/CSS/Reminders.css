@@ -3,10 +3,10 @@
   flex-direction: column;
   min-height: 100vh;
   display: flex;
-  justify-content: start;
   align-items: center;
   font-family: "Inter", system-ui, sans-serif;
   padding: 40px;
+  width: 100%;
   /* padding-top: 170px; */
 }
 
@@ -39,11 +39,12 @@
 .reminders-titles h2 {
   margin: 0;
   font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .reminders-subtitle {
   margin: 0;
-  color: #9ca3af;
+  color: #000000;
   font-size: 0.95rem;
 }
 
@@ -106,7 +107,16 @@
 /* list styles */
 .reminders-list {
   width: 100%;
-  max-width: 920px;
+  max-width: 720px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+    border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+
 }
 
 .reminders-list-header {
@@ -146,6 +156,11 @@
   border: 1px solid rgba(31, 41, 55, 0.8);
   border-radius: 12px;
   padding: 14px 16px;
+  border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
   transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   box-shadow: 0 0 0 rgb(28, 28, 28);
 }
@@ -167,11 +182,12 @@
 }
 
 .reminder-link-icon {
-  color: #9ca3af;
+  color: #0300c0;
 }
 
 .reminder-title {
-  color: #e5e7eb;
+  color: #ffffff;
+  font-weight: bold;
   text-decoration: none;
   font-weight: 600;
   overflow: hidden;
@@ -216,12 +232,12 @@
 }
 
 .reminder-badge.upcoming {
-  background: rgba(16, 185, 129, 0.15);
-  color: #6ee7b7;
-  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(0, 81, 54, 0.416);
+  color: #9effd8;
+  border-color: rgba(0, 121, 81, 0.35);
 }
 
 .reminder-date {
-  color: #9ca3af;
+  color: #ffffff;
   font-size: 0.9rem;
 }
