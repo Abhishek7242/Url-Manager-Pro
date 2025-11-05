@@ -79,6 +79,11 @@
 /* PRICING */
 .uml-pricingcard {
   transition: transform 0.12s ease;
+
+}
+.uml-pricingcard.second {
+      filter: blur(6px);
+
 }
 
 /* NEWSLETTER */

@@ -199,51 +199,80 @@ export default function URLMgrLanding() {
 
   // canonical url (update if deploying to subpath)
   const canonicalUrl = "https://urlmg.com/";
+  // const canonicalUrl = "http://localhost:5173/";
 
   return (
     <div id="landing_page" className={`min-h-screen antialiased uml-root`}>
       {/* SEO Meta + Structured Data */}
       <Helmet>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* Basic */}
         <html lang="en" />
-        <title>URLMgr — Manage, Brand & Measure Short Links</title>
+        <title>
+          URL Manager — Shorten, Manage & Track Links | Custom Domains ·
+          Analytics
+        </title>
         <meta
           name="description"
-          content="URLMgr centralises link operations: custom domains, campaign tracking, governance and team workflows — fast and delightful UI."
+          content="URL Manager helps teams and creators shorten, brand, and measure links. Manage custom domains, campaign tracking, link governance, and analytics — all with a fast, modern interface."
         />
         <meta
           name="keywords"
-          content="url manager, save link, save url, short links, link management, link analytics, custom domains, campaign tracking"
+          content="url manager, short links, save links, link management, branded links, custom domains, link analytics, campaign tracking, url shortener, link governance"
         />
+        <meta name="author" content="URLMg" />
         <link rel="canonical" href={canonicalUrl} />
-        <meta name="robots" content="index, follow" />
+        <meta
+          name="robots"
+          content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+        />
+
+        {/* Favicons & PWA */}
+        <link rel="icon" href={`${canonicalUrl}favicon.ico`} />
+        <link rel="shortcut icon" href={`${canonicalUrl}favicon.ico`} />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href={`${canonicalUrl}apple-touch-icon.png`}
+        />
+        <link rel="manifest" href={`${canonicalUrl}site.webmanifest`} />
+        <meta name="theme-color" content="#0b1220" />
+        <meta name="msapplication-TileColor" content="#0b1220" />
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:site_name" content="URLMg" />
         <meta
           property="og:title"
-          content="URLMgr — Manage, Brand & Measure Short Links"
+          content="URL Manager — Shorten, Manage & Track Links"
         />
         <meta
           property="og:description"
-          content="Centralise link operations: custom domains, campaign tracking, governance and team workflows."
+          content="Shorten, brand, and measure links with URL Manager. Use custom domains, UTM-ready campaign tracking, team workflows, and real-time analytics — all in one place."
         />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:site_name" content="URLMgr" />
         <meta property="og:image" content={`${canonicalUrl}og-image.png`} />
+        <meta
+          property="og:image:alt"
+          content="URL Manager — Link management and analytics dashboard"
+        />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="URLMgr — Manage, Brand & Measure Short Links"
+          content="URL Manager — Shorten, Manage & Track Links"
         />
         <meta
           name="twitter:description"
-          content="Centralise link operations: custom domains, campaign tracking, governance and team workflows."
+          content="Shorten, brand, and measure links with URL Manager. Manage campaigns, domains, and analytics with an elegant and modern UI."
         />
         <meta name="twitter:image" content={`${canonicalUrl}og-image.png`} />
 
-        {/* JSON-LD structured data */}
+        {/* Structured data (JSON-LD) */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -252,35 +281,42 @@ export default function URLMgrLanding() {
                 "@type": "WebSite",
                 "@id": `${canonicalUrl}#website`,
                 url: canonicalUrl,
-                name: "URLMgr",
+                name: "URLMg",
                 description:
-                  "URLMgr centralises link operations: custom domains, campaign tracking, governance and team workflows.",
-                publisher: {
-                  "@type": "Organization",
-                  name: "URLMgr",
-                  url: canonicalUrl,
-                },
+                  "URL Manager centralises link operations: custom domains, campaign tracking, governance and team workflows with real-time analytics.",
               },
               {
                 "@type": "Organization",
                 "@id": `${canonicalUrl}#org`,
-                name: "URLMgr",
+                name: "URLMg",
                 url: canonicalUrl,
                 logo: `${canonicalUrl}logo.png`,
               },
               {
                 "@type": "SoftwareApplication",
-                name: "URLMgr",
+                name: "URL Manager",
                 operatingSystem: "Web",
                 applicationCategory: "BusinessApplication",
                 url: canonicalUrl,
                 description:
-                  "Link management, analytics and brand controls for teams and enterprises.",
+                  "URL Manager offers advanced link shortening, branding, tracking, and governance tools for teams and enterprises.",
               },
             ],
           })}
         </script>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+        {/* Helpful extras for SEO / indexing */}
+        <link
+          rel="search"
+          type="application/opensearchdescription+xml"
+          title="Search URL Manager"
+          href={`${canonicalUrl}opensearch.xml`}
+        />
+        <link
+          rel="sitemap"
+          type="application/xml"
+          href={`${canonicalUrl}sitemap.xml`}
+        />
       </Helmet>
 
       {/* NAV */}
@@ -312,7 +348,7 @@ export default function URLMgrLanding() {
             </div>
             <div className="uml-brand-text">
               <div className="font-extrabold text-lg uml-brand-title">
-                URL<span className="text-indigo-400">Mgr</span>
+                URL<span className="text-indigo-400">Mg</span>
               </div>
               <div className="text-xs text-slate-500 uml-brand-sub">
                 Manage • Brand • Analyze
@@ -405,7 +441,7 @@ export default function URLMgrLanding() {
                       UM
                     </div>
                     <div>
-                      <div className="font-semibold">URLMgr</div>
+                      <div className="font-semibold">URL Manager </div>
                       <div className="text-xs text-slate-400">
                         Manage • Brand • Analyze
                       </div>
@@ -493,7 +529,7 @@ export default function URLMgrLanding() {
                 </div>
 
                 <div className="mt-6 text-xs text-slate-400">
-                  © {new Date().getFullYear()} URLMgr
+                  © {new Date().getFullYear()} URL Manager
                 </div>
               </motion.aside>
             </>
@@ -521,7 +557,7 @@ export default function URLMgrLanding() {
             variants={heroText}
             className="mt-6 text-lg text-slate-400 uml-hero-sub"
           >
-            URLMgr centralises link operations: custom domains, campaign
+            URL Manager centralises link operations: custom domains, campaign
             tracking, governance and team workflows — all in a fast, delightful
             UI.
           </motion.p>
@@ -679,7 +715,7 @@ export default function URLMgrLanding() {
               src={
                 themeImage === "dark" ? dashboardPreviewDark : dashboardPreview
               }
-              alt="URLMgr dashboard preview showing analytics and links list"
+              alt="URL Manager dashboard preview showing analytics and links list"
               className="w-full h-[360px] object-cover uml-preview-image"
               loading="lazy"
             />
@@ -704,7 +740,7 @@ export default function URLMgrLanding() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="absolute dark:bg-slate-800 dark:border-slate-700 -right-6 -top-8 w-48 bg-white rounded-2xl p-3 shadow-lg border uml-preview-topreferrer"
+            className="absolute dark:bg-slate-800 dark:border-slate-700 -right-3 -top-8 w-48 bg-white rounded-2xl p-3 shadow-lg border uml-preview-topreferrer"
           >
             <div className="text-xs text-slate-500 uml-preview-ref-label">
               Top referrer
@@ -833,18 +869,16 @@ export default function URLMgrLanding() {
             price="$0"
             features={["500 links / mo", "Basic analytics"]}
             highlight={false}
-            comingSoon
           />
           <PricingCard
             title="Pro"
-            price="$15"
+            price="$0"
             features={[
               "5,000 links / mo",
               "Advanced analytics",
               "Custom domains",
             ]}
             highlight={true}
-            comingSoon
           />
           <PricingCard
             title="Enterprise"
@@ -914,7 +948,7 @@ export default function URLMgrLanding() {
       <footer className="border-t border-white/6 py-8 uml-footer">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-6 uml-footer-inner">
           <div className="uml-footer-brand">
-            <div className="font-bold uml-footer-name">URLMgr</div>
+            <div className="font-bold uml-footer-name">URL Manager</div>
             <div className="text-sm text-slate-400 mt-2 uml-footer-tagline">
               Manage, brand and measure links with confidence.
             </div>
@@ -937,7 +971,7 @@ export default function URLMgrLanding() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 text-center text-xs text-slate-500 mt-6 uml-footer-copyright">
-          © {new Date().getFullYear()} URLMgr — Built with ❤️
+          © {new Date().getFullYear()} URL Manager — Built with ❤️
         </div>
       </footer>
     </div>
@@ -953,10 +987,12 @@ function PricingCard({ title, price, features, highlight, comingSoon }) {
   return (
     <motion.div
       whileHover={{ scale: comingSoon ? 1 : 1.03 }}
-      className={`relative z-0 p-6 rounded-2xl shadow-lg ${baseBg} uml-pricingcard`}
+      className={`relative z-0 p-6 rounded-2xl shadow-lg ${baseBg} uml-pricingcard 
+           ${comingSoon ? "Coming soon" : highlight ? "second" : "Choose"}
+      `}
     >
       {highlight && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 px-3 py-1 rounded-full text-sm font-semibold uml-pricingcard-badge">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 px-3 py-1 rounded-full text-sm font-semibold uml-pricingcard-badge ">
           Most popular
         </div>
       )}
@@ -987,7 +1023,7 @@ function PricingCard({ title, price, features, highlight, comingSoon }) {
           aria-disabled="true"
           title={comingSoon ? "Coming soon" : ""}
         >
-          {comingSoon ? "Coming soon" : highlight ? "Get Pro" : "Choose"}
+          {comingSoon ? "Coming soon" : highlight ? "Get Pro" : "Free"}
         </button>
       </div>
       {comingSoon && (

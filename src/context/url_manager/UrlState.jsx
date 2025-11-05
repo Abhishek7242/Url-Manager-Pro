@@ -4,10 +4,10 @@ import UrlContext from "./UrlContext";
 import AuthFeatureModal from "../../components/AuthFeatureModal.jsx";
 const UrlState = (props) => {
   // http://localhost:8000/
-  // const API_BASE = "http://localhost:8000/api"; // Laravel backend
-  // const BASE = "http://localhost:8000"; // Laravel backend
-  const API_BASE = "https://urlmg.com/backend/api"; // Laravel backend
-  const BASE = "https://urlmg.com/backend"; // Laravel backend
+  const API_BASE = "http://localhost:8000/api"; // Laravel backend
+  const BASE = "http://localhost:8000"; // Laravel backend
+  // const API_BASE = "https://urlmg.com/backend/api"; // Laravel backend
+  // const BASE = "https://urlmg.com/backend"; // Laravel backend
   const [formData, setFormData] = useState({
     id: "",
     title: "",

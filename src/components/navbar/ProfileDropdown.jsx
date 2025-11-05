@@ -36,7 +36,7 @@ export default function ProfileDropdown({
   openSettings,
   setSettingsOpen,
   mobileOpen,
-  closeMobile,
+  closeMobile = () => {},
   isLoggedIn = () => false, // 👈 Pass this directly or from context
 }) {
   // const { isLoggedIn } = useContext(AuthContext); // optional if using context
@@ -300,7 +300,9 @@ export default function ProfileDropdown({
                     className="more-settings w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-signup-btn"
                     onClick={() => {
                       setSettingsOpen(!openSettings);
-                      if (mobileOpen) closeMobile();
+                      if (mobileOpen) {
+                        closeMobile();
+                      }
                     }}
                     title="Settings"
                   >

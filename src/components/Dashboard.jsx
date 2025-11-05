@@ -87,28 +87,30 @@ export default function Dashboard() {
     showDetailsView,
     setShowDetailsView,
   } = context;
-  
+
   const [loading, setLoading] = useState(true);
   const [openSerch, setOpenSerch] = useState(false);
   const [isQuickAddLoading, setIsQuickAddLoading] = useState(false);
   const [url, setUrl] = useState("");
   const [inputFocus, setInputFocus] = useState(false);
-  const [activeMode, setActiveMode] = useState(localStorage.getItem("activeUrlMode") || "list");
+  const [activeMode, setActiveMode] = useState(
+    localStorage.getItem("activeUrlMode") || "list"
+  );
   const [showDropdown, setShowDropdown] = useState(false);
-    const [disabledTags, setDisabledTags] = useState(
-      JSON.parse(localStorage.getItem("lynkr_disabled_tags")) || []
-    );
- 
-const [showMoreItems, setShowMoreItems] = useState(false);
-const [showFavourites, setShowFavourites] = useState(() => {
-  const stored = localStorage.getItem("lynkr_tabs_view");
-  return stored !== null ? stored === "true" : true;
-});
-const [hideTopSites, setHideTopSites] = useState(false);
+  const [disabledTags, setDisabledTags] = useState(
+    JSON.parse(localStorage.getItem("lynkr_disabled_tags")) || []
+  );
+
+  const [showMoreItems, setShowMoreItems] = useState(false);
+  const [showFavourites, setShowFavourites] = useState(() => {
+    const stored = localStorage.getItem("lynkr_tabs_view");
+    return stored !== null ? stored === "true" : true;
+  });
+  const [hideTopSites, setHideTopSites] = useState(false);
   const inputRef = useRef(null);
-   const [menuOpen, setMenuOpen] = useState(false);
-   const btnRef = useRef(null);
-   const menuRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const btnRef = useRef(null);
+  const menuRef = useRef(null);
 
   // close on outside click
   useEffect(() => {
@@ -143,70 +145,83 @@ const [hideTopSites, setHideTopSites] = useState(false);
 
     fetchUrls(); // call it
   }, []);
-    useEffect(() => {
-      const saved = localStorage.getItem("lynkr_toggles");
+  useEffect(() => {
+    if (search.trim() === "") {
+      // When search is empty
+      setUrlsView("");
+    } else {
+      // When search has a value
+      setUrlsView("visible");
+    }
 
-      if (saved) {
-        // 🔹 Load from localStorage
-        const toggles = JSON.parse(saved);
-        const stats = toggles.find((r) => r.id === "stats");
-        const tags = toggles.find((r) => r.id === "tags");
+    // You can add any other logic here, like filtering or fetching data
+  }, [search]); // 👈 triggers every time 'search' changes
 
-        setStatsView(stats?.enabled ? "visible" : "");
-        setTagsView(tags?.enabled ? "visible" : "");
-        setUrlsView(tags?.enabled ? "visible" : "");
-      } else {
-        // 🔹 If not present in localStorage, default both ON and save it
-        const defaultToggles = [
-          { id: "stats", label: "Lynkr Stats", enabled: true },
-          { id: "tags", label: "Lynkr Tags", enabled: true },
-        ];
+  useEffect(() => {
+    const saved = localStorage.getItem("lynkr_toggles");
 
-        localStorage.setItem("lynkr_toggles", JSON.stringify(defaultToggles));
+    if (saved) {
+      // 🔹 Load from localStorage
+      const toggles = JSON.parse(saved);
+      const stats = toggles.find((r) => r.id === "stats");
+      const tags = toggles.find((r) => r.id === "tags");
+      const urlsView = toggles.find((r) => r.id === "urls");
 
-        setStatsView("visible");
-        setTagsView("visible");
-        setUrlsView("visible");
-      }
-    }, []);
+      setStatsView(stats?.enabled ? "visible" : "");
+      setTagsView(tags?.enabled ? "visible" : "");
+      setUrlsView(urlsView?.enabled ? "visible" : "");
+    } else {
+      // 🔹 If not present in localStorage, default both ON and save it
+      const defaultToggles = [
+        { id: "stats", label: "Lynkr Stats", enabled: true },
+        { id: "tags", label: "Lynkr Tags", enabled: true },
+      ];
 
-function computeItemsPerSlide(width) {
-  if (width <= 340) return 3; // very small phones
-  if (width <= 488) return 4; // small phones
-  if (width <= 768) return 5; // tablets
-  if (width <= 1024) return 6; // small desktops
-  return 6; // large screens
-}
+      localStorage.setItem("lynkr_toggles", JSON.stringify(defaultToggles));
 
-const isClient = typeof window !== "undefined";
+      setStatsView("visible");
+      setTagsView("visible");
+      setUrlsView("visible");
+    }
+  }, []);
 
-const [itemsPerSlide, setItemsPerSlide] = useState(
-  () => (isClient ? computeItemsPerSlide(window.innerWidth) : 4) // SSR fallback
-);
+  function computeItemsPerSlide(width) {
+    if (width <= 340) return 3; // very small phones
+    if (width <= 488) return 4; // small phones
+    if (width <= 768) return 5; // tablets
+    if (width <= 1024) return 6; // small desktops
+    return 6; // large screens
+  }
 
-// Run before paint to avoid the “4 → snap” flicker
-useLayoutEffect(() => {
-  if (!isClient) return;
-  setItemsPerSlide(computeItemsPerSlide(window.innerWidth));
-}, []);
+  const isClient = typeof window !== "undefined";
 
-// Resize listener (throttled with rAF)
-useEffect(() => {
-  if (!isClient) return;
+  const [itemsPerSlide, setItemsPerSlide] = useState(
+    () => (isClient ? computeItemsPerSlide(window.innerWidth) : 4) // SSR fallback
+  );
 
-  let ticking = false;
-  const onResize = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      setItemsPerSlide(computeItemsPerSlide(window.innerWidth));
-      ticking = false;
-    });
-  };
+  // Run before paint to avoid the “4 → snap” flicker
+  useLayoutEffect(() => {
+    if (!isClient) return;
+    setItemsPerSlide(computeItemsPerSlide(window.innerWidth));
+  }, []);
 
-  window.addEventListener("resize", onResize, { passive: true });
-  return () => window.removeEventListener("resize", onResize);
-}, []);
+  // Resize listener (throttled with rAF)
+  useEffect(() => {
+    if (!isClient) return;
+
+    let ticking = false;
+    const onResize = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setItemsPerSlide(computeItemsPerSlide(window.innerWidth));
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const totalClicks = (filtered || []).reduce(
     (sum, u) => sum + (u.url_clicks || 0),
@@ -343,13 +358,11 @@ useEffect(() => {
 
   // Show loading state while fetching data
   if (loading) {
-    return (
-      <NeonOrbitalLoader/>
-    );
+    return <NeonOrbitalLoader />;
   }
   const handleQuickSubmit = async (e) => {
     e.preventDefault();
-console.log( 'handel quick submit',url);
+    console.log("handel quick submit", url);
     // Prevent multiple submissions
     if (isQuickAddLoading) return;
 
@@ -369,7 +382,7 @@ console.log( 'handel quick submit',url);
       url: url.trim(),
       description: "no Note added",
       status: archive ? "archived" : "active",
-      tags: ['#quicklink'],
+      tags: ["#quicklink"],
       url_clicks: 0,
       id: Date.now().toString(), // Add temporary ID for immediate display
     };
@@ -381,10 +394,10 @@ console.log( 'handel quick submit',url);
       // Then send to API
       let res = await addUrl(newLink);
       if (res) {
-      setUrl("");
-        setSearch("")
+        setUrl("");
+        setSearch("");
         setInputFocus(false);
-          inputRef.current?.blur();
+        inputRef.current?.blur();
         showNotify("success", "URL added successfully!");
 
         // Refresh URLs from server to get the proper ID
@@ -392,7 +405,6 @@ console.log( 'handel quick submit',url);
         if (refreshedUrls && refreshedUrls.data) {
           setUrls(refreshedUrls.data);
         }
-
       }
     } catch (error) {
       // console.error("Error adding URL:", error);
@@ -403,7 +415,7 @@ console.log( 'handel quick submit',url);
       setIsQuickAddLoading(false);
     }
   };
- 
+
   return (
     <>
       {/* <BackgroundSettings/> */}
@@ -419,13 +431,13 @@ console.log( 'handel quick submit',url);
         <FiSettings className="settings-icon" />
       </div> */}
 
-      {openSerch && (
+      {/* {openSerch && (
         <SearchFilter
           search={search}
           setSearch={setSearch}
           setOpenSerch={setOpenSerch}
         />
-      )}
+      )} */}
       <div className="dashboard">
         <AddUrlModal
           isOpen={isAddOpen}
@@ -440,7 +452,11 @@ console.log( 'handel quick submit',url);
 
         <div className="controls flex flex-col">
           {tagsView && (
-            <div className="flex justify-center gap-2 w-full items-center">
+            <div
+              className={`flex justify-center gap-2 w-full items-center ${
+                showFavourites ? "" : "show-favourites-small-width"
+              }`}
+            >
               {showFavourites ? (
                 <>
                   <CustomTags
@@ -554,22 +570,26 @@ console.log( 'handel quick submit',url);
                         {/* {hideTopSites ? "✓" : ""} */}
                       </span>
                     </button>
-                    <button
-                      className="menu-item"
-                      title="Enable disabled tags"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setShowDropdown(!showDropdown)
-                      }}
-                    >
-                      <span className="menu-left">
-                        <FiEyeOff />
-                      </span>
-                      <span className="menu-label">Disabled Tags</span>
-                      <span className="menu-check">
-                        {/* {hideTopSites ? "✓" : ""} */}
-                      </span>
-                    </button>
+                    {showFavourites ? (
+                      <button
+                        className="menu-item"
+                        title="Enable disabled tags"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setShowDropdown(!showDropdown);
+                        }}
+                      >
+                        <span className="menu-left">
+                          <FiEyeOff />
+                        </span>
+                        <span className="menu-label">Disabled Tags</span>
+                        <span className="menu-check">
+                          {/* {hideTopSites ? "✓" : ""} */}
+                        </span>
+                      </button>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 )}
               </div>
@@ -588,14 +608,10 @@ console.log( 'handel quick submit',url);
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setUrl(e.target.value);
-                  if (e.target.value == "") {
-                    setUrlsView("");
-                  } else {
-                    setUrlsView("visible");
-                  }
                 }}
                 placeholder="Search or paste a link..."
               />
+
               <div className="btn-group">
                 <button
                   type="submit"

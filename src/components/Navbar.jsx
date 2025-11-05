@@ -73,10 +73,10 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    // let background =
-    //   localStorage.getItem("appBackground") ||
-    //   "linear-gradient(135deg, #0f0c29, #302b63, #24243e)";
-    // updateRootBackground(background);
+    let background =
+      localStorage.getItem("appBackground") ||
+      "linear-gradient(135deg, #0f0c29, #302b63, #24243e)";
+    updateRootBackground(background);
 
     async function getUser() {
       const fetchedUser = await fetchAndLogUser();
@@ -206,7 +206,7 @@ export default function Navbar() {
       {/* backdrop for mobile when drawer open */}
       <div
         className={`mobile-backdrop ${mobileOpen ? "visible" : ""}`}
-        onClick={() => toggleCollapse && closeMobile}
+        onClick={closeMobile}
         aria-hidden={!mobileOpen}
       />
 
@@ -301,8 +301,8 @@ export default function Navbar() {
               collapsed={collapsed}
               openSettings={openSettings}
               setSettingsOpen={setSettingsOpen}
-              mobileOpen
-              closeMobile
+              mobileOpen={mobileOpen}
+              closeMobile={closeMobile}
             />
           ) : (
             <ProfileDropdown
@@ -313,8 +313,8 @@ export default function Navbar() {
               collapsed={collapsed}
               openSettings={openSettings}
               setSettingsOpen={setSettingsOpen}
-              closeMobile
-              mobileOpen
+              closeMobile={closeMobile}
+              mobileOpen={mobileOpen}
             />
           )}
         </div>

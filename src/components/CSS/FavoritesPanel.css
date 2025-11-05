@@ -45,7 +45,7 @@
 .lnk-fav-grid.lnk-fav-grid-6 {
  display: flex;
  flex-direction: row;
- justify-content: center;
+ justify-content: start;
  align-items: center;
 }
 

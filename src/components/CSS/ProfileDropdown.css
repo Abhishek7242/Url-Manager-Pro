@@ -9,7 +9,7 @@
   height: 100%;
  backdrop-filter: blur(10px) saturate(120%);
   -webkit-backdrop-filter: blur(10px) saturate(120%);
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.539), rgba(184, 184, 184, 0.553));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.539), rgba(0, 0, 0, 0.553));
   box-shadow: 0 8px 30px rgba(0,0,0,0.6);
   border-radius: 0.5rem;
   z-index: -1;
@@ -28,5 +28,8 @@
 }
 .more-settings{
   border-top: 2px solid gray;
+}
+.pd-logout-btn{
+      color: rgb(208 0 0);
 }
 
