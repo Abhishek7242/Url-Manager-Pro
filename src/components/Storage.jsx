@@ -33,10 +33,10 @@ export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
       setLoading(true);
       try {
         const res = await getAllUrls();
-        console.log("✅ API Response:", res.data);
+        // console.log("✅ API Response:", res.data);
         setUrls(res.data);
       } catch (err) {
-        console.error("❌ Error fetching URLs:", err);
+        // console.error("❌ Error fetching URLs:", err);
         showNotify("Error loading URLs", "error");
       } finally {
         setLoading(false);
@@ -212,7 +212,8 @@ export default function Storage({ items = [], onImportItems, onSaveToCloud }) {
               </button>
             </div>
 
-            <p className="storage-footer">Cloud saves: 0/10</p>
+            {/* <p className="storage-footer">Cloud saves: 0/10</p> */}
+            <p className="storage-footer">Coming soon</p>
           </div>
         </div>
       )}

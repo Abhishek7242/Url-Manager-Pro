@@ -404,12 +404,12 @@
   display: block;
   transition: all 0.16s ease;
 }
-.dot-btn.active .dot {
+/* .dot-btn.active .dot {
   background: #fff;
   width: 14px;
   height: 14px;
   transform: scale(1.02);
-}
+} */
 
 /* small tweaks */
 @media (max-width: 480px) {

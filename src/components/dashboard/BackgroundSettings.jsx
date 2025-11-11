@@ -1,100 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import UrlContext from "../../context/url_manager/UrlContext";
 import "../CSS/BackgroundSettings.css";
-
-const BACKGROUNDS = {
-  live: [
-    {
-      name: "Matrix Stream",
-      url: "https://wallpapercave.com/wp/wp2760959.gif",
-    },
-    {
-      name: "Aurora Flow",
-      url: "https://wallpapercave.com/wp/wp2757834.gif",
-    },
-    {
-      name: "Cyber Tunnel",
-      url: "https://www.pixelstalk.net/wp-content/uploads/2016/06/Animated-Gif-Images-Download.gif",
-    },
-    {
-      name: "Amoled Flow",
-      url: "https://cdn.wallpapersafari.com/95/37/LQSUZV.gif",
-    },
-    {
-      name: "Glowing Lines",
-      url: "https://cdn.dribbble.com/userupload/19624959/file/original-4542e8a8f3bd8017a0882363a1107498.gif",
-    },
-    {
-      name: "Cyber Wave",
-      url: "https://wallpapercave.com/wp/wp3234203.gif",
-    },
-  ],
-
-  image: [
-    {
-      name: "Aurora",
-      url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1400&q=80",
-    },
-    {
-      name: "Sunset",
-      url: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1400&q=80",
-    },
-    {
-      name: "Nature",
-      url: "https://wallpapers.com/images/hd/serene-glacial-lake-vj6jbi9cqsoa6bg1.jpg",
-    },
-    {
-      name: "Minimal Light",
-      url: "https://4kwallpapers.com/images/wallpapers/3d-background-4480x2520-9771.jpg",
-    },
-    {
-      name: "Dark Horizon",
-      url: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1400&q=80",
-    },
-    {
-      name: "City Lights",
-      url: "https://images.unsplash.com/photo-1497290756760-23ac55edf36f?auto=format&fit=crop&w=1400&q=80",
-    },
-  ],
-
-  gradient: [
-    {
-      name: "Electric Purple",
-      url: "linear-gradient(135deg, #3a0ca3, #7209b7, #f72585)",
-    },
-    {
-      name: "Blue Circuit",
-      url: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)",
-    },
-    {
-      name: "Sunset Blaze",
-      url: "linear-gradient(135deg, #ff512f, #dd2476)",
-    },
-    {
-      name: "Mint Fusion",
-      url: "linear-gradient(135deg, #00c9ff, #92fe9d)",
-    },
-    {
-      name: "Royal Dream",
-      url: "linear-gradient(135deg, #1e3c72, #2a5298)",
-    },
-    {
-      name: "Cyber Pink",
-      url: "linear-gradient(135deg, #ff758c, #ff7eb3)",
-    },
-  ],
-
-  solid: [
-    { name: "Pure Black", url: "#000000" },
-    { name: "Soft Gray", url: "#1e1e1e" },
-    { name: "Sky Blue", url: "#4da6ff" },
-    { name: "Mint Green", url: "#3fc380" },
-    { name: "Crimson Red", url: "#e63946" },
-    { name: "Royal Purple", url: "#5f0f40" },
-  ],
-};
-
 
 function PanelTile({ title, subtitle, previewStyle, onOpen }) {
   return (
@@ -147,18 +54,77 @@ function ThumbsGrid({ items = [], selected, onSelect }) {
 }
 
 export default function BackgroundSettingsFull() {
-  const { updateRootBackground } = React.useContext(UrlContext);
+  const { updateRootBackground, fetchBackgrounds } = useContext(UrlContext);
+
+  // safe default so we can reference gradient[0] etc without crash
+  const defaultBackgrounds = {
+    solid: [],
+    gradient: [],
+    image: [],
+    live: [],
+  };
+
   const [openPanel, setOpenPanel] = useState(null); // 'solid'|'gradient'|'image'|'live'
+  const [backgrounds, setBackgrounds] = useState(defaultBackgrounds);
+
+  // initialize selected from localStorage if present; otherwise empty string for now
   const [selected, setSelected] = useState(
-    localStorage.getItem("appBackground") || BACKGROUNDS.gradient[1].url
+    () => localStorage.getItem("appBackground") || ""
   );
   const [refreshOnNewTab, setRefreshOnNewTab] = useState(false);
 
+  // Fetch backgrounds once
   useEffect(() => {
-    // restore background on mount
-    updateRootBackground(selected);
+    let mounted = true;
+    async function load() {
+      try {
+        const data = await fetchBackgrounds();
+        if (!mounted) return;
+        // ensure the returned data has the expected shape
+        setBackgrounds({
+          solid: Array.isArray(data.solid) ? data.solid : [],
+          gradient: Array.isArray(data.gradient) ? data.gradient : [],
+          image: Array.isArray(data.image) ? data.image : [],
+          live: Array.isArray(data.live) ? data.live : [],
+        });
+      } catch (err) {
+        console.error("Failed to fetch backgrounds:", err);
+        // keep defaults (empty arrays)
+      }
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [fetchBackgrounds]);
+
+  // When backgrounds load, pick a sensible default if none saved
+  useEffect(() => {
+    if (selected) {
+      // if user already had a selection, ensure it's applied
+      updateRootBackground(selected);
+      return;
+    }
+
+    // choose default: gradient[1] -> gradient[0] -> image[0] -> live[0] -> first available -> ''
+    const candidate =
+      backgrounds.gradient?.[0]?.url ||
+      backgrounds.gradient?.[0]?.url ||
+      backgrounds.image?.[0]?.url ||
+      backgrounds.live?.[0]?.url ||
+      backgrounds.solid?.[0]?.url ||
+      "";
+
+    if (candidate) {
+      setSelected(candidate);
+      localStorage.setItem("appBackground", candidate);
+      updateRootBackground(candidate);
+    } else {
+      // nothing to apply yet
+      updateRootBackground(""); // or skip if you prefer
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [backgrounds]); // run when backgrounds change
 
   function open(panel) {
     setOpenPanel(panel);
@@ -175,7 +141,14 @@ export default function BackgroundSettingsFull() {
     updateRootBackground(bg);
   }
 
-  const items = openPanel ? BACKGROUNDS[openPanel] || [] : [];
+  const items = openPanel ? backgrounds[openPanel] || [] : [];
+
+  // safe previewStyle usage with optional chaining and fallback
+  const previewSolid = backgrounds.solid?.[0]?.url || "transparent";
+  const previewGradient =
+    backgrounds.gradient?.[0]?.url || "linear-gradient(#333, #666)";
+  const previewImage = backgrounds.image?.[0]?.url || "";
+  const previewLive = backgrounds.live?.[0]?.url || "";
 
   return (
     <div className="background-settings-root">
@@ -185,20 +158,22 @@ export default function BackgroundSettingsFull() {
           <PanelTile
             title="Solid colors"
             subtitle="Simple & clean"
-            previewStyle={{ background: BACKGROUNDS.solid[0].url }}
+            previewStyle={{ background: previewSolid }}
             onOpen={() => open("solid")}
           />
           <PanelTile
             title="Gradients"
             subtitle="Smooth blends"
-            previewStyle={{ background: BACKGROUNDS.gradient[0].url }}
+            previewStyle={{ background: previewGradient }}
             onOpen={() => open("gradient")}
           />
           <PanelTile
             title="Image Backgrounds"
             subtitle="Photos & scenery"
             previewStyle={{
-              background: `url(${BACKGROUNDS.image[0].url}) center/cover`,
+              background: previewImage
+                ? `url(${previewImage}) center/cover`
+                : "var(--card)",
             }}
             onOpen={() => open("image")}
           />
@@ -206,7 +181,9 @@ export default function BackgroundSettingsFull() {
             title="Live Wallpapers"
             subtitle="Animated GIFs"
             previewStyle={{
-              background: `url(${BACKGROUNDS.live[0].url}) center/cover`,
+              background: previewLive
+                ? `url(${previewLive}) center/cover`
+                : "var(--card)",
             }}
             onOpen={() => open("live")}
           />
@@ -228,18 +205,6 @@ export default function BackgroundSettingsFull() {
                 {openPanel === "live" && "Live Wallpapers"}
               </h2>
             </div>
-
-            {/* <div className="group-controls">
-              <div
-                className={`toggle-wrapper ${refreshOnNewTab ? "active" : ""}`}
-                onClick={() => setRefreshOnNewTab((prev) => !prev)}
-              >
-                <div className="toggle-slider" />
-              </div>
-              <span className="toggle-label">
-                {refreshOnNewTab ? "Auto change is ON" : "Auto change is OFF"}
-              </span>
-            </div> */}
           </div>
 
           <div className="group-body">

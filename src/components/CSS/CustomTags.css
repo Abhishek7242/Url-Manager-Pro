@@ -16,6 +16,29 @@
   font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system,
     "Helvetica Neue", Arial;
 }
+/* Make carousel scrollbar ultra-thin and elegant */
+.ct-carousel-viewport::-webkit-scrollbar {
+  height: 2px; /* very thin horizontal scrollbar */
+}
+
+.ct-carousel-viewport::-webkit-scrollbar-track {
+  background: transparent; /* keep invisible background */
+}
+
+.ct-carousel-viewport::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12); /* subtle thumb color */
+  border-radius: 999px;
+}
+
+.ct-carousel-viewport::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25); /* slightly brighter on hover */
+}
+
+/* Firefox support */
+.ct-carousel-viewport {
+  scrollbar-width: thin; /* makes it thin in Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
 
 /* Container */
 .ct-tags-wrap {
@@ -44,15 +67,25 @@
   font-size: 10px;
 }
 
-/* tags container: allow wrap + horizontal scroll on larger single-row designs */
+/* tags container */
 .ct-tags {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: var(--ct-gap);
   padding: 10px;
   -webkit-overflow-scrolling: touch;
   justify-content: flex-start;
   box-sizing: border-box;
+  min-width: 0;
+}
+.ct-carousel-slide {
+    width: 745px;
+  scroll-snap-align: start;
+  display: block;
+  vertical-align: top;
+  flex: 0 0 100%;       /* fixed to viewport width */
+  box-sizing: border-box;
+  padding: 0;
 }
 
 /* example per-id custom icon colors (kept) */
@@ -71,15 +104,14 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px;
+  padding: 4px;
   border-radius: var(--ct-radius);
   background: var(--ct-pill-bg);
-  border: 1px solid var(--ct-pill-border);
+  border: 1px solid rgba(255, 255, 255, 0.29);
   color: var(--ct-text);
   font-weight: 700;
   font-size: 14px;
   white-space: nowrap;
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.45);
   cursor: pointer;
   backdrop-filter: blur(10px) saturate(120%);
   -webkit-backdrop-filter: blur(10px) saturate(120%);
@@ -88,8 +120,7 @@
     rgba(255, 255, 255, 0.03),
     rgba(255, 255, 255, 0.18)
   );
-  transition: transform 140ms ease, box-shadow 140ms ease, opacity 120ms ease;
-  flex: 0 0 auto; /* prevent stretching when wrapping */
+  transition: background 140ms ease, box-shadow 140ms ease, opacity 120ms ease;
   margin-bottom: 8px; /* spacing when wrapping to multiple rows */
 }
 
@@ -116,7 +147,6 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  flex: 1 1 auto;
   color: var(--ct-text);
   font-size: 13px;
   line-height: 1;
@@ -131,8 +161,8 @@
 .ct-pill.selected {
   background: var(--ct-accent);
   color: #fff;
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.14);
-  transform: translateY(-3px);
+  /* box-shadow: 0 10px 30px rgba(124, 58, 237, 0.14); */
+  /* transform: translateY(-3px); */
 }
 
 /* Quick Add pill style */
@@ -142,6 +172,7 @@
   color: #fff;
   padding-left: 12px;
   padding-right: 12px;
+  /* margin-right: 12px; */
 }
 
 /* remove button (x) */
@@ -175,7 +206,6 @@
   border-radius: var(--ct-radius);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  flex: 0 0 auto;
   margin-bottom: 8px;
 }
 
@@ -194,16 +224,20 @@
 .ct-pill:hover,
 .ct-pill-quick:hover,
 .ct-remove-btn:hover {
-  transform: translateY(-3px);
+    scale: 0.98;
+
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.14);
+  /* transform: translateY(-3px); */
   opacity: 0.98;
 }
-.work-tag{
+.work-tag {
   color: rgb(206, 0, 138);
 }
-.research-tag{
+.research-tag {
   color: rgb(0, 4, 255);
 }
-.education-tag{
+.education-tag {
   color: rgb(148, 0, 212);
 }
 /* scrollbar styling */
@@ -302,41 +336,35 @@
 
 /* Large tablets / small laptops */
 @media (max-width: 1224px) {
+  .ct-tags-wrap {
+    overflow-x: auto;
+    scrollbar-width: thin; /* Firefox */
+    overflow-y: hidden;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox colors */
+  }
 
-.ct-tags-wrap {
-  width: 800px;
-  overflow-x: auto;
-  scrollbar-width: thin;               /* Firefox */
-  scrollbar-color: rgba(255,255,255,0.3) transparent; /* Firefox colors */
+  /* For Chrome, Edge, and Safari */
+  .ct-tags-wrap::-webkit-scrollbar {
+    height: 4px; /* Very thin horizontal bar */
+  }
+  .ct-tags-wrap::-webkit-scrollbar-track {
+    background: transparent; /* Hide track background */
+  }
+  .ct-tags-wrap::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3); /* Soft white thumb */
+    border-radius: 999px; /* Rounded ends */
+  }
+  .ct-tags-wrap::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5); /* Slightly brighter on hover */
+  }
 }
 
-/* For Chrome, Edge, and Safari */
-.ct-tags-wrap::-webkit-scrollbar {
-  height: 4px;                         /* Very thin horizontal bar */
-}
-
-.ct-tags-wrap::-webkit-scrollbar-track {
-  background: transparent;             /* Hide track background */
-}
-
-.ct-tags-wrap::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.3);   /* Soft white thumb */
-  border-radius: 999px;                /* Rounded ends */
-}
-
-.ct-tags-wrap::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.5);   /* Slightly brighter on hover */
-}
-
-
-}
 @media (max-width: 1024px) {
   :root {
     --ct-gap: 10px;
   }
   .ct-tags-wrap {
-  width:100%;
-}
+  }
   .ct-pill {
     padding: 7px 12px;
     font-size: 13px;
@@ -364,10 +392,14 @@
   .ct-pill-count {
     font-size: 9px;
   }
+  .ct-carousel-slide {
+    width: 275px;
+ 
+}
 }
 
 /* Tablets and large phones */
-@media (max-width: 768px) {
+@media (max-width: 788px) {
   :root {
     --ct-gap: 8px;
     --ct-radius: 16px;
@@ -406,10 +438,22 @@
     top: 34px;
     min-width: 160px;
   }
+    .ct-carousel-slide {
+        width: 210px;
+    }
 }
 
 /* Narrow phones */
+@media (max-width: 600px) {
+    .ct-carousel-slide {
+        width: 91px;
+    }
+
+} 
 @media (max-width: 480px) {
+     .ct-carousel-slide {
+        width: 101px;
+    }
   :root {
     --ct-gap: 6px;
     --ct-radius: 14px;
@@ -436,8 +480,9 @@
     max-width: 120px;
     font-size: 12px;
   }
-    .ct-pill .ct-pill-label {
-   display: none;
+  /* hide label text to preserve space */
+  .ct-pill .ct-pill-label {
+    display: none;
   }
   .ct-input-pill {
     min-width: 90px;
@@ -467,12 +512,11 @@
     padding: 4px;
     gap: 6px;
   }
-  .ct-pill {
+  /* .ct-pill {
     padding: 5px 8px;
     font-size: 11px;
     border-radius: 12px;
-  }
-
+  } */
   .ct-pill-left {
     width: 20px;
     height: 20px;
@@ -500,9 +544,9 @@
   }
   .stats-card {
     padding: 0px;
-   justify-content: center;
-   width: 100%;
-}
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 /* Extra small / cramped phones (320px and below) */
@@ -514,13 +558,14 @@
   .ct-tags {
     padding: 4px 6px;
     gap: var(--ct-gap);
+    justify-content: flex-start;
   }
-  .ct-pill {
+  /* .ct-pill {
     padding: 4px 6px;
     font-size: 10px;
     border-radius: 10px;
     margin-bottom: 6px;
-  }
+  } */
   .ct-pill-left {
     width: 18px;
     height: 18px;
@@ -555,10 +600,6 @@
     min-width: 120px;
     top: 28px;
     right: -6px;
-  }
-  /* allow tags to become multiple lines - keep left alignment */
-  .ct-tags {
-    justify-content: flex-start;
   }
 }
 
@@ -615,12 +656,195 @@
 .ct-add-more,
 .ct-remove-btn,
 .ct-add-btn {
-  /* keep visual sizes small but ensure a reasonable click/tap target */
   position: relative;
 }
 @media (pointer: coarse) {
   .ct-add-btn,
   .ct-remove-btn {
     touch-action: manipulation;
+  }
+}
+
+/* =========================
+   CustomTags carousel styles
+   ========================= */
+
+/* Make sure carousel sits on its own row and doesn't wrap with other pills */
+.ct-carousel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* Viewport that scrolls horizontally (track) */
+.ct-carousel-viewport {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  display: flex;           /* horizontal track */
+  gap: 4px;
+  flex-wrap: nowrap;       /* never wrap slides */
+  align-items: flex-start;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  padding-bottom: 6px; /* give space for dots */
+}
+
+/* Each slide should be exactly viewport width (one slide per view) */
+
+/* The grid inside each slide */
+.ct-carousel-grid {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-items: stretch;
+  grid-auto-rows: 40px;
+}
+
+/* Empty message when there are no tags on a slide */
+.ct-carousel-empty {
+  color: var(--ct-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 8px 12px;
+  text-align: center;
+  width: 100%;
+}
+
+/* Dots container */
+.ct-carousel-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Dot button */
+.ct-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
+  cursor: pointer;
+  padding: 0;
+  display: inline-block;
+  position: relative;
+}
+
+/* active dot */
+.ct-dot.active {
+  background: linear-gradient(90deg, #7c3aed, #2563eb);
+  /* transform: scale(1.25); */
+  box-shadow: 0 6px 18px rgba(39, 12, 85, 0.18);
+}
+
+/* larger clickable area for dots (accessibility) */
+.ct-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+}
+
+/* Hide native scrollbar visually but keep it available for keyboard/scroll (non-breaking) */
+.ct-carousel-viewport::-webkit-scrollbar {
+  height: 8px;
+}
+.ct-carousel-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ct-carousel-viewport::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+/* Optional: hide scrollbar for clean look but still allow scrolling */
+.ct-carousel-viewport.hide-scrollbar {
+  scrollbar-width: none; /* firefox */
+}
+.ct-carousel-viewport.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Make pills inside grid fill and behave */
+.ct-carousel-grid .ct-pill {
+  justify-content: space-between;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* When labels are hidden on tiny screens, keep pills square-ish */
+@media (max-width: 480px) {
+  .ct-carousel-grid {
+    gap: 6px;
+  }
+  .ct-carousel-slide {
+    /* padding: 4px 2px; */
+  }
+  .ct-dot {
+    width: 7px;
+    height: 7px;
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .ct-carousel-grid {
+    gap: 8px;
+  }
+}
+
+/* Small desktops */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .ct-carousel-grid {
+  }
+}
+
+/* Large screens */
+@media (min-width: 1025px) {
+  .ct-carousel-grid {
+  }
+}
+
+/* Accessibility focus styles (keyboard users) */
+.ct-carousel-viewport:focus {
+  outline: none;
+}
+.ct-carousel-viewport .ct-pill:focus,
+.ct-carousel-viewport .ct-pill:active {
+  /* box-shadow: 0 6px 26px rgba(0, 0, 0, 0.35); */
+  /* transform: translateY(-2px); */
+}
+
+/* ensure quick pill doesn't join scroll area */
+.ct-pill-quick {
+  flex: 0 0 auto;
+  /* margin-right: 12px; */
+}
+
+/* Small visual polish for interactions */
+.ct-carousel-slide .ct-pill:hover {
+  /* transform: translateY(-3px); */
+  scale: 0.98;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.14);
+}
+
+/* Ensure consistent spacing when carousel wraps below (very narrow) */
+@media (max-width: 320px) {
+  .ct-carousel-wrap {
+  }
+  .ct-carousel-grid {
+    gap: 6px;
   }
 }

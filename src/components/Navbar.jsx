@@ -68,6 +68,8 @@ export default function Navbar() {
     setOpenProfileModel,
     openSettings,
     setSettingsOpen,
+    webNotifications,
+    setWebNotifications,
   } = context;
 
   const location = useLocation();
@@ -294,6 +296,7 @@ export default function Navbar() {
           </div> */}
           {user !== null ? (
             <ProfileDropdown
+              setWebNotifications={setWebNotifications}
               onLogout={handleLogout}
               user={user}
               isLoggedIn={true}
@@ -306,6 +309,7 @@ export default function Navbar() {
             />
           ) : (
             <ProfileDropdown
+              setWebNotifications={setWebNotifications}
               isLoggedIn={false}
               setOpenLoginModel={setOpenLoginModel}
               setOpenSignupModel={setOpenSignupModel}

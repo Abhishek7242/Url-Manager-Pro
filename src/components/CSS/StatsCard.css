@@ -16,7 +16,7 @@
 /* inner card */
 .stats-card-inner {
   width: 100%;
-  max-width: 550px; /* central width */
+  max-width: 400px; /* central width */
   border-radius: 14px;
   padding: 20px 28px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
@@ -58,17 +58,17 @@ text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* each stat block */
-.stat-item {
+.stat-item.main {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 72px;
+  justify-content: space-evenly;
 }
 
 /* optional icon */
 .stat-icon {
-  width: 28px;
-  height: 28px;
+    width: 20px;
+    height: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -80,8 +80,8 @@ text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 
 /* main number */
 .stats-card .stat-value {
-  font-size: 28px;
-  font-weight: 800;
+    font-size: 24px;
+    font-weight: 500;
   line-height: 1;
   color: #ffffff;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -90,13 +90,14 @@ text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 /* highlighted middle value — makes it stand out like screenshot */
 .stat-value.highlight {
   color: #a78bfa; /* violet */
-  font-size: 30px;
+  font-size: 24px;
 }
 
 /* small label text */
 .stats-card .stat-label {
-  font-size: 15px;
+  font-size: 13px;
   opacity: 0.8;
+  gap: 3px;
   color: #f0f0f0;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.557);
 }
@@ -127,7 +128,7 @@ text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 /* small polish - tiny neon bottom glow */
 .stats-card-inner::after {
   content: "";
-  display: block;
+  display: none;
   height: 6px;
   margin-top: 10px;
   border-radius: 999px;

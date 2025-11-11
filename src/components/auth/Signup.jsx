@@ -13,6 +13,7 @@ import "../CSS/Signup.css";
 import { Link, useNavigate } from "react-router-dom";
 import UrlContext from "../../context/url_manager/UrlContext";
 import Buttons from "./Buttons";
+import { da } from "date-fns/locale";
 
 export default function Signup({ onClose,isLogin,setOpenSignupModel,setOpenLoginModel, setOpenVerifyOTPModel, isSignUp }) {
   const context = React.useContext(UrlContext);
@@ -101,6 +102,7 @@ export default function Signup({ onClose,isLogin,setOpenSignupModel,setOpenLogin
       setOpenVerifyOTPModel(true);
       onClose();
       setOtpToken(data.otp_token);
+      console.log(  data.otp_token);
     } catch (err) {
       console.error("Error sending OTP:", err);
       alert(`Error: ${err.message}`);

@@ -1,5 +1,12 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
-import { FiX, FiTag, FiZap, FiPlus } from "react-icons/fi";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useMemo,
+  useLayoutEffect,
+} from "react";
+import { FiX, FiZap } from "react-icons/fi";
 import "../CSS/CustomTags.css";
 import { Icon } from "@iconify/react";
 import UrlContext from "../../context/url_manager/UrlContext";
@@ -23,12 +30,16 @@ export default function CustomTags({
   const inputRef = useRef(null);
 
   const [tags, setTags] = useState([]);
-
   const [selected, setSelected] = useState(initialSelected || null);
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState("");
 
-  // ✅ Load from localStorage ONCE, before anything else
+  // carousel state
+  const trackRef = useRef(null);
+  const [itemsPerSlide, setItemsPerSlide] = useState(4);
+  const [slideIndex, setSlideIndex] = useState(0);
+
+  // ✅ Load from localStorage ONCE
   useEffect(() => {
     let storedDisabled = [];
     try {
@@ -38,19 +49,18 @@ export default function CustomTags({
       storedDisabled = [];
     }
 
-    setDisabledTags(storedDisabled);
+    if (typeof setDisabledTags === "function") setDisabledTags(storedDisabled);
 
-    // Filter out disabled ones
     const filteredTags = initialTags.filter(
       (t) => !storedDisabled.some((d) => d.id === t.id)
     );
     setTags(filteredTags);
-  }, []); // <- runs ONCE only, not dependent on initialTags to prevent reset
+  }, []); // run once
 
-  // ✅ When initialTags change (like remote update), merge without breaking disabled state
+  // ✅ Merge when initialTags change
   useEffect(() => {
     if (!initialTags.length) return;
-    setTags((prev) => {
+    setTags(() => {
       const filtered = initialTags.filter(
         (t) => !disabledTags.some((d) => d.id === t.id)
       );
@@ -58,7 +68,7 @@ export default function CustomTags({
     });
   }, [initialTags, disabledTags]);
 
-  // ✅ Always sync disabled tags to localStorage
+  // ✅ sync disabled tags
   useEffect(() => {
     try {
       localStorage.setItem("lynkr_disabled_tags", JSON.stringify(disabledTags));
@@ -112,6 +122,7 @@ export default function CustomTags({
     onChange(next);
     setValue("");
     setEditing(false);
+    if (inputRef.current) inputRef.current.focus();
   };
 
   // Remove tag permanently (add to disabled)
@@ -126,7 +137,7 @@ export default function CustomTags({
     ];
 
     setTags(nextVisible);
-    setDisabledTags(nextDisabled);
+    if (typeof setDisabledTags === "function") setDisabledTags(nextDisabled);
     onChange(nextVisible);
 
     if (selected === id) {
@@ -135,8 +146,9 @@ export default function CustomTags({
       setSearch("");
     }
 
-    // 🔹 Write immediately (no delay)
-    localStorage.setItem("lynkr_disabled_tags", JSON.stringify(nextDisabled));
+    try {
+      localStorage.setItem("lynkr_disabled_tags", JSON.stringify(nextDisabled));
+    } catch {}
   };
 
   // Re-enable tag
@@ -148,10 +160,12 @@ export default function CustomTags({
     const nextTags = [...tags, tagToEnable];
 
     setTags(nextTags);
-    setDisabledTags(nextDisabled);
+    if (typeof setDisabledTags === "function") setDisabledTags(nextDisabled);
     onChange(nextTags);
     setShowDropdown(false);
-    localStorage.setItem("lynkr_disabled_tags", JSON.stringify(nextDisabled));
+    try {
+      localStorage.setItem("lynkr_disabled_tags", JSON.stringify(nextDisabled));
+    } catch {}
   };
 
   // Tag selection
@@ -178,6 +192,90 @@ export default function CustomTags({
   };
 
   // ------------------------------
+  // Carousel: compute slides for non-quick tags
+  // ------------------------------
+  const otherTags = useMemo(() => {
+    return Array.isArray(tags) ? tags.slice() : [];
+  }, [tags]);
+
+  // responsive items per slide: prefer 4 but reduce on small widths
+  useLayoutEffect(() => {
+    const compute = () => {
+      const w = window.innerWidth;
+      if (w <= 340) return 3;
+      if (w <= 480) return 3;    
+      if (w <= 600) return 2;    
+      if (w <= 780) return 3;
+      if (w >= 1100) return 5;
+      return 4;
+    };
+    const apply = () => setItemsPerSlide(compute());
+    apply();
+    window.addEventListener("resize", apply, { passive: true });
+    return () => window.removeEventListener("resize", apply);
+  }, []);
+
+  // build slides
+  const slides = useMemo(() => {
+    const out = [];
+    if (!otherTags.length) return [[]];
+    for (let i = 0; i < otherTags.length; i += itemsPerSlide) {
+      out.push(otherTags.slice(i, i + itemsPerSlide));
+    }
+    return out.length ? out : [[]];
+  }, [otherTags, itemsPerSlide]);
+
+  // reset slide index when slides change length
+  useEffect(() => {
+    if (slideIndex >= slides.length)
+      setSlideIndex(Math.max(0, slides.length - 1));
+  }, [slides.length]);
+
+  // scroll track to slide
+  const scrollToSlide = (i) => {
+    const idx = Math.max(0, Math.min(i, slides.length - 1));
+    setSlideIndex(idx);
+    const track = trackRef.current;
+    if (!track) return;
+    const slideWidth = track.clientWidth || 1;
+    track.scrollTo({ left: idx * slideWidth, behavior: "smooth" });
+  };
+
+  // convert vertical wheel to horizontal inside carousel
+  useEffect(() => {
+    const node = trackRef.current;
+    if (!node) return;
+    function onWheel(e) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        node.scrollBy({ left: e.deltaY, behavior: "auto" });
+      }
+    }
+    node.addEventListener("wheel", onWheel, { passive: false });
+    return () => node.removeEventListener("wheel", onWheel);
+  }, []);
+
+  // update slideIndex from scroll
+  useEffect(() => {
+    const node = trackRef.current;
+    if (!node) return;
+    let raf;
+    function onScroll() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const slideWidth = node.clientWidth || 1;
+        const calculated = Math.round(node.scrollLeft / slideWidth);
+        setSlideIndex((prev) => (prev === calculated ? prev : calculated));
+      });
+    }
+    node.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      node.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // ------------------------------
   // UI
   // ------------------------------
   return (
@@ -199,41 +297,88 @@ export default function CustomTags({
             <FiZap className="ct-pill-icon" />
           </span>
           <span className="ct-pill-label">
-            Quick Add <span className="ct-pill-count">{quickLinksCount}</span>
+            Quick <span className="ct-pill-count">{quickLinksCount}</span>
           </span>
         </button>
 
-        {/* Active Tags */}
-        {Array.isArray(tags) &&
-          tags.map((t) => {
-            const isSelected = selected === t.id;
-            const icon = t.icon || getIconForLabel(t.label);
-            return (
-              <div
-                key={t.id}
-                className={`ct-pill ${isSelected ? "selected" : ""} ${t.label.toLowerCase()}-tag`}
-                tabIndex={0}
-                role="button"
-                aria-pressed={isSelected}
-                onClick={() => toggleSelect(t.id)}
+        {/* Carousel for other tags */}
+        <div className="ct-carousel-wrap">
+          <div
+            className="ct-carousel-viewport"
+            ref={trackRef}
+            tabIndex={0}
+            role="group"
+            aria-roledescription="carousel"
+          >
+            {slides.map((slideItems, sIdx) => (
+              <section
+                key={`ct-slide-${sIdx}`}
+                className="ct-carousel-slide"
+                aria-roledescription="slide"
+                aria-label={`Slide ${sIdx + 1} of ${slides.length}`}
+                data-slide-index={sIdx}
               >
-                <span className="ct-pill-left">{icon}</span>
-                <span className="ct-pill-label">{t.label}</span>
+                <div className="ct-carousel-grid" role="list">
+                  {slideItems.length === 0 ? (
+                    <div className="ct-carousel-empty">No tags</div>
+                  ) : (
+                    slideItems.map((t) => {
+                      const isSelected = selected === t.id;
+                      const icon = t.icon || getIconForLabel(t.label);
+                      return (
+                        <div
+                          key={t.id}
+                          id={`${t.label}`}
+                          className={`ct-pill ${isSelected ? "selected" : ""}`}
+                          tabIndex={0}
+                          role="button"
+                          aria-pressed={isSelected}
+                          onClick={() => toggleSelect(t.id)}
+                        >
+                          <div className="flex items-center justify-center">
+                            <span className="ct-pill-left">{icon}</span>
+                            <span className="ct-pill-label">{t.label}</span>
+                          </div>
 
+                          <button
+                            type="button"
+                            className="ct-remove-btn"
+                            aria-label={`Remove ${t.label}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeTag(t.id);
+                            }}
+                          >
+                            <FiX />
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </section>
+            ))}
+          </div>
+
+          {/* Dots only (no arrow buttons) */}
+          {slides.length > 1 && (
+            <div
+              className="ct-carousel-dots"
+              role="tablist"
+              aria-label="Tag slides"
+            >
+              {slides.map((_, i) => (
                 <button
-                  type="button"
-                  className="ct-remove-btn"
-                  aria-label={`Remove ${t.label}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeTag(t.id);
-                  }}
-                >
-                  <FiX />
-                </button>
-              </div>
-            );
-          })}
+                  key={`ct-dot-${i}`}
+                  className={`ct-dot ${i === slideIndex ? "active" : ""}`}
+                  onClick={() => scrollToSlide(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                  aria-current={i === slideIndex ? "true" : "false"}
+                />
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Add Input */}
         {allowAdd && editing && (
@@ -256,34 +401,9 @@ export default function CustomTags({
           </div>
         )}
 
-        {/* ➕ Dropdown for disabled tags */}
+        {/* Add more / disabled dropdown (kept commented as in your original) */}
         <div className="ct-add-more">
-          {/* <button
-            className="ct-add-btn"
-            title="Enable disabled tags"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <FiPlus size={18} />
-          </button> */}
-
-          {/* {showDropdown && (
-            <div className="ct-dropdown">
-              {disabledTags.length === 0 ? (
-                <div className="ct-dropdown-empty">No disabled tags</div>
-              ) : (
-                disabledTags.map((t) => (
-                  <div
-                    key={t.id}
-                    className="ct-dropdown-item"
-                    onClick={() => enableTag(t.id)}
-                  >
-                    <span>{t.label}</span>
-                    <span className="ct-enable-text">Enable</span>
-                  </div>
-                ))
-              )}
-            </div>
-          )} */}
+          {/* placeholder for your dropdown trigger */}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../CSS/Settings.css";
 import { FiSettings, FiX } from "react-icons/fi";
 
@@ -18,11 +18,15 @@ const Settings = () => {
      setUrlsView,
      openSettings,
      setSettingsOpen,
+     fetchBackgrounds,
    } = context;
   const [activeTab, setActiveTab] = useState("Backgrounds");
   const [showBackground, setShowBackground] = useState(true);
+  const [Background, setBackground] = useState(true);
   const [showAds, setShowAds] = useState(false);
   const [selectedBg, setSelectedBg] = useState("mountain");
+
+
 
   const tabs = [
     "Backgrounds",
@@ -32,13 +36,13 @@ const Settings = () => {
 
   return (
     <>
-      {/* <div
+      <div
         className="fixed-settings"
         onClick={() => setSettingsOpen(!openSettings)}
         title="Settings"
       >
         <FiSettings />
-      </div> */}
+      </div>
       {openSettings && (
         <div className="settings-root-container ">
           <div className="settings-container">

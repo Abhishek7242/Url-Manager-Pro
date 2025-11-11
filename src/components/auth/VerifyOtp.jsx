@@ -97,6 +97,7 @@ export default function VerifyOtp({ onClose }) {
       );
 
       const data = await response.json();
+
       if (!response.ok) throw new Error(data.message || "Invalid OTP");
       setVerified(true);
       setScreenLoading(true);
@@ -119,22 +120,29 @@ export default function VerifyOtp({ onClose }) {
 
   // Resend OTP handler
   async function handleResend() {
+    console.log( name, email, password);
     if (resendTimer > 0 || isResending) return;
     try {
       setIsResending(true);
       setResendMessage("");
       // call same endpoint that sends OTP on signup
-      const resp = await makeAuthenticatedRequest(
-        `${API_BASE}/user/signup/sendotp`,
-        {
-          method: "POST",
-          body: JSON.stringify({ email }),
-        }
-      );
+      const resp = await fetch(`${API_BASE}/user/signup/sendotp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        credentials: "include", // This is important!
+
+        body: JSON.stringify({ name, email, password }),
+      });
       const respData = await resp.json();
       if (!resp.ok) {
         throw new Error(respData.message || "Failed to resend OTP");
       }
+      setOtpToken(respData.otp_token);
+
       // success: reset timer
       setResendMessage("OTP resent — check your email.");
       setResendTimer(RESEND_SECONDS);

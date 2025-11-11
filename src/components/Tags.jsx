@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
-import { FiHash, FiTag } from "react-icons/fi";
+import React, { useEffect, useMemo, useState, useContext, use } from "react";
+import { FiHash, FiTag, FiPlus, FiEdit, FiTrash2 } from "react-icons/fi";
 import "./CSS/Tags.css";
 import UrlContext from "../context/url_manager/UrlContext";
 import NeonOrbitalLoader from "./NeonOrbitalLoader";
+import AddTagModal from "./dashboard/tags/AddTagModal";
 
 function formatDate(isoOrDate) {
   if (!isoOrDate) return "—";
@@ -29,8 +30,18 @@ function formatDate(isoOrDate) {
 }
 
 export default function Tags() {
-  const { filtered, setUrls, getAllUrls, setScreenLoading } =
-    useContext(UrlContext);
+  const [showAddTagModal, setShowAddTagModal] = useState(false);
+  const {
+    filtered,
+    setUrls,
+    getAllUrls,
+    setScreenLoading,
+    addTag,
+    userTags,
+    setUserTags,
+    getTags,
+    showNotify,
+  } = useContext(UrlContext);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,7 +49,8 @@ export default function Tags() {
       setLoading(true);
       try {
         const res = await getAllUrls();
-        console.log("✅ API Response:", res?.data);
+        const tags = await getTags();
+        // console.log("✅ API Response:", res?.data);
         if (res?.data) setUrls(res.data);
       } catch (err) {
         console.error("❌ Error fetching URLs:", err);
@@ -51,27 +63,50 @@ export default function Tags() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+async function handleAddTag(tag) {
+  const result = await addTag(tag);
+
+  if (!result) {
+    showNotify("error", "No response from addTag");
+    return { success: false, message: "No response" };
+  }
+
+  if (result.success) {
+    // normalize helper: supports string | {tag} | {name}
+    const getVal = (i) => (i?.tag ?? i?.name ?? i).toString().trim();
+    const newItem = result.tag ?? { id: null, tag };
+
+    setUserTags((prev = []) => {
+      const already = prev.some(
+        (p) => getVal(p).toLowerCase() === getVal(newItem).toLowerCase()
+      );
+      if (already) return prev;
+      return [newItem, ...prev]; // prepend so user sees it at top
+    });
+
+    showNotify("success", "Tag added successfully!");
+  } else {
+    showNotify("error", result.message || "Failed to add tag");
+  }
+
+  return result;
+}
+
+
   // derive tags from filtered without side-effects
   const tags = useMemo(() => {
     try {
       const tagMap = {};
       (filtered || []).forEach((url) => {
         if (!url || !url.tags || !Array.isArray(url.tags)) return;
-        // prefer updated_at ISO if available, otherwise try formatted_updated_at (which might already be formatted)
-        // we'll normalize to an ISO for sorting (if possible), and keep a formatted string for display
         const isoCandidate = url.updated_at || url.updated_at_iso || null;
         const altFormatted = url.formatted_updated_at || null;
 
         url.tags.forEach((tag) => {
           if (!tag) return;
-          // compute an ISO date for comparison; if none, keep null
           const parsedISO = isoCandidate ? new Date(isoCandidate) : null;
-          // If parsedISO invalid, try to parse altFormatted (best-effort)
           const lastActiveISO =
             parsedISO && !isNaN(parsedISO) ? parsedISO.toISOString() : null;
-
-          // display date preference: if the URL already provides formatted_updated_at use it,
-          // otherwise format from lastActiveISO
           const lastActiveFormatted = altFormatted
             ? altFormatted
             : lastActiveISO
@@ -82,12 +117,11 @@ export default function Tags() {
             tagMap[tag] = {
               name: tag,
               count: 1,
-              lastActiveISO, // for sorting
+              lastActiveISO,
               lastActiveFormatted,
             };
           } else {
             tagMap[tag].count++;
-            // Update lastActiveISO and formatted if this url is more recent
             if (lastActiveISO) {
               const existingISO = tagMap[tag].lastActiveISO
                 ? new Date(tagMap[tag].lastActiveISO)
@@ -99,7 +133,6 @@ export default function Tags() {
                   lastActiveFormatted || formatDate(lastActiveISO);
               }
             } else if (!tagMap[tag].lastActiveISO && lastActiveFormatted) {
-              // If we don't yet have any ISO but there is a formatted date available, keep it
               tagMap[tag].lastActiveFormatted =
                 tagMap[tag].lastActiveFormatted || lastActiveFormatted;
             }
@@ -113,7 +146,6 @@ export default function Tags() {
     }
   }, [filtered]);
 
-  // stats
   const stats = useMemo(() => {
     const total = tags.reduce((s, t) => s + (t.count || 0), 0);
     const counts = tags.map((t) => t.count || 0);
@@ -122,7 +154,6 @@ export default function Tags() {
     return { total, max, min };
   }, [tags]);
 
-  // responsive scale for tag font-size
   const scaleSize = (count) => {
     let minSize = 14;
     let maxSize = 48;
@@ -161,27 +192,111 @@ export default function Tags() {
     [tags]
   );
 
+  // helper to remove a user tag locally (assumes server call exists elsewhere)
+  const handleRemoveUserTag = (tagName) => {
+    setUserTags((prev) =>
+      prev.filter((t) => (t.tag || t.name || t) !== tagName)
+    );
+    showNotify("success", `Tag \"${tagName}\" removed`);
+  };
+
   if (loading) return <NeonOrbitalLoader />;
 
   return (
     <div className="tags-root">
+      {showAddTagModal && (
+        <AddTagModal
+          existingTags={(userTags || []).map((t) => t.tag || t.name || t)}
+          onClose={() => setShowAddTagModal(false)}
+          onAdd={handleAddTag}
+        />
+      )}
+
       <div className="tags-inner-root">
         <div className="tags-header">
-          <div className="tags-title">
-            <FiTag className="tags-icon" />
-            <h3>Tag Overview</h3>
-            <span className="tag-count">{tags.length} total tags</span>
+          <div className="flex items-center gap-3 justify-between">
+            <div className="tags-title">
+              <FiTag className="tags-icon" />
+              <h3>Tag Overview</h3>
+              <span className="tag-count">{tags.length} derived tags</span>
+            </div>
+
+            <div className="header-actions">
+              <button
+                className="add-tag-btn"
+                onClick={() => setShowAddTagModal(true)}
+              >
+                <FiPlus /> Add Tag
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="tags-card">
+        <div className="tags-card two-column">
+          {/* Right column: User's custom tags (userTags from context) */}
+          <div className="user-tags-section">
+            <h4 className="section-title">Your Tags</h4>
+
+            {!userTags || userTags.length === 0 ? (
+              <div className="user-tags-empty">
+                <p>You haven't created any custom tags yet.</p>
+                <button
+                  className="add-tag-btn small"
+                  onClick={() => setShowAddTagModal(true)}
+                >
+                  <FiPlus /> Create your first tag
+                </button>
+              </div>
+            ) : (
+              <div className="user-tags-list">
+                {userTags.map((ut) => {
+                  const name = ut.tag || ut.name || ut;
+                  const derivedInfo = tags.find((x) => x.name === name);
+                  return (
+                    <div className="user-tag-row" key={name}>
+                      <div className="user-tag-main">
+                        <div className="user-tag-name">{name}</div>
+                        <div className="user-tag-meta">
+                          <span>
+                            {derivedInfo
+                              ? `${derivedInfo.count} URLs`
+                              : "0 URLs"}
+                          </span>
+                          <span className="dot">•</span>
+                          <span>
+                            {derivedInfo
+                              ? derivedInfo.lastActiveFormatted
+                              : "—"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="user-tag-actions">
+                        <button className="icon-btn" title="Edit">
+                          <FiEdit />
+                        </button>
+                        <button
+                          className="icon-btn"
+                          title="Remove"
+                          onClick={() => handleRemoveUserTag(name)}
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          {/* Left column: Tag Cloud (derived from URLs) */}
           <div className="tag-cloud-section">
             <h4 className="section-title">Tag Cloud</h4>
 
             {tags.length === 0 ? (
               <div className="tag-cloud-empty">
                 <FiHash className="empty-hash" />
-                <p>No tags yet. Start adding tags to your URLs!</p>
+                <p>No tags found from saved URLs.</p>
               </div>
             ) : (
               <div className="tag-cloud">
@@ -190,6 +305,7 @@ export default function Tags() {
                     key={t.name}
                     className="tag-pill"
                     title={`${t.name} — ${t.count} url(s)`}
+                    // style={{ fontSize: `${scaleSize(t.count)}px` }}
                     aria-label={`Tag ${t.name}, ${t.count} URLs`}
                   >
                     {t.name}
@@ -198,58 +314,12 @@ export default function Tags() {
                 ))}
               </div>
             )}
-          </div>
-
-          <div className="tags-bottom">
-            <div className="most-used">
-              <h4 className="section-title">Most Used Tags</h4>
-              {mostUsed.length === 0 ? (
-                <div className="empty-line">No tags available</div>
-              ) : (
-                <ul className="most-list">
-                  {mostUsed.map((t, idx) => (
-                    <li key={t.name} className="most-item">
-                      <div className="rank">{idx + 1}</div>
-                      <div className="tag-info">
-                        <div className="tag-name">{t.name}</div>
-                        <div className="tag-meta">
-                          <span className="meta-count">
-                            {t.count} URL{t.count > 1 ? "s" : ""}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="right-badge">
-                        +{Math.max(0, t.count)} this week
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="recent-active">
-              <h4 className="section-title">Recently Active</h4>
-              {recent.length === 0 ? (
-                <div className="empty-line">No recent activity</div>
-              ) : (
-                <ul className="recent-list">
-                  {recent.map((t) => (
-                    <li key={t.name} className="recent-item">
-                      <div className="ra-left">
-                        <FiHash className="ra-icon" />
-                        <div>
-                          <div className="ra-tag">{t.name}</div>
-                          <div className="ra-date">
-                            {t.lastActiveFormatted || "—"}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="ra-count">{t.count} URLs</div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+{/* 
+            <div className="tag-stats">
+              <div>Total tagged URLs: {stats.total}</div>
+              <div>Most used: {mostUsed[0]?.name ?? "—"}</div>
+              <div>Recent active: {recent[0]?.name ?? "—"}</div>
+            </div> */}
           </div>
         </div>
       </div>

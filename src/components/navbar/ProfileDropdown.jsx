@@ -36,6 +36,7 @@ export default function ProfileDropdown({
   openSettings,
   setSettingsOpen,
   mobileOpen,
+  setWebNotifications,
   closeMobile = () => {},
   isLoggedIn = () => false, // 👈 Pass this directly or from context
 }) {
@@ -235,7 +236,8 @@ export default function ProfileDropdown({
                   <button
                     onClick={() => {
                       setOpen(false);
-                      onNotifications();
+                      // onNotifications();
+                      setWebNotifications(true)
                     }}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-notifications-btn"
                   >

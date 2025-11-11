@@ -200,12 +200,12 @@ export default function ProfileCard({
                   <h2 className="profile-card-title text-lg sm:text-xl font-semibold text-white">
                     Profile
                   </h2>
-                  <div className="profile-card-member-label text-xs text-gray-400">
+                  {/* <div className="profile-card-member-label text-xs text-gray-400">
                     Member since
                   </div>
                   <div className="profile-card-member-date text-sm text-gray-200">
                     Oct 2024
-                  </div>
+                  </div> */}
                 </div>
 
                 <button

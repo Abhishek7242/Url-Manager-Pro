@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./CSS/URLMgrLanding.css";
 import Login from "./auth/Login";
 import Signup from "./auth/Signup";
+import VerifyOtp from "./auth/VerifyOtp";
 import {
   ArrowRight,
   Settings,
@@ -15,15 +16,17 @@ import {
   Menu,
   X,
 } from "lucide-react";
+
+import { FiCommand } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import dashboardPreview from "../assets/dashboard-preview.png";
 import dashboardPreviewDark from "../assets/dashboard-preview-dark.png";
 import UrlContext from "../context/url_manager/UrlContext";
 
 import ThemeDropdown from "./navbar/ThemeDropdown";
-import { Helmet } from "react-helmet";
 import { useRef } from "react";
 import { useCallback } from "react";
+import HeadMeta from "./meta/HeadMeta";
 
 export default function URLMgrLanding() {
   const context = React.useContext(UrlContext);
@@ -41,6 +44,13 @@ export default function URLMgrLanding() {
     setUserInfoData,
     themeImage,
     setThemeImage,
+    openverifyOTPModel,
+    setOpenVerifyOTPModel,
+    canonicalUrl,
+    openLoginModel,
+    setOpenLoginModel,
+    openSignupModel,
+    setOpenSignupModel,
   } = context || {};
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -49,9 +59,8 @@ export default function URLMgrLanding() {
   const [subscribed, setSubscribed] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isManageLoading, setIsManageLoading] = useState(false);
-  const [openVerifyOTPModel, setOpenVerifyOTPModel] = useState(false);
-  const [openLoginModel, setOpenLoginModel] = useState(false);
-  const [openSignupModel, setOpenSignupModel] = useState(false);
+  // const [openLoginModel, setOpenLoginModel] = useState(false);
+  // const [openSignupModel, setOpenSignupModel] = useState(false);
 
   const [url, setUrl] = useState("");
 
@@ -198,157 +207,27 @@ export default function URLMgrLanding() {
   };
 
   // canonical url (update if deploying to subpath)
-  const canonicalUrl = "https://urlmg.com/";
   // const canonicalUrl = "http://localhost:5173/";
 
   return (
     <div id="landing_page" className={`min-h-screen antialiased uml-root`}>
       {/* SEO Meta + Structured Data */}
-      <Helmet>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        {/* Basic */}
-        <html lang="en" />
-        <title>
-          URL Manager — Shorten, Manage & Track Links | Custom Domains ·
-          Analytics
-        </title>
-        <meta
-          name="description"
-          content="URL Manager helps teams and creators shorten, brand, and measure links. Manage custom domains, campaign tracking, link governance, and analytics — all with a fast, modern interface."
-        />
-        <meta
-          name="keywords"
-          content="url manager, short links, save links, link management, branded links, custom domains, link analytics, campaign tracking, url shortener, link governance"
-        />
-        <meta name="author" content="URLMg" />
-        <link rel="canonical" href={canonicalUrl} />
-        <meta
-          name="robots"
-          content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
-        />
-
-        {/* Favicons & PWA */}
-        <link rel="icon" href={`${canonicalUrl}favicon.ico`} />
-        <link rel="shortcut icon" href={`${canonicalUrl}favicon.ico`} />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href={`${canonicalUrl}apple-touch-icon.png`}
-        />
-        <link rel="manifest" href={`${canonicalUrl}site.webmanifest`} />
-        <meta name="theme-color" content="#0b1220" />
-        <meta name="msapplication-TileColor" content="#0b1220" />
-
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:site_name" content="URLMg" />
-        <meta
-          property="og:title"
-          content="URL Manager — Shorten, Manage & Track Links"
-        />
-        <meta
-          property="og:description"
-          content="Shorten, brand, and measure links with URL Manager. Use custom domains, UTM-ready campaign tracking, team workflows, and real-time analytics — all in one place."
-        />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:image" content={`${canonicalUrl}og-image.png`} />
-        <meta
-          property="og:image:alt"
-          content="URL Manager — Link management and analytics dashboard"
-        />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="URL Manager — Shorten, Manage & Track Links"
-        />
-        <meta
-          name="twitter:description"
-          content="Shorten, brand, and measure links with URL Manager. Manage campaigns, domains, and analytics with an elegant and modern UI."
-        />
-        <meta name="twitter:image" content={`${canonicalUrl}og-image.png`} />
-
-        {/* Structured data (JSON-LD) */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@graph": [
-              {
-                "@type": "WebSite",
-                "@id": `${canonicalUrl}#website`,
-                url: canonicalUrl,
-                name: "URLMg",
-                description:
-                  "URL Manager centralises link operations: custom domains, campaign tracking, governance and team workflows with real-time analytics.",
-              },
-              {
-                "@type": "Organization",
-                "@id": `${canonicalUrl}#org`,
-                name: "URLMg",
-                url: canonicalUrl,
-                logo: `${canonicalUrl}logo.png`,
-              },
-              {
-                "@type": "SoftwareApplication",
-                name: "URL Manager",
-                operatingSystem: "Web",
-                applicationCategory: "BusinessApplication",
-                url: canonicalUrl,
-                description:
-                  "URL Manager offers advanced link shortening, branding, tracking, and governance tools for teams and enterprises.",
-              },
-            ],
-          })}
-        </script>
-
-        {/* Helpful extras for SEO / indexing */}
-        <link
-          rel="search"
-          type="application/opensearchdescription+xml"
-          title="Search URL Manager"
-          href={`${canonicalUrl}opensearch.xml`}
-        />
-        <link
-          rel="sitemap"
-          type="application/xml"
-          href={`${canonicalUrl}sitemap.xml`}
-        />
-      </Helmet>
+      <HeadMeta canonicalUrl={canonicalUrl} />
 
       {/* NAV */}
-      {openLoginModel && (
-        <Login
-          isOpen={openLoginModel}
-          setOpenSignupModel={setOpenSignupModel}
-          isSignUp={openSignupModel}
-          onClose={() => setOpenLoginModel(false)}
-          className="uml-login-modal"
-        />
-      )}
-      {openSignupModel && (
-        <Signup
-          isLogin={openLoginModel}
-          isSignUp={openSignupModel}
-          onClose={() => setOpenSignupModel(false)}
-          setOpenLoginModel={setOpenLoginModel}
-          setOpenVerifyOTPModel={setOpenVerifyOTPModel}
-          className="uml-signup-modal"
-        />
-      )}
+ 
 
       <nav className="backdrop-blur sticky top-0 z-50 bg-white/60 dark:bg-slate-900/60 border-b border-white/5 uml-nav">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between uml-nav-inner">
           <div className="flex items-center gap-4 uml-brand">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white uml-brand-mark">
-              UM
+              <div className="brand-icon" aria-hidden>
+                <FiCommand />
+              </div>
             </div>
             <div className="uml-brand-text">
               <div className="font-extrabold text-lg uml-brand-title">
-                URL<span className="text-indigo-400">Mg</span>
+                URL <span className="text-indigo-400"> Manager</span>
               </div>
               <div className="text-xs text-slate-500 uml-brand-sub">
                 Manage • Brand • Analyze
@@ -951,6 +830,18 @@ export default function URLMgrLanding() {
             <div className="font-bold uml-footer-name">URL Manager</div>
             <div className="text-sm text-slate-400 mt-2 uml-footer-tagline">
               Manage, brand and measure links with confidence.
+            </div>
+            <div className="linkuss-tag  z-50 text-sm text-gray-400 font-medium">
+              <p>
+                Powered by{" "}
+                <a
+                  href="https://linkuss.com/"
+                  target="_blank"
+                  className="text-indigo-400 font-semibold hover:text-cyan-400 transition-colors duration-200"
+                >
+                  Linkuss
+                </a>
+              </p>
             </div>
           </div>
 

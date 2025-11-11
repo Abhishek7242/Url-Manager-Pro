@@ -1,13 +1,18 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import AuthLimitModal from "../../components/AuthLimitModal.jsx";
 import UrlContext from "./UrlContext";
 import AuthFeatureModal from "../../components/AuthFeatureModal.jsx";
+import { useNavigate } from "react-router-dom";
+import TooltipRemove from "../../components/dashboard/TooltipRemove.jsx";
 const UrlState = (props) => {
   // http://localhost:8000/
   const API_BASE = "http://localhost:8000/api"; // Laravel backend
   const BASE = "http://localhost:8000"; // Laravel backend
-  // const API_BASE = "https://urlmg.com/backend/api"; // Laravel backend
-  // const BASE = "https://urlmg.com/backend"; // Laravel backend
+  // const API_BASE = "https://www.urlmg.com/backend/api"; // Laravel backend
+  // const BASE = "https://www.urlmg.com/backend"; // Laravel backend
+
+  const canonicalUrl = "https://www.urlmg.com/";
+
   const [formData, setFormData] = useState({
     id: "",
     title: "",
@@ -45,8 +50,28 @@ const UrlState = (props) => {
   const [showDetailsView, setShowDetailsView] = useState(false);
   const [showDetails, setShowDetails] = useState([]);
   const [openSettings, setSettingsOpen] = useState(false);
+  const [webNotifications, setWebNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [userTags, setUserTags] = useState([]);
+  const navigate = useNavigate();
+async function submitIndexNow() {
+  const res = await fetch(
+    `${API_BASE}/indexnow/submit-sitemap`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sitemapUrl: `${BASE}/sitemap.xml`,
+      }),
+    }
+  );
 
-
+  const data = await res.json();
+  if (!res.ok || !data.ok) {
+    throw new Error(data.error || "IndexNow submission failed");
+  }
+  return data.result; // includes status/body from IndexNow
+}
   const updateRootBackground = (bg) => {
     const root = document.querySelector("#root");
     if (!root) return;
@@ -72,18 +97,168 @@ const UrlState = (props) => {
         setUser(null);
         return null;
       }
-      setIsLoggedIn(true)
+      setIsLoggedIn(true);
       setUser(JSON.parse(bodyText));
       // console.log(res.status, bodyText);
       return JSON.parse(bodyText);
     } catch (err) {
-      console.log("gestuser");
+      // console.log("gestuser");
+    }
+  }
+  async function getTags() {
+    try {
+      const res = await fetch(`${API_BASE}/user/tags`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // if using Sanctum cookies; remove if using Bearer tokens
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch tags");
+
+      const data = await res.json();
+      // console.log(data.data);
+      if (data.success) {
+        setUserTags(data.data); // ✅ update React state here
+      }
+
+      return data.data || [];
+    } catch (err) {
+      console.error("Error loading tags:", err);
+      return [];
+    }
+  }
+async function addTag(tag) {
+  try {
+    const res = await fetch(`${API_BASE}/user/tags`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json", ...getXsrfHeader() },
+      credentials: "include",
+      body: JSON.stringify({ tag }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      return { success: false, message: data?.message || `Request failed (${res.status})` };
+    }
+
+    // Expect { success: true, tag: {id, tag} } or { success: true, data: [...] }
+    if (data?.tag) return { success: true, tag: data.tag };
+    if (Array.isArray(data?.data)) {
+      const last = data.data[data.data.length - 1];
+      return { success: true, tag: last };
+    }
+    // fallback
+    return { success: true, tag: data?.data ?? null };
+  } catch (err) {
+    return { success: false, message: err?.message || "Network error" };
+  }
+}
+
+
+  const updateTag = async (id, data) => {
+    try {
+      // mirror your URL builder pattern (falls back between guest/user endpoints if you use that)
+      const url = await buildGetUrlsUrl(
+        `${API_BASE}/guest/tags/${id}`,
+        `${API_BASE}/user/tags/${id}`
+      );
+
+      const res = await fetch(url.toString(), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...getXsrfHeader(),
+        },
+        credentials: "include",
+        body: JSON.stringify({ ...data }),
+      });
+
+      if (!res.ok) {
+        // try to get a helpful error message from backend
+        let errorData = {};
+        try {
+          errorData = await res.json();
+        } catch (e) {
+          // ignore parse error
+        }
+        throw new Error(
+          errorData.message || `Failed to update tag (status ${res.status})`
+        );
+      }
+
+      const result = await res.json();
+      return result;
+    } catch (err) {
+      // keep same behavior as your other functions (silently swallow or log)
+      // console.error("❌ Error updating tag:", err);
+      // throw err; // uncomment if you want the caller to catch
+    }
+  };
+  async function deleteTag(id) {
+    try {
+      // Build correct endpoint for guest or logged-in user
+      const url = await buildGetUrlsUrl(
+        `${API_BASE}/guest/tags/delete/${id}`,
+        `${API_BASE}/user/tags/${id}` // Laravel route: DELETE /api/user/tags/{id}
+      );
+
+      const res = await fetch(url.toString(), {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          ...getXsrfHeader(),
+        },
+        credentials: "include", // required for Sanctum cookie auth
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        throw new Error(err.message || "Failed to delete tag");
+      }
+
+      const data = await res.json();
+      return data; // { success: true, message: "Tag deleted.", id: ... }
+    } catch (err) {
+      console.error("❌ deleteTag error:", err);
+      return { success: false, message: err.message };
+    }
+  }
+
+  // src/api/getNotifications.js
+  async function getNotifications() {
+    try {
+      const res = await fetch(`${API_BASE}/notifications`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+        credentials: "include", // optional if you use auth cookies
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch notifications");
+
+      const data = await res.json();
+      if (data.success) {
+        setNotifications(data.notifications); // ✅ set the data here
+      }
+      return data.notifications || [];
+    } catch (err) {
+      console.error("Error loading notifications:", err);
+      return [];
     }
   }
 
   useEffect(() => {
+    getNotifications();
     fetchAndLogUser();
     sendUserSession();
+    // submit IndexNow();
     ensureSession(); // synchronous: writes "lynkr_session" immediately
   }, []);
 
@@ -178,6 +353,70 @@ const UrlState = (props) => {
       return "Unknown";
     }
   }
+  const handleToggleFavourite = async (id) => {
+    console.log(id);
+    if (!id) return;
+
+    try {
+      // 🔹 1. Find current link
+      const urlItem = urls.find((u) => String(u.id) === String(id));
+      if (!urlItem) return;
+
+      const isCurrentlyFav = Array.isArray(urlItem.tags)
+        ? urlItem.tags.includes("#favourite")
+        : false;
+
+      console.log("isCurrentlyFav:", isCurrentlyFav);
+
+      // 🔹 2. Send API request to backend (send new state)
+      const response = await fetch(`${API_BASE}/update-favourite`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...getXsrfHeader(),
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          id: id,
+          favourite: !isCurrentlyFav, // send desired new state
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update favourite");
+      const data = await response.json();
+
+      // 🔹 3. Update state only after success
+      if (setUrls) {
+        setUrls((prev) =>
+          prev.map((x) => {
+            if (String(x.id) !== String(id)) return x;
+
+            const currentTags = Array.isArray(x.tags) ? [...x.tags] : [];
+            const newTags = isCurrentlyFav
+              ? currentTags.filter((t) => t !== "#favourite")
+              : [...currentTags, "#favourite"];
+
+            return { ...x, tags: newTags };
+          })
+        );
+      }
+
+      // 🔹 4. Notify success
+      if (showNotify) {
+        showNotify(
+          "success",
+          data?.message ||
+            (!isCurrentlyFav
+              ? "Marked as favourite"
+              : "Removed from favourites")
+        );
+      }
+    } catch (err) {
+      console.error("Favourite update failed:", err);
+      if (showNotify) showNotify("error", "Failed to update favourite");
+    }
+  };
 
   // create/ensure session once on provider mount
 
@@ -209,10 +448,20 @@ const UrlState = (props) => {
     url = new URL(`${userUrl}`);
     return url;
   }
-
+  async function fetchBackgrounds() {
+    try {
+      const response = await fetch(`${API_BASE}/backgrounds`);
+      if (!response.ok) throw new Error("Failed to fetch backgrounds");
+      const data = await response.json();
+      return data; // returns { live: [...], image: [...], gradient: [...], solid: [...] }
+    } catch (error) {
+      console.error("Error fetching backgrounds:", error);
+      return { live: [], image: [], gradient: [], solid: [] }; // fallback
+    }
+  }
   // ✅ Add new URL (POST)
   const addUrl = async (data) => {
-    console.log( data);
+    console.log(data);
     try {
       let url = await buildGetUrlsUrl(
         `${API_BASE}/url/add`,
@@ -349,52 +598,51 @@ const UrlState = (props) => {
   }
 
   // updateUserName.js
-async function updateUserName(updated) {
-  try {
-    // Determine which field we’re updating
-    const hasName = Object.prototype.hasOwnProperty.call(updated, "name");
-    const hasEmail = Object.prototype.hasOwnProperty.call(updated, "email");
+  async function updateUserName(updated) {
+    try {
+      // Determine which field we’re updating
+      const hasName = Object.prototype.hasOwnProperty.call(updated, "name");
+      const hasEmail = Object.prototype.hasOwnProperty.call(updated, "email");
 
-    let endpoint = `${API_BASE}/user/update-profile`; // default fallback
-    let body = {};
+      let endpoint = `${API_BASE}/user/update-profile`; // default fallback
+      let body = {};
 
-    if (hasName) {
-      endpoint = `${API_BASE}/user/update-name`;
-      body = { name: updated.name };
-    } else if (hasEmail) {
-      endpoint = `${API_BASE}/user/update-email`;
-      body = { email: updated.email };
-    } else {
-      throw new Error("Invalid update type. Must include name or email.");
+      if (hasName) {
+        endpoint = `${API_BASE}/user/update-name`;
+        body = { name: updated.name };
+      } else if (hasEmail) {
+        endpoint = `${API_BASE}/user/update-email`;
+        body = { email: updated.email };
+      } else {
+        throw new Error("Invalid update type. Must include name or email.");
+      }
+
+      // 🔹 Make the request
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...getXsrfHeader(),
+        },
+        credentials: "include",
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update user");
+      }
+      let user = await fetchAndLogUser();
+
+      console.log("✅ User updated successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error updating user:", error.message);
+      throw error;
     }
-
-    // 🔹 Make the request
-    const response = await fetch(endpoint, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        ...getXsrfHeader(),
-      },
-      credentials: "include",
-      body: JSON.stringify(body),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to update user");
-    }
-    let user = await fetchAndLogUser()
-    
-    console.log("✅ User updated successfully:", data);
-    return data;
-  } catch (error) {
-    console.error("❌ Error updating user:", error.message);
-    throw error;
   }
-}
-
 
   // Logout function
   async function logout() {
@@ -431,6 +679,9 @@ async function updateUserName(updated) {
       if (refreshedUrls && refreshedUrls.data) {
         setUrls(refreshedUrls.data);
       }
+      localStorage.removeItem("lynkr_tabs_view");
+
+      navigate("/");
       return data;
     } catch (error) {
       // console.error("Logout failed:", error);
@@ -646,7 +897,6 @@ async function updateUserName(updated) {
       // throw err;
     }
   };
-  
 
   const batchUpdateUrlStatus = async (urlIds, status = "archived") => {
     try {
@@ -752,10 +1002,38 @@ async function updateUserName(updated) {
       setExportLoading(false);
     }
   }
+  const [tooltipState, setTooltipState] = useState(null); // { id, link, rect } | null
+
+  // openUrl used by FavoritesPanel
+  const openUrl = useCallback((link) => {
+    window.open(link.url, "_blank", "noopener,noreferrer");
+  }, []);
+
+  // deleteUrl used to finalize removals
+  const deleteUrl = useCallback((idOrObj) => {
+    console.log(idOrObj);
+    handleToggleFavourite(idOrObj);
+  }, []);
+
+  // optional undo handler (no-op here)
+  const undoDelete = useCallback((_id) => {}, []);
+
+  const ctxValue = useMemo(() => {
+    return {
+      urls,
+      openUrl,
+      deleteUrl,
+      // expose setTooltipState so FavoritesPanel can call it
+      setTooltipState,
+      // you can expose other helpers too (updateRootBackground, fetchBackgrounds etc.)
+    };
+  }, [urls, openUrl, deleteUrl, setTooltipState]);
+
   return (
     // <NoteContext.Provider value={{ apiData, addNote, deleteNote, editNote ,getdata}}>
     <UrlContext.Provider
       value={{
+        canonicalUrl,
         API_BASE,
         userInfoData,
         setUserInfoData,
@@ -833,6 +1111,19 @@ async function updateUserName(updated) {
         setShowDetailsView,
         openSettings,
         setSettingsOpen,
+        fetchBackgrounds,
+        setTooltipState,
+        tooltipState,
+        ctxValue,
+        webNotifications,
+        setWebNotifications,
+        notifications,
+        setNotifications,
+        getNotifications,
+        addTag,
+        userTags,
+        setUserTags,
+        getTags,
       }}
     >
       {props.children}
@@ -848,6 +1139,22 @@ async function updateUserName(updated) {
           setOpenSignupModel={setOpenSignupModel}
           setOpenLoginModel={setOpenLoginModel}
           onClose={() => setShowAuthFeature(false)}
+        />
+      )}
+      {tooltipState && (
+        <TooltipRemove
+          id={tooltipState.id}
+          link={tooltipState.link}
+          rect={tooltipState.rect}
+          onFinalize={(id) => {
+            deleteUrl(id);
+            setTooltipState(null);
+          }}
+          onUndo={(id) => {
+            // nothing to undo because finalize removed on finalize
+            setTooltipState(null);
+          }}
+          onClose={() => setTooltipState(null)}
         />
       )}
     </UrlContext.Provider>

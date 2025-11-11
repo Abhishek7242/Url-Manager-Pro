@@ -51,6 +51,7 @@ import FavoritesPanel from "./dashboard/FavoritesPanel";
 import ShowDetails from "./dashboard/ShowDetails";
 import { set } from "date-fns";
 import DisableTags from "./dashboard/DisableTags";
+import HeadMeta from "./meta/HeadMeta";
 
 export default function Dashboard() {
   const context = useContext(UrlContext);
@@ -86,6 +87,7 @@ export default function Dashboard() {
     showDetails,
     showDetailsView,
     setShowDetailsView,
+    canonicalUrl,
   } = context;
 
   const [loading, setLoading] = useState(true);
@@ -100,8 +102,15 @@ export default function Dashboard() {
   const [disabledTags, setDisabledTags] = useState(
     JSON.parse(localStorage.getItem("lynkr_disabled_tags")) || []
   );
+    const [showButton, setShowButton] = useState(
+      typeof window !== "undefined" ? window.innerWidth >= 1400 : true
+    );
 
-  const [showMoreItems, setShowMoreItems] = useState(false);
+  const [showMoreItems, setShowMoreItems] = useState(() => {
+    if (typeof window === "undefined") return false; // SSR safety
+    const saved = localStorage.getItem("showMoreItems");
+    return saved === "true"; // convert string to boolean
+  });
   const [showFavourites, setShowFavourites] = useState(() => {
     const stored = localStorage.getItem("lynkr_tabs_view");
     return stored !== null ? stored === "true" : true;
@@ -127,35 +136,62 @@ export default function Dashboard() {
     window.addEventListener("mousedown", handleClick);
     return () => window.removeEventListener("mousedown", handleClick);
   }, []);
-  useEffect(() => {
-    // define async function inside useEffect
-    const fetchUrls = async () => {
-      setLoading(true);
-      try {
-        const res = await getAllUrls(); // call API function
-        // console.log("✅ API Response:", res.data); // full response object
-        setUrls(res.data); // save to state
-      } catch (err) {
+useEffect(() => {
+  let isMounted = true; // ✅ prevents state update after unmount
+
+  const fetchUrls = async () => {
+    setLoading(true);
+    try {
+      const res = await getAllUrls(); // call API function
+      if (isMounted) {
+        setUrls(res.data); // save to state only if mounted
+      }
+    } catch (err) {
+      if (isMounted) {
         console.error("❌ Error fetching URLs:", err);
-      } finally {
+      }
+    } finally {
+      if (isMounted) {
         setLoading(false);
         setScreenLoading(false);
       }
-    };
-
-    fetchUrls(); // call it
-  }, []);
-  useEffect(() => {
-    if (search.trim() === "") {
-      // When search is empty
-      setUrlsView("");
-    } else {
-      // When search has a value
-      setUrlsView("visible");
     }
+  };
 
-    // You can add any other logic here, like filtering or fetching data
-  }, [search]); // 👈 triggers every time 'search' changes
+  fetchUrls();
+
+  // ✅ cleanup: avoids memory leaks & race conditions on fast redirects
+  return () => {
+    isMounted = false;
+  };
+}, []);
+
+useEffect(() => {
+  // Get stored data safely
+  const stored = localStorage.getItem("lynkr_toggles");
+  let urlsEnabled = true;
+      // console.log("checked");
+
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      const urlsItem = parsed.find((item) => item.id === "urls");
+      if (urlsItem && urlsItem.enabled === false) {
+        urlsEnabled = false;
+      }
+    } catch (err) {
+      console.error("Error parsing lynkr_toggles:", err);
+    }
+  }
+
+  // ✅ Combined condition
+  if (!urlsEnabled && search.trim() === "") {
+    setUrlsView(""); // hide
+  } else {
+    setUrlsView("visible"); // show
+  }
+}, [search]);
+
 
   useEffect(() => {
     const saved = localStorage.getItem("lynkr_toggles");
@@ -175,6 +211,7 @@ export default function Dashboard() {
       const defaultToggles = [
         { id: "stats", label: "Lynkr Stats", enabled: true },
         { id: "tags", label: "Lynkr Tags", enabled: true },
+        { id: "urls", label: "Lynkr urls", enabled: true },
       ];
 
       localStorage.setItem("lynkr_toggles", JSON.stringify(defaultToggles));
@@ -418,6 +455,15 @@ export default function Dashboard() {
 
   return (
     <>
+      <HeadMeta
+        canonicalUrl={canonicalUrl}
+        title="URL Manager Dashboard — Smart Link Management, Analytics & Custom Domains"
+        description="Access your URL Manager dashboard to manage, track, and optimize every link. Get real-time analytics, custom domain setup, and campaign insights — all in one intuitive dashboard."
+        keywords="URL Manager dashboard, link management, shorten URLs, branded links, analytics, campaign tracking, custom domains, link analytics, link governance, team workspace"
+        image="og-image.png"
+        themeColor="#0b1220"
+      />
+
       {/* <BackgroundSettings/> */}
       {showDetailsView && (
         <ShowDetails
@@ -455,7 +501,7 @@ export default function Dashboard() {
             <div
               className={`flex justify-center gap-2 w-full items-center ${
                 showFavourites ? "" : "show-favourites-small-width"
-              }`}
+              } ${showMoreItems && showButton ? "showmore" : ""}`}
             >
               {showFavourites ? (
                 <>
@@ -482,7 +528,7 @@ export default function Dashboard() {
                   )}
                 </>
               ) : (
-                <FavoritesPanel />
+                <FavoritesPanel showMoreItems={showMoreItems} />
               )}
 
               <div className="more-wrap">
@@ -505,10 +551,14 @@ export default function Dashboard() {
                     ref={menuRef}
                   >
                     <button
-                      className="menu-item"
+                      className={`menu-item ${showButton ? "" : "hidden"}`}
                       role="menuitem"
                       onClick={() => {
-                        setShowMoreItems((s) => !s);
+                        setShowMoreItems((prev) => {
+                          const newValue = !prev;
+                          localStorage.setItem("showMoreItems", newValue); // ✅ Save to localStorage
+                          return newValue;
+                        });
                         setMenuOpen(false);
                       }}
                     >
@@ -558,8 +608,23 @@ export default function Dashboard() {
                       className="menu-item"
                       role="menuitem"
                       onClick={() => {
-                        // setHideTopSites((s) => !s);
-                        // setMenuOpen(false);
+                        const data =
+                          JSON.parse(localStorage.getItem("lynkr_toggles")) ||
+                          [];
+
+                        const updated = data.map((item) =>
+                          item.id === "tags"
+                            ? { ...item, enabled: false }
+                            : item
+                        );
+
+                        localStorage.setItem(
+                          "lynkr_toggles",
+                          JSON.stringify(updated)
+                        );
+
+                        // 👇 Hide tags view
+                        setTagsView("");
                       }}
                     >
                       <span className="menu-left">

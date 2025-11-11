@@ -36,35 +36,46 @@ export default function StatsCard({
   };
 
   return (
-    <section className={`stats-card ${inputFocus ? "focus" : ""}`} aria-label="Statistics">
+    <section
+      className={`stats-card ${inputFocus ? "focus" : ""}`}
+      aria-label="Statistics"
+    >
       <div className="stats-card-inner">
         <header className="stats-header">
           <span className="stats-title">STATS</span>
         </header>
 
         <div className="stats-grid">
-          <div className="stat-item">
-            <div className="stat-icon">
-              <Link2 />
-            </div>
+          <div className="stat-item main">
             <div className="stat-value">{formatNumber(urls)}</div>
-            <div className="stat-label">{labels.urls}</div>
+            <div className="stat-label flex justify-center items-center">
+              <div className="stat-icon">
+                <Link2 />
+              </div>{" "}
+              {labels.urls}
+            </div>
           </div>
 
-          <div className="stat-item">
-            <div className="stat-icon">
-              <MousePointerClick />
-            </div>
+          <div className="stat-item main">
             <div className="stat-value highlight">{formatNumber(clicks)}</div>
-            <div className="stat-label">{labels.clicks}</div>
+            <div className="stat-label flex justify-center items-center">
+              {" "}
+              <div className="stat-icon">
+                <MousePointerClick />
+              </div>
+              {labels.clicks}
+            </div>
           </div>
 
-          <div className="stat-item">
-            <div className="stat-icon">
-              <Bell />
-            </div>
+          <div className="stat-item main">
             <div className="stat-value">{formatNumber(reminders)}</div>
-            <div className="stat-label">{labels.reminders}</div>
+            <div className="stat-label flex justify-center items-center">
+              {" "}
+              <div className="stat-icon">
+                <Bell />
+              </div>
+              {labels.reminders}
+            </div>
           </div>
         </div>
       </div>

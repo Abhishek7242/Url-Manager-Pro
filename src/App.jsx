@@ -14,7 +14,7 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Duplicates from "./components/Duplicates";
 import Suggestions from "./components/Suggestions";
 import Tags from "./components/Tags";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Notification from "./components/Notification";
 import UrlContext from "./context/url_manager/UrlContext";
 import AddTagsLinksModel from "./components/suggestion/AddTagsLinksModel";
@@ -22,6 +22,7 @@ import ProfileCard from "./components/navbar/ProfileCard";
 import FullscreenLoader from "./components/FullscreenLoader";
 import URLMgrLanding from "./components/URLMgrLanding";
 import Settings from "./components/dashboard/Settings";
+import Notifications from "./components/auth/Notifications";
 
 function App() {
   const context = React.useContext(UrlContext);
@@ -52,7 +53,40 @@ function App() {
     openProfileModel,
     setOpenProfileModel,
     updateUserName,
+    webNotifications,
+    setWebNotifications,
+    notifications,
+    setNotifications,
+    getNotifications,
   } = context;
+  useEffect(() => {
+    let isMounted = true; // ✅ prevents state update after unmount
+  
+    const fetchUrls = async () => {
+      try {
+        const res = await getAllUrls(); // call API function
+        if (isMounted) {
+          setUrls(res.data); // save to state only if mounted
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error("❌ Error fetching URLs:", err);
+        }
+      } finally {
+        if (isMounted) {
+          setScreenLoading(false);
+        }
+      }
+    };
+  
+    fetchUrls();
+  
+    // ✅ cleanup: avoids memory leaks & race conditions on fast redirects
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+  
   const handleExport = () => {
     const data = JSON.parse(localStorage.getItem("lynkr_urls") || "[]");
     const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -87,6 +121,12 @@ function App() {
 
   return (
     <>
+      {webNotifications && (
+        <Notifications
+          notifications={notifications}
+          onClose={() => setWebNotifications(false)}
+        />
+      )}
       {openProfileModel && (
         <ProfileCard
           isOpen={openProfileModel}
@@ -120,21 +160,25 @@ function App() {
         />
       )}
       {/* { screenLoading ? <FullscreenLoader/> : null } */}
-      {location.pathname !== "/" && <Navbar />}
-      <Settings />
+      {location.pathname !== "/" && (
+        <>
+          <Navbar /> <Settings />
+        </>
+      )}
 
       <div className="app">
-        <div className="linkuss-tag fixed bottom-4 right-4 z-50 text-sm text-gray-400 font-medium">
+        {/* <div className="linkuss-tag fixed bottom-4 right-4 z-50 text-sm text-gray-400 font-medium">
           <p>
             Powered by{" "}
             <a
-              href="https://linkuss.com/" target="_blank"
+              href="https://linkuss.com/"
+              target="_blank"
               className="text-indigo-400 font-semibold hover:text-cyan-400 transition-colors duration-200"
             >
               Linkuss
             </a>
           </p>
-        </div>
+        </div> */}
 
         <div className="notify-container">
           {notify && (

@@ -22,7 +22,7 @@
 
 .tags-inner-root {
   width: 100%;
-  max-width: 700px; /* max on large screens */
+  max-width: 900px; /* increased max to give vertical column some room */
   padding: 22px;
   box-sizing: border-box;
   backdrop-filter: blur(10px) saturate(120%);
@@ -265,19 +265,217 @@
 .ra-date {
   font-weight: 400;
   font-size: 0.8rem;
-        color: #c9c9c9;
-
+  color: #c9c9c9;
 }
 .ra-count {
   color: rgb(203, 203, 203);
   font-weight: 500;
 }
+.add-tag-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 
-/* RESPONSIVE BREAKPOINTS */
+  /* Glass look */
+  background: rgba(255, 255, 255, 0.06);      /* light tint */
+  border: 1px solid rgba(255, 255, 255, 0.12); /* soft edge */
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
 
-/* Large tablets and laptops down to 900px (tweak layout) */
+  /* sizing */
+  padding: 0.5rem 0.9rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #eaf6ff; /* slightly cool white for contrast */
+
+  /* subtle depth */
+
+  /* motion */
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, opacity 120ms ease;
+  cursor: pointer;
+
+  /* make sure button contents don't overflow the blur */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hover / focus */
+.add-tag-btn:hover,
+.add-tag-btn:focus {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(3, 8, 20, 0.269), inset 0 1px 0 rgba(255,255,255,0.03);
+  opacity: 1;
+}
+
+/* Active press feedback */
+.add-tag-btn:active {
+  transform: translateY(-1px) scale(0.995);
+  box-shadow: 0 8px 22px rgba(3, 8, 20, 0.5);
+}
+
+/* Accessible focus ring (keyboard) */
+.add-tag-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 8px 24px rgba(3, 8, 20, 0.55),
+    0 0 0 4px rgba(0, 120, 255, 0.12);
+}
+
+/* Darker variant when placed on very light backgrounds */
+.add-tag-btn.light {
+  background: rgba(6, 10, 15, 0.06);
+  border: 1px solid rgba(6, 10, 15, 0.08);
+  color: #0f1720;
+}
+
+/* LAYOUT CHANGE: force both sections to stack vertically (single column)
+   and make the user-tags section vertically scrollable */
+.tags-card.two-column {
+  display: grid;
+  grid-template-columns: 1fr; /* stack sections in a column */
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+/* User tags visual container — set a max-height and make it scrollable */
+.user-tags-section {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px) saturate(110%);
+  -webkit-backdrop-filter: blur(8px) saturate(110%);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.18s ease;
+  /* scrolling */
+  max-height: 360px; /* adjust to taste */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Slight hover lift */
+.user-tags-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* reduce vertical padding inside to maximize visible list area */
+.user-tags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 6px;
+  padding-right: 6px; /* allow for scrollbar without layout shift */
+}
+
+.user-tags-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.2rem;
+  color: #aaa;
+  text-align: center;
+}
+
+.user-tag-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  transition: background 0.2s ease, transform 0.12s ease;
+}
+
+.user-tag-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.user-tag-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.user-tag-name {
+  font-size: 0.985rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.user-tag-meta {
+  font-size: 0.82rem;
+  color: #bfc7d6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-tag-meta .dot {
+  color: #7b8997;
+}
+
+.user-tag-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #dfe7f6;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.18s ease, transform 0.12s ease;
+}
+
+.icon-btn:hover {
+  color: var(--accent);
+  transform: scale(1.06);
+}
+
+.user-tags-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.6rem;
+  padding-bottom: 6px; /* breathing room at bottom */
+}
+
+.add-tag-btn.small {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+/* custom scrollbar for webkit browsers (macOS/Chrome) */
+.user-tags-section::-webkit-scrollbar {
+  width: 10px;
+}
+.user-tags-section::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+}
+.user-tags-section::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.user-tags-section::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+/* Firefox scrollbar styling */
+.user-tags-section {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.06) rgba(255,255,255,0.02);
+}
+
 @media (max-width: 900px) {
-    .tags-root {
+  .tags-root {
     padding-top: 50px;
   }
   .tags-inner-root {
@@ -293,7 +491,6 @@
   }
 }
 
-/* Tablet / big mobile */
 @media (max-width: 480px) {
   .tags-root {
     padding: 8px;
@@ -336,21 +533,19 @@
   }
   .tags-card {
     padding: 0px;
-}
-.tag-cloud-section {
+  }
+  .tag-cloud-section {
     padding: 6px;
-}
-.ra-date {
-        font-size: 11px;
-    }
+  }
+  .ra-date {
+    font-size: 11px;
+  }
 }
 
-/* Small phones down to 360px */
 @media (max-width: 360px) {
-   .tags-root {
+  .tags-root {
     padding: 6px;
     padding-top: 50px;
-
   }
   .tags-inner-root {
     padding: 4px;
@@ -359,9 +554,9 @@
     gap: 6px;
     min-height: 90px;
   }
-      .tags-title h3 {
-        font-size: 12px;
-    }
+  .tags-title h3 {
+    font-size: 12px;
+  }
   .tag-pill {
     padding: 5px 8px;
   }
@@ -378,23 +573,19 @@
   }
   .empty-tags-text {
     font-size: 9px;
-}
-.most-list, .recent-list {
-  
+  }
+  .most-list, .recent-list {
     padding: 2px;
-}
-.most-used, .recent-active {
+  }
+  .most-used, .recent-active {
     padding: 0px;
-
+  }
+  .ra-date {
+    font-size: 10px;
+  }
 }
-.ra-date {
-        font-size: 10px;
-    }
-}
 
-/* Tiny devices: 280px width */
 @media (max-width: 280px) {
-
   .tag-cloud {
     gap: 6px;
     min-height: 80px;
@@ -431,6 +622,6 @@
     gap: 8px;
   }
   .ra-date {
-        font-size: 9px;
-    }
+    font-size: 9px;
+  }
 }

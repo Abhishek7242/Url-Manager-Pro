@@ -25,6 +25,7 @@ export default function Login({isOpen,isSignUp, onClose, setOpenSignupModel }) {
   const [forgotOpen, setForgotOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState("");
+    const [remember, setRemember] = useState(false);
   const navigate = useNavigate();
 
   const emailValid = /\S+@\S+\.\S+/.test(email);
@@ -49,7 +50,7 @@ export default function Login({isOpen,isSignUp, onClose, setOpenSignupModel }) {
         `${API_BASE}/user/login`,
         {
           method: "POST",
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email, password,remember }),
         }
       );
 
@@ -156,7 +157,11 @@ export default function Login({isOpen,isSignUp, onClose, setOpenSignupModel }) {
               <div className="row-between">
                 <div className="remember">
                   <label className="remember-label">
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={remember}
+                      onChange={(e) => setRemember(e.target.checked)}
+                    />
                     <span className="text-white">Remember me</span>
                   </label>
                 </div>
