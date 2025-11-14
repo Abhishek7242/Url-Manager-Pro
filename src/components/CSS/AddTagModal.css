@@ -336,3 +336,27 @@
     display: none;
   }
 }
+.emoji-section {
+  margin-top: 1rem;
+  position: relative;
+}
+
+.emoji-input-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.emoji-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.emoji-picker-wrapper {
+  position: absolute;
+  z-index: 1000;
+  margin-top: 0.5rem;
+}

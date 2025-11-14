@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo, useState, useContext, use } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import { FiHash, FiTag, FiPlus, FiEdit, FiTrash2 } from "react-icons/fi";
+import { Icon } from "@iconify/react";
 import "./CSS/Tags.css";
 import UrlContext from "../context/url_manager/UrlContext";
 import NeonOrbitalLoader from "./NeonOrbitalLoader";
 import AddTagModal from "./dashboard/tags/AddTagModal";
+import EditTagModal from "./dashboard/tags/EditTagModal"; // <-- new
 
 function formatDate(isoOrDate) {
   if (!isoOrDate) return "—";
@@ -31,6 +33,8 @@ function formatDate(isoOrDate) {
 
 export default function Tags() {
   const [showAddTagModal, setShowAddTagModal] = useState(false);
+  const [editingTag, setEditingTag] = useState(null); // <-- new: current tag being edited
+
   const {
     filtered,
     setUrls,
@@ -41,7 +45,11 @@ export default function Tags() {
     setUserTags,
     getTags,
     showNotify,
+    updateTag,
+    deleteTag, // optional; if your UrlContext exposes updateTag/use it
+    user, // <-- added: will gate Add/Edit/Delete UI (ensure this matches your UrlContext)
   } = useContext(UrlContext);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,7 +58,6 @@ export default function Tags() {
       try {
         const res = await getAllUrls();
         const tags = await getTags();
-        // console.log("✅ API Response:", res?.data);
         if (res?.data) setUrls(res.data);
       } catch (err) {
         console.error("❌ Error fetching URLs:", err);
@@ -60,38 +67,72 @@ export default function Tags() {
       }
     };
     fetchUrls();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-async function handleAddTag(tag) {
-  const result = await addTag(tag);
+  async function handleAddTag(emoji, tag) {
+    const result = await addTag(emoji, tag);
 
-  if (!result) {
-    showNotify("error", "No response from addTag");
-    return { success: false, message: "No response" };
+    if (!result) {
+      showNotify("error", "No response from addTag");
+      return { success: false, message: "No response" };
+    }
+
+    if (result.success) {
+      const getVal = (i) => (i?.tag ?? i?.name ?? i).toString().trim();
+      const newItem = result.tag ?? { id: null, tag };
+
+      setUserTags((prev = []) => {
+        const already = prev.some(
+          (p) => getVal(p).toLowerCase() === getVal(newItem).toLowerCase()
+        );
+        if (already) return prev;
+        return [newItem, ...prev];
+      });
+
+      showNotify("success", "Tag added successfully!");
+    } else {
+      showNotify("error", result.message || "Failed to add tag");
+    }
+
+    return result;
   }
 
-  if (result.success) {
-    // normalize helper: supports string | {tag} | {name}
-    const getVal = (i) => (i?.tag ?? i?.name ?? i).toString().trim();
-    const newItem = result.tag ?? { id: null, tag };
+  // ✅ Helper: return user icon (emoji) or default system icon
+  const getIconForTag = (name = "") => {
+    if (!name) return "";
 
-    setUserTags((prev = []) => {
-      const already = prev.some(
-        (p) => getVal(p).toLowerCase() === getVal(newItem).toLowerCase()
-      );
-      if (already) return prev;
-      return [newItem, ...prev]; // prepend so user sees it at top
+    const normalizedName = name.toString().trim().toLowerCase();
+
+    // Find user-defined tag record
+    const ut = (userTags || []).find((u) => {
+      const candidate = (u?.tag ?? u?.name ?? u)
+        .toString()
+        .trim()
+        .toLowerCase();
+      return candidate === normalizedName;
     });
 
-    showNotify("success", "Tag added successfully!");
-  } else {
-    showNotify("error", result.message || "Failed to add tag");
-  }
+    const userIcon = ut?.icon;
 
-  return result;
-}
+    if (userIcon && userIcon !== "null" && userIcon !== "undefined") {
+      return userIcon;
+    }
 
+    switch (normalizedName) {
+      case "work":
+        return <Icon icon="fluent:briefcase-24-filled" width="18" />;
+      case "research":
+        return <Icon icon="mdi:microscope" width="18" />;
+      case "education":
+        return <Icon icon="mdi:school" width="18" />;
+      case "ai":
+        return <Icon icon="noto:robot" width="18" />;
+      case "reading":
+        return <Icon icon="flat-color-icons:reading" width="18" />;
+      default:
+        return <Icon icon="ph:plus-circle-fill" width="18" />;
+    }
+  };
 
   // derive tags from filtered without side-effects
   const tags = useMemo(() => {
@@ -193,18 +234,129 @@ async function handleAddTag(tag) {
   );
 
   // helper to remove a user tag locally (assumes server call exists elsewhere)
-  const handleRemoveUserTag = (tagName) => {
-    setUserTags((prev) =>
-      prev.filter((t) => (t.tag || t.name || t) !== tagName)
-    );
-    showNotify("success", `Tag \"${tagName}\" removed`);
+  async function handleRemoveUserTag(tagItem) {
+    try {
+      const id = tagItem?.id ?? null;
+      const tagName = tagItem?.tag || tagItem?.name || tagItem;
+
+      if (!id) {
+        showNotify("error", `Tag "${tagName}" has no valid ID.`);
+        return;
+      }
+
+      const confirmDelete = window.confirm(`Delete tag "${tagName}"?`);
+      if (!confirmDelete) return;
+
+      const result = await deleteTag(id);
+
+      if (!result || result.success !== true) {
+        showNotify("error", result?.message || "Failed to delete tag");
+        return;
+      }
+
+      // ✅ remove tag from local state
+      setUserTags((prev) => prev.filter((t) => t.id !== id));
+
+      showNotify("success", `Tag "${tagName}" deleted successfully!`);
+    } catch (err) {
+      console.error("❌ handleRemoveUserTag error:", err);
+      showNotify("error", err?.message || "Network error while deleting tag");
+    }
+  }
+
+  // open edit modal for a user tag
+  const handleEditClick = (ut) => {
+    // ut may be string or object
+    const tagObj =
+      typeof ut === "string" ? { id: null, tag: ut, icon: "" } : ut ?? {};
+    setEditingTag(tagObj);
   };
+
+  // save handler passed to EditTagModal
+  const handleSaveTag = async (id, icon, tag) => {
+    // console.log("handleSaveTag called with:", { id, icon, tag });
+    // Prefer context.updateTag if provided
+    try {
+      let result = null;
+      if (typeof updateTag === "function") {
+        // assume updateTag returns { success, tag }
+        result = await updateTag(id, icon, tag);
+      } else {
+        // fallback: call API directly (adjust path if your API base differs)
+        const payload = { tag, icon };
+        const res = await fetch(`/user/tags/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => null);
+        if (!res.ok) {
+          result = {
+            success: false,
+            message: data?.message || `Request failed (${res.status})`,
+          };
+        } else {
+          // Laravel controller returns { success: true, data: <tag> }
+          result = { success: true, tag: data?.data ?? data?.tag ?? null };
+        }
+      }
+
+      if (!result || result.success !== true) {
+        showNotify("error", result?.message || "Failed to update tag");
+        return result;
+      }
+
+      // Update local userTags list: replace existing item by id or tag name
+      setUserTags((prev = []) => {
+        const normalizedNew = (tag ?? "").toString().trim();
+        const foundIndex = prev.findIndex((p) => {
+          const pid = p?.id ?? null;
+          if (id && pid) return pid === id;
+          // fallback compare by name
+          const candidate = (p?.tag ?? p?.name ?? p).toString().trim();
+          return (
+            candidate.toLowerCase() === (normalizedNew || "").toLowerCase()
+          );
+        });
+
+        const updatedItem = result.tag ?? {
+          id: id ?? null,
+          tag: normalizedNew,
+          icon,
+        };
+
+        if (foundIndex === -1) {
+          // prepend new if not found
+          return [updatedItem, ...prev];
+        } else {
+          const next = [...prev];
+          next[foundIndex] = { ...next[foundIndex], ...updatedItem };
+          return next;
+        }
+      });
+
+      showNotify("success", "Tag updated.");
+      setEditingTag(null);
+      return { success: true };
+    } catch (err) {
+      console.error("save tag failed:", err);
+      showNotify("error", err?.message || "Could not save tag.");
+      return { success: false, message: err?.message || "Could not save tag." };
+    }
+  };
+
+  // cancel editing
+  const handleEditCancel = () => setEditingTag(null);
 
   if (loading) return <NeonOrbitalLoader />;
 
   return (
     <div className="tags-root">
-      {showAddTagModal && (
+      {showAddTagModal && user && (
         <AddTagModal
           existingTags={(userTags || []).map((t) => t.tag || t.name || t)}
           onClose={() => setShowAddTagModal(false)}
@@ -212,9 +364,19 @@ async function handleAddTag(tag) {
         />
       )}
 
+      {editingTag && user && (
+        <EditTagModal
+          tagItem={editingTag}
+          existingTags={(userTags || []).map((t) => t.tag || t.name || t)}
+          onClose={handleEditCancel}
+          onSave={handleSaveTag}
+          closeOnSuccess={true}
+        />
+      )}
+
       <div className="tags-inner-root">
         <div className="tags-header">
-          <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3 flex-wrap justify-between">
             <div className="tags-title">
               <FiTag className="tags-icon" />
               <h3>Tag Overview</h3>
@@ -222,30 +384,34 @@ async function handleAddTag(tag) {
             </div>
 
             <div className="header-actions">
-              <button
-                className="add-tag-btn"
-                onClick={() => setShowAddTagModal(true)}
-              >
-                <FiPlus /> Add Tag
-              </button>
+              {user && (
+                <button
+                  className="add-tag-btn"
+                  onClick={() => setShowAddTagModal(true)}
+                >
+                  <FiPlus /> Add Tag
+                </button>
+              )}
             </div>
           </div>
         </div>
 
         <div className="tags-card two-column">
-          {/* Right column: User's custom tags (userTags from context) */}
+          {/* Right column: User's custom tags */}
           <div className="user-tags-section">
             <h4 className="section-title">Your Tags</h4>
 
             {!userTags || userTags.length === 0 ? (
               <div className="user-tags-empty">
                 <p>You haven't created any custom tags yet.</p>
-                <button
-                  className="add-tag-btn small"
-                  onClick={() => setShowAddTagModal(true)}
-                >
-                  <FiPlus /> Create your first tag
-                </button>
+                {user && (
+                  <button
+                    className="add-tag-btn small"
+                    onClick={() => setShowAddTagModal(true)}
+                  >
+                    <FiPlus /> Create your first tag
+                  </button>
+                )}
               </div>
             ) : (
               <div className="user-tags-list">
@@ -255,7 +421,12 @@ async function handleAddTag(tag) {
                   return (
                     <div className="user-tag-row" key={name}>
                       <div className="user-tag-main">
-                        <div className="user-tag-name">{name}</div>
+                        <div className="user-tag-name">
+                          <span className="tag-icon" aria-hidden>
+                            {getIconForTag(name)}
+                          </span>
+                          {name}
+                        </div>
                         <div className="user-tag-meta">
                           <span>
                             {derivedInfo
@@ -272,16 +443,24 @@ async function handleAddTag(tag) {
                       </div>
 
                       <div className="user-tag-actions">
-                        <button className="icon-btn" title="Edit">
-                          <FiEdit />
-                        </button>
-                        <button
-                          className="icon-btn"
-                          title="Remove"
-                          onClick={() => handleRemoveUserTag(name)}
-                        >
-                          <FiTrash2 />
-                        </button>
+                        {user && (
+                          <>
+                            <button
+                              className="icon-btn"
+                              title="Edit"
+                              onClick={() => handleEditClick(ut)} // <-- wired
+                            >
+                              <FiEdit />
+                            </button>
+                            <button
+                              className="icon-btn"
+                              title="Remove"
+                              onClick={() => handleRemoveUserTag(ut)} // pass full object, not just name
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   );
@@ -289,7 +468,8 @@ async function handleAddTag(tag) {
               </div>
             )}
           </div>
-          {/* Left column: Tag Cloud (derived from URLs) */}
+
+          {/* Left column: Tag Cloud */}
           <div className="tag-cloud-section">
             <h4 className="section-title">Tag Cloud</h4>
 
@@ -305,21 +485,17 @@ async function handleAddTag(tag) {
                     key={t.name}
                     className="tag-pill"
                     title={`${t.name} — ${t.count} url(s)`}
-                    // style={{ fontSize: `${scaleSize(t.count)}px` }}
                     aria-label={`Tag ${t.name}, ${t.count} URLs`}
                   >
+                    <span className="tag-pill-icon" aria-hidden>
+                      {getIconForTag(t.name)}
+                    </span>
                     {t.name}
                     <span className="tag-bubble">{t.count}</span>
                   </button>
                 ))}
               </div>
             )}
-{/* 
-            <div className="tag-stats">
-              <div>Total tagged URLs: {stats.total}</div>
-              <div>Most used: {mostUsed[0]?.name ?? "—"}</div>
-              <div>Recent active: {recent[0]?.name ?? "—"}</div>
-            </div> */}
           </div>
         </div>
       </div>

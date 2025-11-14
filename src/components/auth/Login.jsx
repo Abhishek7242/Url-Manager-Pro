@@ -17,6 +17,8 @@ export default function Login({isOpen,isSignUp, onClose, setOpenSignupModel }) {
     setScreenLoading,
     getAllUrls,
     setUrls,
+    getTags,
+    setUserTags,
   } = context;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,6 +72,9 @@ export default function Login({isOpen,isSignUp, onClose, setOpenSignupModel }) {
       if (refreshedUrls && refreshedUrls.data) {
         setUrls(refreshedUrls.data);
       }
+        const tags = await getTags();
+
+      setUserTags(tags);
     } catch (err) {
       console.error("Error sending OTP:", err);
       alert(`Error: ${err.message}`);

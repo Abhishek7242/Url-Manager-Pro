@@ -16,7 +16,9 @@
   transition: background 0.3s ease;
   overflow: hidden;
 }
-
+.modal-actions.add-url-actions{
+  z-index: 11112;
+}
 .add .modal-card {
   width: 700px;
   max-width: calc(100% - 40px);
@@ -230,7 +232,39 @@
 .add .tag-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
+
+/* User tags shelf (suggested tags displayed as buttons) */
+.add .user-tags-shelf {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 6px 0 2px;
+}
+.add .user-tag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: transform 0.18s, background 0.18s, box-shadow 0.18s;
+}
+.add .user-tag-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.12); }
+.add .user-tag-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.add .user-tag-btn.selected {
+  background: linear-gradient(180deg, rgba(109, 40, 217, 0.9), rgba(109, 40, 217, 0.7));
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.25);
+}
+.add .user-tag-icon { font-size: 1rem; line-height: 1; }
+.add .user-tag-label { line-height: 1; }
 .add .btn.add-tag-btn,
 .add .btn.clear-tags-btn {
   background: rgba(255, 255, 255, 0.05);
@@ -244,6 +278,21 @@
 }
 .add .btn.add-tag-btn:hover,
 .add .btn.clear-tags-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* clear last button style to match clear/all buttons */
+.add .btn.clear-last-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.add .btn.clear-last-btn:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -325,7 +374,7 @@
   transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
 }
 .add .btn.cancel {
-  background: transparent;
+ background: #540000;
   color: rgba(255, 255, 255, 0.65);
 }
 .add .btn.cancel:hover {
@@ -333,7 +382,7 @@
   color: white;
 }
 .add .addbtn.btn.primary {
-  background: rgba(255, 255, 255, 0.9);
+     background: linear-gradient(180deg, rgb(59 130 246), rgb(59 130 246 / 82%))!important;
   color: #0b1220;
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
 }
@@ -380,15 +429,22 @@
 }
 
 /* responsive stacking */
+@media (max-width: 640px) {
+.modal-actions.add-url-actions{
+  flex-direction: row;
+}
+
+
+}
 @media (max-width: 600px) {
   .add .modal-card {
     width: 92%;
     padding: 18px;
   }
   .add .modal-actions {
-    flex-direction: column-reverse;
+    /* flex-direction: column-reverse; */
   }
   .add .btn {
-    width: 100%;
+    /* width: 100%; */
   }
 }

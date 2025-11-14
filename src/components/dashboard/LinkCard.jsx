@@ -311,6 +311,9 @@ useEffect(() => {
           <h3 className="card-title">{link.title}</h3>
           <a
             href={link.url}
+            onClick={ () => {
+              if (updateClickCount) updateClickCount(link.id);
+            }}
             target="_blank"
             rel="noreferrer"
             className="card-url"

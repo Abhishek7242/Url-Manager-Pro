@@ -1,6 +1,6 @@
 // EditUrlModal.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { FiX, FiCalendar, FiLoader } from "react-icons/fi";
+import { FiX, FiCalendar, FiLoader, FiTag, FiStar } from "react-icons/fi";
 import "../CSS/EditUrlModal.css";
 import UrlContext from "../../context/url_manager/UrlContext";
 import DatePicker from "react-datepicker";
@@ -24,6 +24,7 @@ export default function EditUrlModal({
     archive,
     formData = {},
     setFormData,
+    userTags,
   } = ctx;
 
   const MAX_TAGS = 4;
@@ -35,7 +36,6 @@ export default function EditUrlModal({
   const [tagError, setTagError] = useState("");
 
   const titleRef = useRef(null);
-  const tagInputRef = useRef(null);
 
   // Helper: normalize incoming tags (string or array) -> flattened array of "#tag" strings (deduped)
   function normalizeIncomingTags(input) {
@@ -73,6 +73,37 @@ export default function EditUrlModal({
       }
     }
     return out;
+  }
+
+  // Choose an icon for a tag label, preferring userTags[i].icon when available
+  function iconNodeForTagLabel(label) {
+    const plain = String(label || "").replace(/^#/, "");
+    if (Array.isArray(userTags)) {
+      for (const ut of userTags) {
+        const raw =
+          typeof ut === "string" ? ut : ut?.tag ?? ut?.label ?? ut?.name ?? "";
+        const iconStr =
+          typeof ut === "object" && ut && ut.icon ? String(ut.icon) : "";
+        if (
+          String(raw || "")
+            .replace(/^#/, "")
+            .toLowerCase() === plain.toLowerCase()
+        ) {
+          if (iconStr) {
+            return (
+              <span className="user-tag-icon" aria-hidden>
+                {iconStr}
+              </span>
+            );
+          }
+          break;
+        }
+      }
+    }
+    const lower = plain.toLowerCase();
+    const IconComp =
+      lower === "favorite" || lower === "favourite" ? FiStar : FiTag;
+    return <IconComp className="user-tag-icon" aria-hidden="true" />;
   }
 
   // Seed formData when modal opens (store tags as array)
@@ -128,100 +159,56 @@ export default function EditUrlModal({
     );
   const clearTagErrorSoon = () => setTimeout(() => setTagError(""), 1800);
 
-  // Add tags using functional updater to avoid stale reads
-  function addTagsFromString(raw) {
-    if (!raw || !String(raw).trim()) return;
-    const incoming = normalizeIncomingTags(raw);
-    if (!incoming.length) return;
+  // Removed addTagsFromString/removeTagAt; tags are managed via toggleTag and formData.tags
 
+  // Toggle tag selection via user tag buttons
+  function toggleTag(label) {
+    const normalized = label.startsWith("#")
+      ? label.toLowerCase()
+      : `#${label.toLowerCase()}`;
     setFormData?.((prev = {}) => {
-      const existing = normalizeIncomingTags(prev.tags ?? prev.tagsInput ?? []);
-      const lower = new Set(existing.map((p) => p.toLowerCase()));
-      const allowed = Math.max(0, MAX_TAGS - existing.length);
-      const toAdd = incoming.slice(0, allowed);
-      if (!toAdd.length) {
-        // set tagError outside setFormData so component re-renders with error
+      const existing = normalizeIncomingTags(prev.tags ?? []);
+      const lower = existing.map((t) => t.toLowerCase());
+      const idx = lower.indexOf(normalized);
+      if (idx >= 0) {
+        existing.splice(idx, 1);
+        return { ...prev, tags: existing };
+      }
+      if (existing.length >= MAX_TAGS) {
         setTagError(`Maximum ${MAX_TAGS} tags allowed`);
         clearTagErrorSoon();
-        return { ...prev, tags: existing, tagsInput: "" };
+        return prev;
       }
-      for (const t of toAdd) {
-        if (!lower.has(t.toLowerCase())) {
-          existing.push(t);
-          lower.add(t.toLowerCase());
-        }
-      }
-      return { ...prev, tags: existing.slice(0, MAX_TAGS), tagsInput: "" };
+      return { ...prev, tags: [...existing, normalized] };
     });
   }
 
-  // Remove tag using functional updater
-  function removeTagAt(index) {
+  // Remove a tag from the URL's selected tags (protect 'favorite'/'favourite')
+  function removeTag(label) {
+    const normalized = label.startsWith("#")
+      ? label.toLowerCase()
+      : `#${label.toLowerCase()}`;
+    const plain = normalized.replace(/^#/, "");
+    if (
+      plain.toLowerCase() === "favorite" ||
+      plain.toLowerCase() === "favourite"
+    ) {
+      // Do not remove the 'favorite' tag
+      return;
+    }
     setFormData?.((prev = {}) => {
-      const existing = normalizeIncomingTags(prev.tags ?? prev.tagsInput ?? []);
-      if (index < 0 || index >= existing.length) return prev;
-      existing.splice(index, 1);
-      setTagError("");
-      return { ...prev, tags: existing, tagsInput: "" };
+      const existing = normalizeIncomingTags(prev.tags ?? []);
+      const lower = existing.map((t) => t.toLowerCase());
+      const idx = lower.indexOf(normalized);
+      if (idx >= 0) {
+        existing.splice(idx, 1);
+      }
+      return { ...prev, tags: existing };
     });
-  }
-
-  function handleTagKeyDown(e) {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      const raw = String(formData.tagsInput || "")
-        .trim()
-        .replace(/,+$/, "");
-      if (raw) addTagsFromString(raw);
-    } else if (e.key === "Backspace" && !(formData.tagsInput || "").trim()) {
-      // remove last tag if input empty
-      setFormData?.((prev = {}) => {
-        const existing = normalizeIncomingTags(
-          prev.tags ?? prev.tagsInput ?? []
-        );
-        existing.pop();
-        return { ...prev, tags: existing, tagsInput: "" };
-      });
-    }
-  }
-
-  function handleTagPaste(e) {
-    const text = (e.clipboardData || window.clipboardData).getData("text");
-    if (!text) return;
-    if (text.includes(",")) {
-      e.preventDefault();
-      // we still use functional updater below
-      setFormData?.((prev = {}) => {
-        const existing = normalizeIncomingTags(
-          prev.tags ?? prev.tagsInput ?? []
-        );
-        const lower = new Set(existing.map((p) => p.toLowerCase()));
-        const parts = normalizeIncomingTags(text);
-        const allowed = Math.max(0, MAX_TAGS - existing.length);
-        const toAdd = parts.slice(0, allowed);
-        if (!toAdd.length) {
-          setTagError(`Maximum ${MAX_TAGS} tags allowed`);
-          clearTagErrorSoon();
-          return { ...prev, tags: existing, tagsInput: "" };
-        }
-        for (const t of toAdd) {
-          if (!lower.has(t.toLowerCase())) {
-            existing.push(t);
-            lower.add(t.toLowerCase());
-          }
-        }
-        return { ...prev, tags: existing.slice(0, MAX_TAGS), tagsInput: "" };
-      });
-    }
   }
 
   // Validation & submit (keeps your original logic)
-  function parseTags(input) {
-    return input
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
-  }
+  // parseTags removed; tags handled via normalized array selection
   function isValidUrl(s) {
     try {
       const u = new URL(s);
@@ -263,7 +250,7 @@ export default function EditUrlModal({
         url: (formData.url || "").trim(),
         description: (formData.description || "").trim(),
         status: archive ? "archived" : "active",
-        tags: parseTags(formData.tagsInput || formData.tags?.toString() || ""),
+        tags: normalizeIncomingTags(formData?.tags ?? []),
         url_clicks: 0,
         reminder_at: formData.reminder_at || formData.reminder || null,
       };
@@ -295,8 +282,19 @@ export default function EditUrlModal({
   }
 
   // defensive chips array for rendering (in case formData.tags is still string)
-  const chips = normalizeIncomingTags(
-    formData?.tags ?? formData?.tagsInput ?? []
+  const chips = normalizeIncomingTags(formData?.tags ?? []);
+  // Build a set of normalized user tags for quick exclusion
+  const userTagLabels = Array.isArray(userTags)
+    ? userTags.map((ut) =>
+        typeof ut === "string" ? ut : ut?.tag ?? ut?.label ?? ut?.name ?? ""
+      )
+    : [];
+  const normalizedUserTagSet = new Set(
+    normalizeIncomingTags(userTagLabels).map((t) => t.toLowerCase())
+  );
+  // Only show selected chips that are NOT in the user's global tags
+  const nonUserSelectedChips = chips.filter(
+    (t) => !normalizedUserTagSet.has(t.toLowerCase())
   );
 
   if (!isOpen) return null;
@@ -389,98 +387,122 @@ export default function EditUrlModal({
 
             {/* Tags + Date row */}
             <div className="edit field-row tags-date-row">
-              <label className="edit add-link-field field tags-field">
+              <div className="edit add-link-field field tags-field">
                 <div className="edit field-label">Tags</div>
 
                 <div className="edit tag-input-wrap">
+                  {/* User tags shelf with selected state indicator (matching AddUrlModal design) */}
                   <div
-                    className="edit tags-list"
+                    className="user-tags-shelf"
                     role="list"
-                    onClick={() => tagInputRef.current?.focus()}
+                    aria-label="Your tags"
                   >
-                    {chips.map((t, i) => (
-                      <span
-                        className="edit tag-chip"
-                        key={`${String(t)}-${i}`}
-                        role="listitem"
-                      >
-                        <span className="edit tag-text">
-                          {String(t).startsWith("#") ? String(t).slice(1) : t}
-                        </span>
-                        <button
-                          type="button"
-                          className="edit tag-cut-btn"
-                          onClick={() => removeTagAt(i)}
-                          aria-label={`Remove tag ${t}`}
-                        >
-                          ✕
-                        </button>
-                      </span>
-                    ))}
-
-                    <input
-                      ref={tagInputRef}
-                      className="edit tag-input"
-                      value={formData.tagsInput || ""}
-                      onChange={(e) =>
-                        setFormData?.((prev = {}) => ({
-                          ...prev,
-                          tagsInput: e.target.value,
-                        }))
-                      }
-                      onKeyDown={handleTagKeyDown}
-                      onPaste={handleTagPaste}
-                      placeholder="type tag and press Enter or comma"
-                      type="text"
-                      disabled={remainingSlots() <= 0}
-                    />
+                    {Array.isArray(userTags) &&
+                      userTags.map((ut, idx) => {
+                        const raw =
+                          typeof ut === "string"
+                            ? ut
+                            : ut?.tag ?? ut?.label ?? ut?.name ?? "";
+                        const icon =
+                          typeof ut === "object" && ut && ut.icon
+                            ? String(ut.icon)
+                            : "";
+                        const label = String(raw || "");
+                        const normalized = label.startsWith("#")
+                          ? label.toLowerCase()
+                          : `#${label.toLowerCase()}`;
+                        const already = chips.some(
+                          (c) => c.toLowerCase() === normalized
+                        );
+                        return (
+                          <button
+                            key={`user-tag-${idx}`}
+                            type="button"
+                            className={`user-tag-btn ${
+                              already ? "selected" : ""
+                            }`}
+                            onClick={() => {
+                              if (already) {
+                                removeTag(normalized);
+                              } else if (chips.length < MAX_TAGS) {
+                                toggleTag(label);
+                              } else {
+                                setTagError(`Maximum ${MAX_TAGS} tags allowed`);
+                                clearTagErrorSoon();
+                              }
+                            }}
+                            disabled={!already && chips.length >= MAX_TAGS}
+                            aria-pressed={already}
+                            aria-label={
+                              already
+                                ? `Remove tag ${label.replace(/^#/, "")}`
+                                : `Add tag ${label.replace(/^#/, "")}`
+                            }
+                            title={already ? "Click to remove" : "Click to add"}
+                          >
+                            {icon ? (
+                              <span className="user-tag-icon" aria-hidden>
+                                {icon}
+                              </span>
+                            ) : (
+                              iconNodeForTagLabel(label)
+                            )}
+                            <span className="user-tag-label">
+                              {label.startsWith("#") ? label.slice(1) : label}
+                            </span>
+                          </button>
+                        );
+                      })}
                   </div>
 
-                  <div className="edit tag-actions">
-                    <button
-                      type="button"
-                      className="edit btn add-tag-btn"
-                      onClick={() =>
-                        addTagsFromString(formData.tagsInput || "")
-                      }
-                      disabled={
-                        remainingSlots() <= 0 ||
-                        !(formData.tagsInput || "").trim()
-                      }
+                  {/* Show any non-user tags that were selected (custom tags not in user's global tags) */}
+                  {nonUserSelectedChips.length > 0 && (
+                    <div
+                      className="edit selected-tags"
+                      aria-label="Custom selected tags"
                     >
-                      Add
-                    </button>
-
-                    <button
-                      type="button"
-                      className="edit btn clear-tags-btn"
-                      onClick={() =>
-                        setFormData?.((prev = {}) => ({
-                          ...prev,
-                          tags: [],
-                          tagsInput: "",
-                        }))
-                      }
-                    >
-                      Clear
-                    </button>
-                  </div>
+                      {nonUserSelectedChips.map((t, idx) => {
+                        const plain = t.replace(/^#/, "");
+                        const lower = plain.toLowerCase();
+                        const isProtected =
+                          lower === "favorite" || lower === "favourite";
+                        return (
+                          <div
+                            key={`${t}-${idx}`}
+                            className="user-tag-btn selected"
+                            title={`Tag ${plain}`}
+                            aria-label={`Tag ${plain}`}
+                          >
+                            {iconNodeForTagLabel(plain)}
+                            <span className="user-tag-label">{plain}</span>
+                            {!isProtected && (
+                              <button
+                                type="button"
+                                className="tag-remove"
+                                aria-label={`Remove tag ${plain}`}
+                                title={`Remove tag ${plain}`}
+                                onClick={() => removeTag(t)}
+                              >
+                                <FiX />
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
 
                   <div
                     className={`edit tag-limit ${tagError ? "has-error" : ""}`}
                     aria-live="polite"
                   >
                     <small>
-                      Tags:{" "}
-                      {Array.isArray(formData.tags)
-                        ? formData.tags.length
-                        : chips.length}
-                      /{MAX_TAGS}
+                      Tags: {chips.length}/{MAX_TAGS}
                       {tagError ? ` — ${tagError}` : ""}
                     </small>
                   </div>
                 </div>
-              </label>
+              </div>
 
               <label className="edit add-link-field field date-field">
                 <div className="edit field-label">Reminder Date (Optional)</div>
@@ -539,7 +561,7 @@ export default function EditUrlModal({
                     Saving...
                   </>
                 ) : (
-                  "Save Changes"
+                  "Save"
                 )}
               </button>
             </div>

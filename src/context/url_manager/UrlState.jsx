@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 import TooltipRemove from "../../components/dashboard/TooltipRemove.jsx";
 const UrlState = (props) => {
   // http://localhost:8000/
-  const API_BASE = "http://localhost:8000/api"; // Laravel backend
-  const BASE = "http://localhost:8000"; // Laravel backend
-  // const API_BASE = "https://www.urlmg.com/backend/api"; // Laravel backend
-  // const BASE = "https://www.urlmg.com/backend"; // Laravel backend
+  // const API_BASE = "http://localhost:8000/api"; // Laravel backend
+  // const BASE = "http://localhost:8000"; // Laravel backend
+  const API_BASE = "https://www.urlmg.com/backend/api"; // Laravel backend
+  const BASE = "https://www.urlmg.com/backend"; // Laravel backend
 
   const canonicalUrl = "https://www.urlmg.com/";
 
@@ -130,13 +130,14 @@ async function submitIndexNow() {
       return [];
     }
   }
-async function addTag(tag) {
+  async function addTag(icon, tag) {
+  
   try {
     const res = await fetch(`${API_BASE}/user/tags`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json", ...getXsrfHeader() },
       credentials: "include",
-      body: JSON.stringify({ tag }),
+      body: JSON.stringify({ icon, tag }),
     });
 
     const data = await res.json().catch(() => null);
@@ -159,7 +160,7 @@ async function addTag(tag) {
 }
 
 
-  const updateTag = async (id, data) => {
+  const updateTag = async (id, icon,tag) => {
     try {
       // mirror your URL builder pattern (falls back between guest/user endpoints if you use that)
       const url = await buildGetUrlsUrl(
@@ -175,7 +176,7 @@ async function addTag(tag) {
           ...getXsrfHeader(),
         },
         credentials: "include",
-        body: JSON.stringify({ ...data }),
+        body: JSON.stringify({icon,tag }),
       });
 
       if (!res.ok) {
@@ -259,6 +260,7 @@ async function addTag(tag) {
     fetchAndLogUser();
     sendUserSession();
     // submit IndexNow();
+    // submitIndexNow()
     ensureSession(); // synchronous: writes "lynkr_session" immediately
   }, []);
 
@@ -1123,6 +1125,8 @@ async function addTag(tag) {
         addTag,
         userTags,
         setUserTags,
+        updateTag,
+        deleteTag,
         getTags,
       }}
     >

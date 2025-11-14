@@ -88,6 +88,7 @@ export default function Dashboard() {
     showDetailsView,
     setShowDetailsView,
     canonicalUrl,
+    getTags,
   } = context;
 
   const [loading, setLoading] = useState(true);
@@ -143,6 +144,8 @@ useEffect(() => {
     setLoading(true);
     try {
       const res = await getAllUrls(); // call API function
+        const tags = await getTags();
+
       if (isMounted) {
         setUrls(res.data); // save to state only if mounted
       }
@@ -399,7 +402,7 @@ useEffect(() => {
   }
   const handleQuickSubmit = async (e) => {
     e.preventDefault();
-    console.log("handel quick submit", url);
+    // console.log("handel quick submit", url);
     // Prevent multiple submissions
     if (isQuickAddLoading) return;
 
@@ -468,8 +471,8 @@ useEffect(() => {
       {showDetailsView && (
         <ShowDetails
           item={showDetails}
-          onEdit={(it) => console.log("edit", it)}
-          onDelete={(it) => console.log("delete", it)}
+          // onEdit={(it) => console.log("edit", it)}
+          // onDelete={(it) => console.log("delete", it)}
           onClose={() => setShowDetailsView(false)}
         />
       )}
@@ -499,7 +502,7 @@ useEffect(() => {
         <div className="controls flex flex-col">
           {tagsView && (
             <div
-              className={`flex justify-center gap-2 w-full items-center ${
+              className={`flex justify-center gap-2  tags-view-width items-center ${
                 showFavourites ? "" : "show-favourites-small-width"
               } ${showMoreItems && showButton ? "showmore" : ""}`}
             >
@@ -575,7 +578,7 @@ useEffect(() => {
                       className="menu-item"
                       role="menuitem"
                       onClick={() => {
-                        console.log(isLoggedIn);
+                        // console.log(isLoggedIn);
                         if (isLoggedIn) {
                           setShowFavourites((prev) => {
                             const newValue = !prev;

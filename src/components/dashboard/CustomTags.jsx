@@ -21,10 +21,10 @@ export default function CustomTags({
   placeholder = "Add tag",
   showDropdown,
   setShowDropdown,
-  disabledTags,
+  disabledTags = [],
   setDisabledTags,
 }) {
-  const { setSearch, filtered } = useContext(UrlContext);
+  const { setSearch, filtered, userTags } = useContext(UrlContext);
   const QUICK_ID = "__quick";
 
   const inputRef = useRef(null);
@@ -39,6 +39,36 @@ export default function CustomTags({
   const [itemsPerSlide, setItemsPerSlide] = useState(4);
   const [slideIndex, setSlideIndex] = useState(0);
 
+  // Normalize function: convert various incoming shapes into { id, label, icon }
+  const normalizeSourceTags = (source = []) => {
+    return (source || []).map((t, idx) => {
+      // If already in { id, label, icon } shape, keep
+      if (
+        t &&
+        typeof t === "object" &&
+        ("label" in t || "tag" in t || "name" in t)
+      ) {
+        return {
+          id:
+            t.id ??
+            t._id ??
+            `t-${idx}-${String(t.tag ?? t.label ?? t.name ?? "").replace(
+              /\s+/g,
+              "-"
+            )}`,
+          label: (t.label ?? t.tag ?? t.name ?? "").toString(),
+          icon: t.icon ?? null,
+        };
+      }
+      // primitive (string) case
+      return {
+        id: `t-${idx}-${String(t).replace(/\s+/g, "-")}`,
+        label: String(t),
+        icon: null,
+      };
+    });
+  };
+
   // ✅ Load from localStorage ONCE
   useEffect(() => {
     let storedDisabled = [];
@@ -51,22 +81,36 @@ export default function CustomTags({
 
     if (typeof setDisabledTags === "function") setDisabledTags(storedDisabled);
 
-    const filteredTags = initialTags.filter(
+    // Prefer userTags when present and non-empty, otherwise use initialTags
+    const source =
+      Array.isArray(userTags) && userTags.length ? userTags : initialTags;
+    const normalized = normalizeSourceTags(source);
+
+    // filter out disabled by id
+    const filteredTags = normalized.filter(
       (t) => !storedDisabled.some((d) => d.id === t.id)
     );
+
     setTags(filteredTags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // run once
 
-  // ✅ Merge when initialTags change
+  // ✅ Merge when initialTags or userTags change
   useEffect(() => {
-    if (!initialTags.length) return;
-    setTags(() => {
-      const filtered = initialTags.filter(
-        (t) => !disabledTags.some((d) => d.id === t.id)
-      );
-      return filtered;
-    });
-  }, [initialTags, disabledTags]);
+    const source =
+      Array.isArray(userTags) && userTags.length ? userTags : initialTags;
+    const normalized = normalizeSourceTags(source);
+
+    if (!normalized.length) {
+      setTags([]);
+      return;
+    }
+
+    const filteredTags = normalized.filter(
+      (t) => !disabledTags.some((d) => d.id === t.id)
+    );
+    setTags(filteredTags);
+  }, [initialTags, disabledTags, userTags]);
 
   // ✅ sync disabled tags
   useEffect(() => {
@@ -82,7 +126,7 @@ export default function CustomTags({
     ? filtered.filter((item) => item?.tags?.includes?.("#quicklink")).length
     : 0;
 
-  // Icon resolver
+  // Icon resolver — kept unchanged
   const getIconForLabel = (label = "") => {
     const key = (label || "").trim().toLowerCase();
     switch (key) {
@@ -116,7 +160,7 @@ export default function CustomTags({
       return;
     }
 
-    const newTag = { id: `t-${Date.now()}`, label: trimmed };
+    const newTag = { id: `t-${Date.now()}`, label: trimmed, icon: null };
     const next = [...tags, newTag];
     setTags(next);
     onChange(next);
@@ -202,11 +246,10 @@ export default function CustomTags({
   useLayoutEffect(() => {
     const compute = () => {
       const w = window.innerWidth;
-      if (w <= 340) return 3;
-      if (w <= 480) return 3;    
-      if (w <= 600) return 2;    
-      if (w <= 780) return 3;
-      if (w >= 1100) return 5;
+      if (w <= 380) return 3;
+      if (w <= 480) return 4;
+      if (w <= 920) return 3;
+      if (w >= 1120) return 5;
       return 4;
     };
     const apply = () => setItemsPerSlide(compute());
@@ -293,7 +336,7 @@ export default function CustomTags({
           }`}
           onClick={() => toggleSelect(QUICK_ID)}
         >
-          <span className="ct-pill-left">
+          <span className="ct-pill-left flash-icon">
             <FiZap className="ct-pill-icon" />
           </span>
           <span className="ct-pill-label">

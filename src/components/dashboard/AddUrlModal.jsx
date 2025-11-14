@@ -11,7 +11,7 @@ export default function AddUrlModal({
   defaultValues = {},
 }) {
   const ctx = React.useContext(UrlContext) || {};
-  const { addUrl, getAllUrls, showNotify, setUrls, archive } = ctx;
+  const { addUrl, getAllUrls, showNotify, setUrls, archive, userTags } = ctx;
 
   const MAX_TAGS = 4;
 
@@ -20,7 +20,6 @@ export default function AddUrlModal({
   const [url, setUrl] = useState("");
   const [note, setNote] = useState("");
   const [tags, setTags] = useState([]);
-  const [tagInput, setTagInput] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [reminder, setReminder] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +43,6 @@ export default function AddUrlModal({
           .filter(Boolean)
       : [];
     setTags(iv.map((t) => (t.startsWith("#") ? t : `#${t}`)));
-    setTagInput("");
     setSelectedDate(
       defaultValues.reminder ? new Date(defaultValues.reminder) : null
     );
@@ -100,7 +98,6 @@ export default function AddUrlModal({
       }
       return merged;
     });
-    setTagInput("");
   };
 
   const removeTag = (idx) => {
@@ -112,49 +109,10 @@ export default function AddUrlModal({
     setTimeout(() => setTagError(""), 2200);
   };
 
-  const handleTagKeyDown = (e) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      const raw = tagInput.trim().replace(/,+$/, "");
-      if (raw) addTagFromInput(raw);
-    } else if (e.key === "Backspace" && !tagInput) {
-      setTags((prev) => prev.slice(0, -1));
-      setTagError("");
-    }
-  };
-
-  const handleTagPaste = (e) => {
-    const text = (e.clipboardData || window.clipboardData).getData("text");
-    if (!text) return;
-    if (tags.length >= MAX_TAGS) {
-      e.preventDefault();
-      setTagError(`Maximum ${MAX_TAGS} tags allowed`);
-      clearTagErrorSoon();
-      return;
-    }
-    if (text.includes(",")) {
-      e.preventDefault();
-      const parts = parseTagsFromString(text);
-      const allowed = remainingSlots();
-      const toAdd = parts.slice(0, allowed);
-      if (toAdd.length === 0) {
-        setTagError(`Maximum ${MAX_TAGS} tags allowed`);
-        clearTagErrorSoon();
-        return;
-      }
-      setTags((prev) => {
-        const lower = new Set(prev.map((p) => p.toLowerCase()));
-        const merged = [...prev];
-        for (const t of toAdd) {
-          if (!lower.has(t.toLowerCase())) {
-            merged.push(t);
-            lower.add(t.toLowerCase());
-          }
-        }
-        return merged;
-      });
-      setTagInput("");
-    }
+  // utility to remove last tag
+  const removeLastTag = () => {
+    setTags((prev) => (prev.length ? prev.slice(0, -1) : prev));
+    setTagError("");
   };
 
   const isValidUrl = (s) => {
@@ -215,13 +173,13 @@ export default function AddUrlModal({
         setUrl("");
         setNote("");
         setTags([]);
-        setTagInput("");
         setReminder(null);
         setSelectedDate(null);
         const refreshedUrls = await getAllUrls?.();
         if (refreshedUrls && refreshedUrls.data) setUrls?.(refreshedUrls.data);
       }
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       showNotify?.("error", "Failed to add URL. Please try again.");
     } finally {
       setIsLoading(false);
@@ -240,14 +198,13 @@ export default function AddUrlModal({
           className="modal-close"
           aria-label="Close"
           onClick={() => {
-            onClose()
-                setTitle("");
-                setUrl("");
-                setNote("");
-                setTags([]);
-                setTagInput("");
-                setReminder(null);
-                setSelectedDate(null);
+            onClose();
+            setTitle("");
+            setUrl("");
+            setNote("");
+            setTags([]);
+            setReminder(null);
+            setSelectedDate(null);
           }}
           disabled={isLoading}
           type="button"
@@ -313,66 +270,75 @@ export default function AddUrlModal({
 
           {/* Tags + Date on same line */}
           <div className="field-row tags-date-row">
-            <label className="add-link-field field tags-field">
+            <div className="add-link-field field tags-field">
               <div className="field-label">Tags</div>
 
               <div className="tag-input-wrap">
-                <div className="tags-list" role="list">
-                  {tags.map((t, i) => (
-                    <span
-                      className="tag-chip small"
-                      key={`${t}-${i}`}
-                      role="listitem"
-                    >
-                      <span className="tag-text">
-                        {t.startsWith("#") ? t.slice(1) : t}
-                      </span>
-                      <button
-                        type="button"
-                        className="tag-cut-btn"
-                        onClick={() => removeTag(i)}
-                        aria-label={`Remove tag ${t}`}
-                      >
-                        ✕
-                      </button>
-                    </span>
-                  ))}
-
-                  <input
-                    className="tag-input"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={handleTagKeyDown}
-                    onPaste={handleTagPaste}
-                    placeholder={`Type tag and press Enter or comma (max ${MAX_TAGS})`}
-                    disabled={tags.length >= MAX_TAGS}
-                  />
+                {/* User tags shelf (click to add) */}
+                <div className="user-tags-shelf" aria-label="Your tags">
+                  {Array.isArray(userTags) &&
+                    userTags.map((ut, idx) => {
+                      const raw =
+                        typeof ut === "string"
+                          ? ut
+                          : ut?.tag ?? ut?.label ?? ut?.name ?? "";
+                      const icon =
+                        typeof ut === "object" && ut && ut.icon
+                          ? String(ut.icon)
+                          : "";
+                      const label = String(raw || "");
+                      const normalized = label.startsWith("#")
+                        ? label
+                        : `#${label}`;
+                      const already = tags.some(
+                        (t) => t.toLowerCase() === normalized.toLowerCase()
+                      );
+                      const canAdd = !already && tags.length < MAX_TAGS;
+                      return (
+                        <button
+                          key={`user-tag-${idx}`}
+                          type="button"
+                          className={`user-tag-btn ${
+                            already ? "selected" : ""
+                          }`}
+                          onClick={() => {
+                            if (already) {
+                              setTags((prev) =>
+                                prev.filter(
+                                  (t) =>
+                                    t.toLowerCase() !== normalized.toLowerCase()
+                                )
+                              );
+                              setTagError("");
+                            } else if (tags.length < MAX_TAGS) {
+                              addTagFromInput(normalized);
+                            } else {
+                              setTagError(`Maximum ${MAX_TAGS} tags allowed`);
+                              clearTagErrorSoon();
+                            }
+                          }}
+                          disabled={!already && tags.length >= MAX_TAGS}
+                          aria-pressed={already}
+                          aria-label={
+                            already ? `Remove tag ${label}` : `Add tag ${label}`
+                          }
+                          title={already ? "Click to remove" : `Click to add`}
+                        >
+                          {icon ? (
+                            <span className="user-tag-icon" aria-hidden>
+                              {icon}
+                            </span>
+                          ) : null}
+                          <span className="user-tag-label">
+                            {label.startsWith("#") ? label.slice(1) : label}
+                          </span>
+                        </button>
+                      );
+                    })}
                 </div>
+                {/* Removed chips list; selection is indicated on the user tag buttons */}
 
-                <div className="tag-actions">
-                  <button
-                    type="button"
-                    className="btn add-tag-btn"
-                    onClick={() => {
-                      if (tagInput.trim()) addTagFromInput(tagInput.trim());
-                    }}
-                    disabled={!tagInput.trim() || tags.length >= MAX_TAGS}
-                  >
-                    Add
-                  </button>
-
-                  <button
-                    type="button"
-                    className="btn clear-tags-btn"
-                    onClick={() => {
-                      setTags([]);
-                      setTagInput("");
-                      setTagError("");
-                    }}
-                  >
-                    Clear
-                  </button>
-                </div>
+                {/* Removed Clear All / Clear Last actions as requested */}
 
                 <div
                   className={`tag-limit ${tagError ? "has-error" : ""}`}
@@ -384,7 +350,7 @@ export default function AddUrlModal({
                   </small>
                 </div>
               </div>
-            </label>
+            </div>
 
             {/* Date on same row as tags */}
             <label className="add-link-field field date-field">
@@ -413,7 +379,7 @@ export default function AddUrlModal({
           </div>
 
           {/* Actions */}
-          <div className="modal-actions">
+          <div className="modal-actions add-url-actions">
             <button
               type="button"
               className="btn cancel"

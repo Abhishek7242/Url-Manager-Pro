@@ -217,7 +217,7 @@
   .add .modal-card { padding:18px; }
   .add .two-col-row { grid-template-columns: 1fr; gap:10px; }
   .add .tag-input { min-width:80px; }
-  .add .modal-actions { flex-direction: column-reverse; gap:8px; }
+  /* .add .modal-actions { flex-direction: column-reverse; gap:8px; } */
   .add .addbtn.btn.primary, .add .btn { width:100%; }
 }
 
