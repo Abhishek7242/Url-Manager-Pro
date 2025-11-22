@@ -8,8 +8,9 @@ const UrlState = (props) => {
   // http://localhost:8000/
   // const API_BASE = "http://localhost:8000/api"; // Laravel backend
   // const BASE = "http://localhost:8000"; // Laravel backend
-  const API_BASE = "https://www.urlmg.com/backend/api"; // Laravel backend
-  const BASE = "https://www.urlmg.com/backend"; // Laravel backend
+
+  const API_BASE = import.meta.env.VITE_API_BASE;
+  const BASE = import.meta.env.VITE_BASE;
 
   const canonicalUrl = "https://www.urlmg.com/";
 
@@ -53,25 +54,27 @@ const UrlState = (props) => {
   const [webNotifications, setWebNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [userTags, setUserTags] = useState([]);
+  const [termsData, setTermsData] = useState([]);
+  const [privacyData, setPrivacyData] = useState([]);
+  const [friendsModalOpen, setFriendsModalOpen] = useState(false);
+  const [termsAndConditionsModalOpen, setTermsAndConditionsModalOpen] =
+    useState(false);
   const navigate = useNavigate();
-async function submitIndexNow() {
-  const res = await fetch(
-    `${API_BASE}/indexnow/submit-sitemap`,
-    {
+  async function submitIndexNow() {
+    const res = await fetch(`${API_BASE}/indexnow/submit-sitemap`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         sitemapUrl: `${BASE}/sitemap.xml`,
       }),
-    }
-  );
+    });
 
-  const data = await res.json();
-  if (!res.ok || !data.ok) {
-    throw new Error(data.error || "IndexNow submission failed");
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      throw new Error(data.error || "IndexNow submission failed");
+    }
+    return data.result; // includes status/body from IndexNow
   }
-  return data.result; // includes status/body from IndexNow
-}
   const updateRootBackground = (bg) => {
     const root = document.querySelector("#root");
     if (!root) return;
@@ -81,8 +84,90 @@ async function submitIndexNow() {
       bg.startsWith("http") ? `url(${bg})` : bg
     );
   };
+  async function fetchTerms() {
+    try {
+      const res = await fetch(`${API_BASE}/terms/list`, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || "Failed to fetch terms");
+      }
+      setTermsData(json.data);
+      // Normalize structure
+      return json.data;
+    } catch (error) {
+      return [];
+    }
+  }
+  async function fetchPrivacyData() {
+    try {
+      const res = await fetch(`${API_BASE}/privacy/list`, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || "Failed to fetch terms");
+      }
+      setTermsData(json.data);
+      // Normalize structure
+      return json.data;
+    } catch (error) {
+      return [];
+    }
+  }
 
   const [user, setUser] = useState(null);
+
+  // ext-notify.js - run this after successful signup/login (session cookie already set)
+  // Example usage in React: call notifyExtensionOnAuth(user) inside your OTP success handler if ext_redirect query present.
+
+  // ext-notify.js
+  async function notifyExtensionOnAuth(user) {
+    try {
+      if (!user || typeof window === "undefined") return;
+
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get("ext_redirect")) return; // only if opened from extension
+
+      const safeUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar || null,
+      };
+
+      window.postMessage(
+        {
+          type: "EXT_AUTH_SUCCESS",
+          user: safeUser,
+        },
+        window.location.origin
+      );
+
+      // Optional: clean URL so ext_redirect doesn't stay forever
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("ext_redirect");
+        window.history.replaceState({}, document.title, url.toString());
+      } catch {}
+    } catch (e) {
+      console.warn("notifyExtensionOnAuth failed", e);
+    }
+  }
+
   async function fetchAndLogUser() {
     try {
       const res = await fetch(`${API_BASE}/user`, {
@@ -98,9 +183,11 @@ async function submitIndexNow() {
         return null;
       }
       setIsLoggedIn(true);
-      setUser(JSON.parse(bodyText));
-      // console.log(res.status, bodyText);
-      return JSON.parse(bodyText);
+      let data = JSON.parse(bodyText);
+      // notifyExtensionOnAuth(data);
+      setUser(data);
+      // console.log(res.status, data);
+      return data;
     } catch (err) {
       // console.log("gestuser");
     }
@@ -131,36 +218,41 @@ async function submitIndexNow() {
     }
   }
   async function addTag(icon, tag) {
-  
-  try {
-    const res = await fetch(`${API_BASE}/user/tags`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json", ...getXsrfHeader() },
-      credentials: "include",
-      body: JSON.stringify({ icon, tag }),
-    });
+    try {
+      const res = await fetch(`${API_BASE}/user/tags`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...getXsrfHeader(),
+        },
+        credentials: "include",
+        body: JSON.stringify({ icon, tag }),
+      });
 
-    const data = await res.json().catch(() => null);
+      const data = await res.json().catch(() => null);
 
-    if (!res.ok) {
-      return { success: false, message: data?.message || `Request failed (${res.status})` };
+      if (!res.ok) {
+        return {
+          success: false,
+          message: data?.message || `Request failed (${res.status})`,
+        };
+      }
+
+      // Expect { success: true, tag: {id, tag} } or { success: true, data: [...] }
+      if (data?.tag) return { success: true, tag: data.tag };
+      if (Array.isArray(data?.data)) {
+        const last = data.data[data.data.length - 1];
+        return { success: true, tag: last };
+      }
+      // fallback
+      return { success: true, tag: data?.data ?? null };
+    } catch (err) {
+      return { success: false, message: err?.message || "Network error" };
     }
-
-    // Expect { success: true, tag: {id, tag} } or { success: true, data: [...] }
-    if (data?.tag) return { success: true, tag: data.tag };
-    if (Array.isArray(data?.data)) {
-      const last = data.data[data.data.length - 1];
-      return { success: true, tag: last };
-    }
-    // fallback
-    return { success: true, tag: data?.data ?? null };
-  } catch (err) {
-    return { success: false, message: err?.message || "Network error" };
   }
-}
 
-
-  const updateTag = async (id, icon,tag) => {
+  const updateTag = async (id, icon, tag) => {
     try {
       // mirror your URL builder pattern (falls back between guest/user endpoints if you use that)
       const url = await buildGetUrlsUrl(
@@ -176,7 +268,7 @@ async function submitIndexNow() {
           ...getXsrfHeader(),
         },
         credentials: "include",
-        body: JSON.stringify({icon,tag }),
+        body: JSON.stringify({ icon, tag }),
       });
 
       if (!res.ok) {
@@ -256,8 +348,8 @@ async function submitIndexNow() {
   }
 
   useEffect(() => {
-    getNotifications();
-    fetchAndLogUser();
+    // getNotifications();
+    // fetchAndLogUser();
     sendUserSession();
     // submit IndexNow();
     // submitIndexNow()
@@ -501,6 +593,7 @@ async function submitIndexNow() {
 
       if (!res.ok) {
         const errorData = await res.json();
+        showNotify("error", errorData.message || "Failed to add URL");
         throw new Error(errorData.message || "Failed to add URL");
       }
 
@@ -677,6 +770,7 @@ async function submitIndexNow() {
 
       // Clear current URLs and fetch fresh ones
       setUrls([]);
+      setUserTags([]);
       const refreshedUrls = await getAllUrls();
       if (refreshedUrls && refreshedUrls.data) {
         setUrls(refreshedUrls.data);
@@ -1035,6 +1129,7 @@ async function submitIndexNow() {
     // <NoteContext.Provider value={{ apiData, addNote, deleteNote, editNote ,getdata}}>
     <UrlContext.Provider
       value={{
+        getXsrfHeader,
         canonicalUrl,
         API_BASE,
         userInfoData,
@@ -1103,7 +1198,6 @@ async function submitIndexNow() {
         openProfileModel,
         setOpenProfileModel,
         updateUserName,
-        getXsrfHeader,
         setShowAuthFeature,
         urlsView,
         setUrlsView,
@@ -1128,6 +1222,16 @@ async function submitIndexNow() {
         updateTag,
         deleteTag,
         getTags,
+        friendsModalOpen,
+        setFriendsModalOpen,
+        termsAndConditionsModalOpen,
+        setTermsAndConditionsModalOpen,
+        termsData,
+        setTermsData,
+        fetchTerms,
+        privacyData,
+        setPrivacyData,
+        fetchPrivacyData,
       }}
     >
       {props.children}

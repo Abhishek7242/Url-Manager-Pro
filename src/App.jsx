@@ -23,6 +23,11 @@ import FullscreenLoader from "./components/FullscreenLoader";
 import URLMgrLanding from "./components/URLMgrLanding";
 import Settings from "./components/dashboard/Settings";
 import Notifications from "./components/auth/Notifications";
+import FriendsComponent from "./components/navbar/FriendsComponent";
+import TermsAndServices from "./components/landingPage/TermsAndServices";
+import TermsAndServicesPage from "./components/TermsAndServicesPage";
+import FuturisticContact from "./components/FuturisticContact";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 
 function App() {
   const context = React.useContext(UrlContext);
@@ -58,6 +63,15 @@ function App() {
     notifications,
     setNotifications,
     getNotifications,
+    friendsModalOpen,
+    setFriendsModalOpen,
+    termsAndConditionsModalOpen,
+    setTermsAndConditionsModalOpen,
+    termsData,
+    fetchTerms,
+    canonicalUrl,
+    privacyData,
+    fetchPrivacyData,
   } = context;
   useEffect(() => {
     let isMounted = true; // ✅ prevents state update after unmount
@@ -124,6 +138,7 @@ function App() {
       {webNotifications && (
         <Notifications
           notifications={notifications}
+          onGetNotifications={getNotifications}
           onClose={() => setWebNotifications(false)}
         />
       )}
@@ -160,12 +175,14 @@ function App() {
         />
       )}
       {/* { screenLoading ? <FullscreenLoader/> : null } */}
-      {location.pathname !== "/" && (
-        <>
-          <Navbar /> <Settings />
-        </>
-      )}
-
+      {location.pathname !== "/" &&
+        location.pathname !== "/terms" &&
+        location.pathname !== "/privacy" &&
+        location.pathname !== "/contact" && (
+          <>
+            <Navbar /> <Settings />
+          </>
+        )}
       <div className="app">
         {/* <div className="linkuss-tag fixed bottom-4 right-4 z-50 text-sm text-gray-400 font-medium">
           <p>
@@ -191,7 +208,6 @@ function App() {
           )}
         </div>
       </div>
-
       <Routes>
         <Route
           path="/"
@@ -201,7 +217,40 @@ function App() {
         />
 
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/terms"
+          element={
+            <TermsAndServicesPage
+              termsData={termsData}
+              fetchTerms={fetchTerms}
+              canonicalUrl={canonicalUrl}
+            />
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <PrivacyPolicy
+              privacyData={privacyData}
+              fetchPrivacyData={fetchPrivacyData}
+              canonicalUrl={canonicalUrl}
+            />
+          }
+        />
         <Route path="/storage" element={<Storage />} />
+        <Route
+          path="/contact"
+          element={!user ? <Navigate to="/" replace /> : <FuturisticContact />}
+        />
+        <Route
+          path="/friends"
+          element={
+            <FriendsComponent
+              friendsModalOpen={friendsModalOpen}
+              setFriendsModalOpen={setFriendsModalOpen}
+            />
+          }
+        />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/duplicates" element={<Duplicates />} />

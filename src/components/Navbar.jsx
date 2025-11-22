@@ -29,6 +29,7 @@ import {
   ChevronRight,
   Zap,
   Loader2,
+  Users,
 } from "lucide-react";
 
 import "./CSS/Navbar.css";
@@ -70,6 +71,8 @@ export default function Navbar() {
     setSettingsOpen,
     webNotifications,
     setWebNotifications,
+    friendsModalOpen,
+    setFriendsModalOpen,
   } = context;
 
   const location = useLocation();
@@ -80,12 +83,12 @@ export default function Navbar() {
       "linear-gradient(135deg, #0f0c29, #302b63, #24243e)";
     updateRootBackground(background);
 
-    async function getUser() {
-      const fetchedUser = await fetchAndLogUser();
-      setUserInfoData(fetchedUser);
-      if (fetchedUser) setUser(fetchedUser);
-    }
-    getUser();
+    // async function getUser() {
+    //   const fetchedUser = await fetchAndLogUser();
+    //   setUserInfoData(fetchedUser);
+    //   if (fetchedUser) setUser(fetchedUser);
+    // }
+    // getUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -169,12 +172,7 @@ export default function Navbar() {
       label: "URLs",
       meta: `${(filtered || []).length}`,
     },
-    {
-      to: "/reminders",
-      icon: <Bell color="#ff6b6b" />,
-      label: "Reminders",
-      meta: `${remindersCount}`,
-    },
+    { to: "/tags", icon: <Tag color="#fb923c" />, label: "Tags" },
     {
       to: "/analytics",
       icon: <BarChart3 color="#5ad2ff" />,
@@ -186,7 +184,13 @@ export default function Navbar() {
       label: "Suggestions",
     },
     { to: "/duplicates", icon: <Copy color="#fbbf24" />, label: "Duplicates" },
-    { to: "/tags", icon: <Tag color="#fb923c" />, label: "Tags" },
+    // {
+    //   to: "/friends",
+    //   icon: <Users color="#fffdd0" />, // blue tone for friends
+    //   label: "Friends",
+    //   // meta: `${friendsCount}`,
+    // },
+
     { to: "/storage", icon: <Database color="#a78bfa" />, label: "Storage" },
   ];
 
@@ -306,6 +310,9 @@ export default function Navbar() {
               setSettingsOpen={setSettingsOpen}
               mobileOpen={mobileOpen}
               closeMobile={closeMobile}
+              friendsModalOpen={friendsModalOpen}
+              setFriendsModalOpen={setFriendsModalOpen}
+              setMobileOpen={setMobileOpen}
             />
           ) : (
             <ProfileDropdown
@@ -319,6 +326,9 @@ export default function Navbar() {
               setSettingsOpen={setSettingsOpen}
               closeMobile={closeMobile}
               mobileOpen={mobileOpen}
+              friendsModalOpen={friendsModalOpen}
+              setFriendsModalOpen={setFriendsModalOpen}
+              setMobileOpen={setMobileOpen}
             />
           )}
         </div>

@@ -103,9 +103,9 @@ export default function Dashboard() {
   const [disabledTags, setDisabledTags] = useState(
     JSON.parse(localStorage.getItem("lynkr_disabled_tags")) || []
   );
-    const [showButton, setShowButton] = useState(
-      typeof window !== "undefined" ? window.innerWidth >= 1400 : true
-    );
+  const [showButton, setShowButton] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1400 : true
+  );
 
   const [showMoreItems, setShowMoreItems] = useState(() => {
     if (typeof window === "undefined") return false; // SSR safety
@@ -137,64 +137,63 @@ export default function Dashboard() {
     window.addEventListener("mousedown", handleClick);
     return () => window.removeEventListener("mousedown", handleClick);
   }, []);
-useEffect(() => {
-  let isMounted = true; // ✅ prevents state update after unmount
+  useEffect(() => {
+    let isMounted = true; // ✅ prevents state update after unmount
 
-  const fetchUrls = async () => {
-    setLoading(true);
-    try {
-      const res = await getAllUrls(); // call API function
+    const fetchUrls = async () => {
+      setLoading(true);
+      try {
+        const res = await getAllUrls(); // call API function
         const tags = await getTags();
 
-      if (isMounted) {
-        setUrls(res.data); // save to state only if mounted
+        if (isMounted) {
+          setUrls(res.data); // save to state only if mounted
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error("❌ Error fetching URLs:", err);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+          setScreenLoading(false);
+        }
       }
-    } catch (err) {
-      if (isMounted) {
-        console.error("❌ Error fetching URLs:", err);
-      }
-    } finally {
-      if (isMounted) {
-        setLoading(false);
-        setScreenLoading(false);
+    };
+
+    fetchUrls();
+
+    // ✅ cleanup: avoids memory leaks & race conditions on fast redirects
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // Get stored data safely
+    const stored = localStorage.getItem("lynkr_toggles");
+    let urlsEnabled = true;
+    // console.log("checked");
+
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        const urlsItem = parsed.find((item) => item.id === "urls");
+        if (urlsItem && urlsItem.enabled === false) {
+          urlsEnabled = false;
+        }
+      } catch (err) {
+        console.error("Error parsing lynkr_toggles:", err);
       }
     }
-  };
 
-  fetchUrls();
-
-  // ✅ cleanup: avoids memory leaks & race conditions on fast redirects
-  return () => {
-    isMounted = false;
-  };
-}, []);
-
-useEffect(() => {
-  // Get stored data safely
-  const stored = localStorage.getItem("lynkr_toggles");
-  let urlsEnabled = true;
-      // console.log("checked");
-
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      const urlsItem = parsed.find((item) => item.id === "urls");
-      if (urlsItem && urlsItem.enabled === false) {
-        urlsEnabled = false;
-      }
-    } catch (err) {
-      console.error("Error parsing lynkr_toggles:", err);
+    // ✅ Combined condition
+    if (!urlsEnabled && search.trim() === "") {
+      setUrlsView(""); // hide
+    } else {
+      setUrlsView("visible"); // show
     }
-  }
-
-  // ✅ Combined condition
-  if (!urlsEnabled && search.trim() === "") {
-    setUrlsView(""); // hide
-  } else {
-    setUrlsView("visible"); // show
-  }
-}, [search]);
-
+  }, [search]);
 
   useEffect(() => {
     const saved = localStorage.getItem("lynkr_toggles");
@@ -284,7 +283,8 @@ useEffect(() => {
     { id: "4", label: "AI", icon: null },
     { id: "5", label: "Reading", icon: null },
   ]);
-  const [selected, setSelected] = useState(["1"]);
+  // old (array) -> replace with this:
+  const [selected, setSelected] = useState(null); // single tag id or null
 
   const handleSelect = (id, isChecked) => {
     setSelectedIds((prev) => {
@@ -363,6 +363,21 @@ useEffect(() => {
       setArchiveLoading(false);
     }
   }
+  // Put this near your other handlers (where you had cleanOnFocus)
+const cleanOnFocus = () => {
+  // If search does NOT start with "#", do nothing
+  if (!search || !search.startsWith("#")) return;
+
+  // If it starts with "#", then clean everything
+  setSearch(""); // Clear search
+  setUrl(""); // Clear quick-add URL
+
+  if (selected) {
+    setSelected(null); // Remove selected tag
+  }
+};
+
+
 
   async function handleDelete() {
     const ids = Object.keys(selectedIds);
@@ -429,11 +444,12 @@ useEffect(() => {
 
     try {
       // Add to URLs array immediately for real-time update
-      setUrls((prevUrls) => [newLink, ...prevUrls]);
 
       // Then send to API
       let res = await addUrl(newLink);
+      
       if (res) {
+      setUrls((prevUrls) => [newLink, ...prevUrls]);
         setUrl("");
         setSearch("");
         setInputFocus(false);
@@ -460,7 +476,7 @@ useEffect(() => {
     <>
       <HeadMeta
         canonicalUrl={canonicalUrl}
-        title="URL Manager Dashboard — Smart Link Management, Analytics & Custom Domains"
+        title="URL Manager Dashboard — Smart URL Management, Analytics & Custom Domains"
         description="Access your URL Manager dashboard to manage, track, and optimize every link. Get real-time analytics, custom domain setup, and campaign insights — all in one intuitive dashboard."
         keywords="URL Manager dashboard, link management, shorten URLs, branded links, analytics, campaign tracking, custom domains, link analytics, link governance, team workspace"
         image="og-image.png"
@@ -673,6 +689,9 @@ useEffect(() => {
                 className="search-input"
                 value={search}
                 ref={inputRef}
+                onFocus={() => {
+                  cleanOnFocus(); // new function
+                }}
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setUrl(e.target.value);

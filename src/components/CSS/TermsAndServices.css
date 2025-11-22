@@ -1,0 +1,679 @@
+.terms-wrap{
+    position: fixed;
+    right: 0px;
+    padding: 10px;
+    padding-top: 30px;
+    bottom: 0px;
+    z-index: 999999999;
+    height: 100vh;
+    backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    overflow-y: scroll;
+}/* TermsAndServices.css
+   Styles all classes referenced in your TermsAndServices.jsx
+   - Responsive down to 280px
+   - Scrollable content with styled scrollbar
+   - Optional floating modifier: add class "terms-float" to .terms-wrap
+*/
+/* WebKit browsers (Chrome, Edge, Brave, Opera) */
+.terms-wrap::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terms-wrap::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.terms-wrap::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(99,102,241,0.6), rgba(79,70,229,0.6));
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.terms-wrap::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(99,102,241,0.8), rgba(79,70,229,0.8));
+}
+
+/* Firefox */
+.terms-wrap {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99,102,241,0.6) rgba(255,255,255,0.05);
+}
+:root{
+  --accent-1: #6366f1; /* purple */
+
+}
+/* ---------- Variables ---------- */
+.btn.btn.ghost {
+    flex: unset;
+}
+
+
+/* ---------- Base container ---------- */
+.terms-wrap{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: var(--text);
+  max-width: var(--max-width);
+  box-sizing: border-box;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* Optional: floating bottom-right window 'freedom window'
+   Use: <div class="terms-wrap terms-float"> ... </div>
+*/
+.terms-wrap.terms-float{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 360px;
+  max-height: 78vh;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(2,6,23,0.18);
+  border: 1px solid rgba(2,6,23,0.06);
+  padding: 0;
+  overflow: hidden;
+  z-index: 99999;
+}
+
+/* ---------- Header ---------- */
+.terms-header{
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding: 10px 0;
+}
+
+.terms-wrap.terms-float .terms-header{
+  padding: 14px 16px;
+  color: #fff;
+  align-items: center;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.terms-title h1{
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.terms-wrap.terms-float .terms-title h1{
+  font-size: 1rem;
+  color: #fff;
+}
+
+.subtitle{
+  margin: 0;
+  color: whitesmoke;
+  font-size: 0.88rem;
+}
+
+.terms-wrap.terms-float .subtitle{
+  color: rgba(255,255,255,0.85);
+  font-size: 0.78rem;
+}
+.terms-close{
+    color: white;
+    font-size: 34px;
+    font-weight: bold;
+}
+/* ---------- Controls (search + clear) ---------- */
+.controls{
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.search-input{
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #e6eefc;
+  min-width: 220px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: box-shadow .15s ease, border-color .15s ease;
+  color: var(--text);
+}
+
+.search-input:focus{
+  box-shadow: 0 6px 18px rgba(99,102,241,0.08);
+  border-color: rgba(99,102,241,0.32);
+}
+
+/* Buttons */
+.btn{
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: #fff;
+  box-shadow: var(--shadow);
+  transition: transform .12s ease, opacity .12s ease, box-shadow .12s ease;
+}
+
+.btn:active{ transform: translateY(1px); }
+.btn:hover{ filter: brightness(.98); }
+
+/* outline variant */
+.btn.outline{
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: var(--text);
+  box-shadow: none;
+}
+
+/* ghost variant (used inside cards) */
+.btn.ghost{
+  background: transparent;
+  color: var(--accent-2);
+  border: 1px solid transparent;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* ---------- Grid layout (TOC + content) ---------- */
+.terms-grid{
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+/* If floating panel, use stacked layout inside the float */
+.terms-wrap.terms-float .terms-grid{
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+/* ---------- Table of contents / sidebar ---------- */
+.toc-panel{
+    position: sticky;
+    top: 10px;
+    color: white;
+  background: linear-gradient(180deg, rgba(99,102,241,0.04), rgba(0, 0, 0, 0.589));
+  padding: 14px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(99,102,241,0.06);
+  min-height: 120px;
+  box-sizing: border-box;
+}
+
+.terms-wrap.terms-float .toc-panel{
+  display: none; /* keep float compact — hide TOC by default */
+}
+
+.toc-panel h3{
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: var(--accent-2);
+}
+
+.toc-panel ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+/* TOC button */
+.toc-btn{
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background .12s ease, transform .08s ease;
+}
+
+.toc-btn:hover{
+  background: rgba(15,23,42,0.03);
+  transform: translateX(3px);
+}
+
+.toc-btn.active{
+  background: linear-gradient(90deg, rgba(99,102,241,0.08), rgba(79,70,229,0.05));
+  color: var(--accent-2);
+  box-shadow: 0 6px 18px rgba(99,102,241,0.06);
+}
+
+/* ---------- Content panel (cards) ---------- */
+.content-panel{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* When used inside float, make content scrollable and compact */
+.terms-wrap.terms-float .content-panel{
+  padding: 12px 14px 10px 14px;
+  max-height: calc(78vh - 120px);
+  overflow-y: auto;
+}
+
+/* Individual term card */
+.term-card{
+    color: white;
+ backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.18));
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  border: 1px solid var(--card-border);
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 26px rgba(2,6,23,0.03);
+  overflow: hidden;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.term-card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 18px 42px rgba(2,6,23,0.06);
+}
+
+/* Expanded styling when the card is open */
+.term-card.expanded{
+  border-color: rgba(99,102,241,0.12);
+  box-shadow: 0 20px 48px rgba(2,6,23,0.07);
+}
+
+/* Card header */
+.card-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-header h2{
+  margin: 0;
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
+}
+
+.mini{
+  margin: 3px 0 0 0;
+  color: rgb(224, 224, 224);
+  font-size: 0.82rem;
+}
+
+/* Actions area */
+.card-actions{ display: flex; gap: 8px; align-items: center; }
+
+/* body that toggles open/close */
+.card-body{
+  padding-top: 10px;
+  color: rgb(201, 201, 201);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  overflow: hidden;
+}
+
+/* small subtle divider for footer in float mode */
+.terms-wrap.terms-float .terms-footer{
+  padding: 10px 14px;
+  background: rgba(250,250,255,0.9);
+  border-top: 1px solid #eef2ff;
+}
+
+/* ---------- No results view ---------- */
+.no-results{
+  padding: 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+  background: transparent;
+  border-radius: 10px;
+}
+
+/* ---------- Footer ---------- */
+.terms-footer{
+  margin-top: 1.25rem;
+  text-align: center;
+  color: white;
+  font-size: 0.9rem;
+}
+
+/* anchor style inside footer */
+.terms-footer a{
+  color: var(--accent-1);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ---------- Scrollbar styling for content areas ---------- */
+.content-panel, .term-card, .toc-panel, .terms-wrap.terms-float .content-panel{
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.content-panel::-webkit-scrollbar, .terms-wrap.terms-float .content-panel::-webkit-scrollbar{
+  height: 8px;
+  width: 8px;
+}
+
+.content-panel::-webkit-scrollbar-thumb, .terms-wrap.terms-float .content-panel::-webkit-scrollbar-thumb{
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+
+/* ---------- Animations ---------- */
+@keyframes floatIn {
+  from { transform: translateY(18px) scale(.998); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.terms-wrap.terms-float { animation: floatIn .36s cubic-bezier(.2,.9,.3,1); }
+
+/* ---------- Responsive: down to 280px ---------- */
+@media (max-width: 880px){
+  .terms-grid{ grid-template-columns: 1fr; }
+  .toc-panel{ display: none; }
+  .search-input{ min-width: 140px; }
+}
+
+@media (max-width: 480px){
+  .terms-wrap{ padding: 0.6rem; }
+  .terms-header{ gap: 0.5rem; }
+  .search-input{ min-width: 110px; padding: 7px 9px; font-size: 0.9rem; }
+  .btn{ padding: 7px 9px; font-size: 0.9rem; border-radius: 9px; }
+  .btn {
+  
+    min-width: 78px;}
+}
+
+/* Very small phones — ensure readability down to ~280px */
+@media (max-width: 320px){
+  .terms-title h1{ font-size: 1.05rem; }
+  .subtitle{ font-size: 0.78rem; }
+  .search-input{ min-width: 90px; padding: 6px; }
+  .toc-panel{ padding: 10px; }
+  .term-card{ padding: 10px; border-radius: 10px; }
+  .card-header h2{ font-size: 0.98rem; }
+  .card-body{ font-size: 0.92rem; }
+}
+
+/* ---------- Utility: make the read/collapse button visually distinct on small screens ---------- */
+@media (max-width: 420px){
+  .card-actions .btn.ghost{ font-size: 0.85rem; padding: 6px 8px; }
+}
+/* Highlight + scroll focus styling for the target clause */
+.term-card.highlight {
+  border-color: rgba(99,102,241,0.22);
+  background: linear-gradient(
+    90deg,
+    rgba(8, 34, 87, 0.95),
+    rgba(2, 6, 23, 0.85)
+  );
+
+  transform: translateY(-3px);
+  animation: highlightPulse 2.2s ease forwards;
+  position: relative;
+  z-index: 2;
+}
+
+/* subtle ribbon/glow at the top right of highlighted card (optional) */
+.term-card.highlight::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #6366f1, #4f46e5);
+  box-shadow: 0 6px 18px rgba(79,70,229,0.18);
+}
+
+/* keyframes for the pulse effect */
+@keyframes highlightPulse {
+  0% {
+    box-shadow: 0 10px 30px rgba(79,70,229,0.06), 0 4px 12px rgba(2,6,23,0.04);
+  }
+  30% {
+    box-shadow: 0 22px 48px rgba(79,70,229,0.12), 0 8px 28px rgba(2,6,23,0.06);
+  }
+  100% {
+    box-shadow: 0 12px 34px rgba(79,70,229,0.08), 0 6px 18px rgba(2,6,23,0.05);
+  }
+}
+
+/* ensure smooth snapping/padding when scrolling - give some breathing room from top */
+.term-card {
+  scroll-margin-top: 18px; /* so scrollIntoView doesn't hide under sticky header */
+}
+
+/* when using the compact floating variant where content-panel is scrollable,
+   the highlight might need higher z-index so it sits above other items */
+.terms-wrap.terms-float .term-card.highlight {
+  z-index: 10;
+}
+/* ===== Light mode overrides =====
+   Usage: add class "light-mode" on a parent (e.g. <body class="light-mode">)
+   This file only overrides properties that need to change for light backgrounds.
+*/
+
+/* Container */
+.light-mode .terms-wrap {
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 8px 28px rgba(2,6,23,0.06);
+  color: #0f172a;
+}
+
+/* Close button darker in light mode */
+.light-mode .terms-close,.light-mode h2   {
+  color: #0f172a;
+}
+
+/* Scrollbar (WebKit) */
+.light-mode .terms-wrap::-webkit-scrollbar {
+  width: 8px;
+}
+.light-mode .terms-wrap::-webkit-scrollbar-track {
+  background: rgba(15,23,42,0.03);
+  border-radius: 10px;
+}
+.light-mode .terms-wrap::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(99,102,241,0.28), rgba(79,70,229,0.28));
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow: none;
+}
+.light-mode .terms-wrap::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(99,102,241,0.42), rgba(79,70,229,0.42));
+}
+
+/* Firefox scrollbar */
+.light-mode .terms-wrap {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99,102,241,0.28) rgba(15,23,42,0.03);
+}
+
+/* TOC panel (lighter background) */
+.light-mode .toc-panel {
+  background: linear-gradient(180deg, rgba(240,243,255,0.9), rgba(255,255,255,0.96));
+  color: #0f172a;
+  border: 1px solid rgba(99,102,241,0.06);
+}
+
+/* TOC button active style for light */
+.light-mode .toc-btn.active {
+  background: linear-gradient(90deg, rgba(99,102,241,0.10), rgba(79,70,229,0.06));
+  color: var(--accent-2);
+  box-shadow: 0 6px 18px rgba(99,102,241,0.04);
+}
+
+/* Card background and text in light mode */
+.light-mode .term-card {
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  color: #0f172a;
+  text-shadow: none;
+  border: 1px solid rgba(2,6,23,0.06);
+  box-shadow: 0 8px 26px rgba(2,6,23,0.04);
+}
+
+/* Expanded card accent in light mode */
+.light-mode .term-card.expanded {
+  border-color: rgba(99,102,241,0.12);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.06);
+}
+
+/* mini / meta text */
+.light-mode .mini {
+  color: #475569;
+}
+
+/* Card body text */
+.light-mode .card-body {
+  color: #1f2937;
+}
+
+/* Buttons - default look in light mode */
+.light-mode .btn {
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+
+/* Outline button for light mode */
+.light-mode .btn.outline {
+  background: transparent;
+  border: 1px solid rgba(15,23,42,0.06);
+  color: #0f172a;
+  box-shadow: none;
+}
+
+/* Ghost button (inside card) */
+.light-mode .btn.ghost {
+  color: var(--accent-2);
+}
+
+/* Footer link color in light mode */
+.light-mode .terms-footer a {
+  color: var(--accent-2);
+}
+
+/* Highlight variant adjusted for light backgrounds */
+.light-mode .term-card.highlight {
+  border-color: rgba(99,102,241,0.28);
+  background: linear-gradient(180deg, rgba(248,250,255,0.95), rgba(240,243,255,0.98));
+  box-shadow: 0 22px 48px rgba(99,102,241,0.06), 0 8px 28px rgba(2,6,23,0.04);
+}
+
+/* ribbon/glow on highlight tuned for light */
+.light-mode .term-card.highlight::after {
+  box-shadow: 0 6px 14px rgba(99,102,241,0.12);
+}
+
+/* No-results color (light mode) */
+.light-mode .no-results {
+  color: #6b7280;
+}
+
+/* small viewport tweaks remain inherited; keep behavior same */
+
+/* END light-mode overrides */
+/* TERMS: improved layout + loader */
+
+/* layout */
+
+/* loader overlay */
+.terms-loader-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: auto;
+  backdrop-filter: blur(4px) saturate(110%);
+}
+
+/* loader card */
+.loader-card-rich {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.35);
+  background: linear-gradient(180deg, rgba(12,14,18,0.95), rgba(24,26,30,0.95));
+  color: #fff;
+  min-width: 260px;
+}
+
+/* ring spinner */
+.loader-ring {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.12);
+  border-top-color: rgba(255,255,255,0.96);
+  animation: loader-spin 1s linear infinite;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 -4px 8px rgba(0,0,0,0.12);
+}
+
+/* small glow behind ring using pseudo element (keeps markup small) */
+.loader-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  filter: blur(6px);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), transparent 40%);
+  pointer-events: none;
+}
+
+/* loader texts */
+.loader-texts { display:flex; flex-direction:column; gap:4px; }
+.loader-title { font-weight:700; font-size:15px; letter-spacing:0.1px; }
+.loader-sub { font-size:13px; opacity:0.85; color: rgba(255,255,255,0.9); }
+
+/* animation keyframes */
+@keyframes loader-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* term cards */
+.term-card {
+ border-radius: 12px; padding: 14px; margin-bottom: 12px;
+  box-shadow: 0 6px 18px rgba(8,10,12,0.04);
+}
+.term-card.highlight { outline: 3px solid rgba(99,102,241,0.14); }
+
+/* header inside card */
+.card-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.card-header h2 { margin:0; font-size:16px; }
+
+/* actions */
+.card-actions .btn { cursor:pointer; }
+
+/* footer */
+.terms-footer { padding: 18px; text-align:center; color:#fbfbfb; font-size:13px; }
+.light-mode .terms-footer { padding: 18px; text-align:center; color:#343434; font-size:13px; }
+
+/* error banner */
+.fetch-error {
+  margin: 12px 18px; padding: 12px; border-radius: 8px;
+  background: rgba(220, 38, 38, 0.06); color: #991b1b; display:flex; align-items:center; gap:12px;
+}
+.btn.small { padding:6px 10px; font-size:13px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background: #fff; }
+
+/* toc button */
+.toc-btn { display:block; width:100%; text-align:left; padding:8px 10px; border-radius:8px; background:transparent; border:none; cursor:pointer; font-size:14px; }
+.toc-btn.active { background: rgba(99,102,241,0.06); }
+
+/* ensure content-panel doesn't collapse visually when empty */
+.content-panel { min-height: 180px; }

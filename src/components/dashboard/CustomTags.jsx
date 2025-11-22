@@ -39,6 +39,14 @@ export default function CustomTags({
   const [itemsPerSlide, setItemsPerSlide] = useState(4);
   const [slideIndex, setSlideIndex] = useState(0);
 
+  // helper: deterministic slug for ids
+  const slug = (s = "") =>
+    String(s)
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-_]/g, "");
+
   // Normalize function: convert various incoming shapes into { id, label, icon }
   const normalizeSourceTags = (source = []) => {
     return (source || []).map((t, idx) => {
@@ -48,26 +56,27 @@ export default function CustomTags({
         typeof t === "object" &&
         ("label" in t || "tag" in t || "name" in t)
       ) {
+        const label = (t.label ?? t.tag ?? t.name ?? "").toString();
         return {
-          id:
-            t.id ??
-            t._id ??
-            `t-${idx}-${String(t.tag ?? t.label ?? t.name ?? "").replace(
-              /\s+/g,
-              "-"
-            )}`,
-          label: (t.label ?? t.tag ?? t.name ?? "").toString(),
+          id: String(t.id ?? t._id ?? `t-${slug(label)}`),
+          label,
           icon: t.icon ?? null,
         };
       }
-      // primitive (string) case
+      // primitive (string) case -> deterministic id from label
+      const label = String(t);
       return {
-        id: `t-${idx}-${String(t).replace(/\s+/g, "-")}`,
-        label: String(t),
+        id: `t-${slug(label)}`,
+        label,
         icon: null,
       };
     });
   };
+  // after: const [selected, setSelected] = useState(initialSelected || null);
+  useEffect(() => {
+    // Keep internal selected state in sync with the prop (parent-driven)
+    setSelected(initialSelected ?? null);
+  }, [initialSelected]);
 
   // ✅ Load from localStorage ONCE
   useEffect(() => {
@@ -356,7 +365,9 @@ export default function CustomTags({
             {slides.map((slideItems, sIdx) => (
               <section
                 key={`ct-slide-${sIdx}`}
-                className="ct-carousel-slide"
+                className={`ct-carousel-slide ${
+                  userTags.length > 0 ? "has-tags" : "no-tags"
+                }`}
                 aria-roledescription="slide"
                 aria-label={`Slide ${sIdx + 1} of ${slides.length}`}
                 data-slide-index={sIdx}

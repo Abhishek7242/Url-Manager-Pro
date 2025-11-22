@@ -1,0 +1,179 @@
+/* Extra-small screens (280px to 340px) */
+        .glass-card {
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.03),
+            rgba(255, 255, 255, 0.01)
+          );
+        }
+        .neon-ring {
+          background: linear-gradient(
+            90deg,
+            rgba(124, 58, 237, 0.14),
+            rgba(6, 182, 212, 0.12)
+          );
+          border-radius: 12px;
+          border: 1px solid rgba(124, 58, 237, 0.18);
+          backdrop-filter: blur(6px);
+        }
+        .avatar-spark {
+          background: linear-gradient(
+            90deg,
+            rgba(124, 58, 237, 0.12),
+            rgba(6, 182, 212, 0.12)
+          );
+          color: white;
+          font-weight: 700;
+        }
+        .info-pill {
+          background: rgba(255, 255, 255, 0.02);
+          padding: 6px 10px;
+          border-radius: 999px;
+          font-size: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .icon-btn {
+          background: rgba(255, 255, 255, 0.02);
+          padding: 8px 12px;
+          border-radius: 10px;
+          font-size: 13px;
+          border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .input-wrap {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: rgba(255, 255, 255, 0.02);
+          padding: 10px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .input-icon {
+          color: rgba(255, 255, 255, 0.6);
+        }
+        .input-field {
+          background: transparent;
+          border: none;
+          outline: none;
+          color: #fff;
+          width: 100%;
+          font-size: 14px;
+        }
+        .file-btn {
+          display: inline-flex;
+          gap: 8px;
+          align-items: center;
+          padding: 8px 10px;
+          border-radius: 10px;
+          border: 1px dashed rgba(255, 255, 255, 0.04);
+          cursor: pointer;
+        }
+        .send-btn {
+          background: linear-gradient(
+            90deg,
+            rgba(124, 58, 237, 0.12),
+            rgba(6, 182, 212, 0.12)
+          );
+          padding: 8px 14px;
+          border-radius: 10px;
+          border: 1px solid rgba(124, 58, 237, 0.22);
+        }
+
+        /* small responsive tweak */
+        @media (max-width: 770px) {
+ .futuristic-contact{
+        padding-top: 100px;
+    }
+
+
+        }
+        @media (max-width: 420px) {
+          .glass-card {
+            padding: 16px;
+          }
+        }
+@media (max-width: 340px) {
+    .futuristic-contact{
+        padding: 30px 8px !important;
+        padding-top: 80px!important;
+
+    }
+  .glass-card {
+    padding: 12px !important;
+  }
+
+  /* Reduce heading sizes */
+  h3 {
+    font-size: 1rem !important;
+  }
+
+  /* Input container spacing */
+  .input-wrap {
+    padding: 8px !important;
+    gap: 6px !important;
+  }
+
+  /* Input & textarea font size */
+  .input-field {
+    font-size: 12px !important;
+  }
+
+  /* Textarea height for small screens */
+  textarea {
+    height: 80px !important;
+  }
+
+  /* Send button */
+  .send-btn {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+
+  /* File button */
+  .file-btn {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+  }
+
+  /* SVG background shrink */
+
+
+  /* Grid: stack vertically always on tiny screens */
+  .max-w-4xl {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tighten spacing */
+  .grid {
+    gap: 8px !important;
+  }
+
+  .flex {
+    gap: 6px !important;
+  }
+
+  /* Text scaling */
+  .text-xs, .text-sm {
+    font-size: 11px !important;
+  }
+
+  /* Icons smaller */
+  .input-icon,
+  .file-btn svg,
+  .send-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Pills + info panel tweaks */
+  .info-pill {
+    font-size: 10px !important;
+    padding: 4px 6px !important;
+  }
+
+  .avatar-spark {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 12px !important;
+  }
+}

@@ -87,6 +87,10 @@
   box-sizing: border-box;
   padding: 0;
 }
+.ct-carousel-slide.no-tags {
+    width: 700px;
+ 
+}
 
 /* example per-id custom icon colors (kept) */
 #Work .ct-pill-left svg {
@@ -359,6 +363,10 @@
   }
 }
 
+@media (max-width: 1120px) {
+  .ct-carousel-slide.no-tags {
+    width: 276px;
+}}
 @media (max-width: 1100px) {
 
 .ct-carousel-slide {
@@ -459,12 +467,18 @@
         .ct-carousel-slide {
         width: 126px;
     }
+        .ct-carousel-slide.no-tags {
+        width: 174px;
+    }
 }
 
 /* Narrow phones */
 @media (max-width: 600px) {
     .ct-carousel-slide {
         width: 84px;
+    }
+         .ct-carousel-slide.no-tags {
+        width: 133px;
     }
       .ct-pill .ct-pill-label {
         display: none;

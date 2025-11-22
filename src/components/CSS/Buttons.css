@@ -1,43 +1,60 @@
-.toggle-btn-container{
-  border-radius: 8px;
+.toggle-btn-container {
+  width: 100%;
+  max-width: 520px;
   display: flex;
-  justify-content: center;
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(10px);
-  padding: 8px;
-      width: 100%;
-    max-width: 520px;
-    gap: 4px;
-    margin-bottom: 20px;
-}
-.toggle-btn-container button{
-width:100%;
-padding: 6px 10px;
-border-radius: 6px;
-transition: all 0.3s ;
-    background: transparent;
-  color: #fff;
+  gap: 6px;
+  padding: 10px;
 
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05); /* subtle glass layer */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px);
+
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08);
+  margin-bottom: 22px;
 }
 
-.toggle-btn.active{
- border: none;
-  background: #ffffff68;
-  color: #fff;
-}
-.toggle-btn:hover{
-    box-shadow: 0px 0px 10px #ffffff40;
-}
-
-.signup_btn.toggle-btn{
+/* Buttons */
+.toggle-btn-container button {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
   border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffffcc;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+
+  transition: 
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.2s ease,
+    transform 0.25s ease;
 }
-.signup_btn.active{
- border: none;
-  background: #ffffff68;
+
+/* Active state: soft luminous fill */
+.toggle-btn.active,
+.signup_btn.active {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0.15)
+  );
   color: #fff;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
 }
-.signup_btn:hover{
-    box-shadow: 0px 0px 10px #ffffff40;
+
+/* Hover state: neon glow effect */
+.toggle-btn:hover,
+.signup_btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.25),
+    0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+/* Remove borders from signup button */
+.signup_btn {
+  border: none;
 }

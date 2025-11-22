@@ -130,7 +130,6 @@ export default function Signup({ onClose,isLogin,setOpenSignupModel,setOpenLogin
             right: 12,
             top: 12,
             background: "transparent",
-            border: "none",
             fontSize: 18,
             cursor: "pointer",
             padding: 6,

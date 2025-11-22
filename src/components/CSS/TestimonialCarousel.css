@@ -1,0 +1,377 @@
+/* TestimonialCarousel — polished */
+/* -------------------------------------------
+   Features:
+   - CSS variables for theme control
+   - Light/Dark support (+ .light-mode class)
+   - Smooth entrance/exit transforms and fade
+   - Responsive previews and compact mobile layout
+   - Accessibility: focus states + reduced-motion
+   ------------------------------------------- */
+
+/* -------------------------
+   THEME VARIABLES
+   ------------------------- */
+:root{
+  --bg: #0b1220;
+  --card-bg: #0f1726;
+  --muted: #94a3b8;
+  --text: #e6eefc;
+  --accent-1: rgba(255,255,255,0.06);
+  --glass: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  --card-radius: 14px;
+  --card-padding: 1.25rem;
+  --shadow-1: 0 6px 18px rgba(2,6,23,0.45);
+  --transition-fast: 180ms;
+  --transition-med: 360ms;
+  --max-width: 1120px;
+  --dot-inactive: rgba(148,163,184,0.18);
+  --dot-active: #ffffff;
+}
+
+/* Respect user preference for light mode via class or system setting */
+.light-mode,
+:root.light-mode { /* class-based override */
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --text: #0f1726;
+  --accent-1: rgba(15,23,38,0.06);
+  --glass: linear-gradient(180deg, rgba(15,23,38,0.02), rgba(15,23,38,0.01));
+  --shadow-1: 0 10px 30px rgba(2,6,23,0.08);
+  --dot-active: #0f1726;
+  --dot-inactive: rgba(15,23,38,0.08);
+}
+
+/* Fallback for prefers-color-scheme */
+@media (prefers-color-scheme: light) {
+  :root:not(.dark):not(.light-mode) {
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --muted: #6b7280;
+    --text: #0f1726;
+    --accent-1: rgba(15,23,38,0.06);
+    --glass: linear-gradient(180deg, rgba(15,23,38,0.02), rgba(15,23,38,0.01));
+    --shadow-1: 0 10px 30px rgba(2,6,23,0.08);
+    --dot-active: #0f1726;
+    --dot-inactive: rgba(15,23,38,0.08);
+  }
+}
+
+/* -------------------------
+   BASE LAYOUT
+   ------------------------- */
+.tm-carousel {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: var(--text);
+  background: transparent;
+}
+
+/* header row */
+.tm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.tm-title {
+  font-size: 1.75rem;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.tm-sub {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+/* rotate button */
+.tm-rotate-btn {
+  border: 1px solid var(--accent-1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color: var(--text);
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(2,6,23,0.12);
+}
+.tm-rotate-btn:hover,
+.tm-rotate-btn:focus {
+  transform: translateY(-2px);
+  outline: none;
+  box-shadow: 0 8px 22px rgba(2,6,23,0.18);
+}
+.tm-rotate-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+/* -------------------------
+   CONTAINER + CARD LAYOUT
+   ------------------------- */
+.tm-container {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* central testimonial card (main) */
+.tm-card {
+  position: relative;
+  width: min(88%, 720px);
+  background: var(--card-bg);
+  border: 1px solid var(--accent-1);
+  color: var(--text);
+  padding: var(--card-padding);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-1);
+  box-sizing: border-box;
+  transform-origin: center top;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--transition-med) cubic-bezier(.2,.9,.2,1), opacity var(--transition-med), box-shadow var(--transition-fast);
+  will-change: transform, opacity;
+}
+
+/* quote text */
+.tm-quote {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  font-weight: 500;
+  hyphens: auto;
+}
+
+/* author */
+.tm-author {
+  display: block;
+  margin-top: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* supporting note (small) */
+.tm-note {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* card variants */
+.tm-card.small {
+  width: 240px;
+  padding: 0.75rem;
+  border-radius: 12px;
+  opacity: 0.95;
+  transform: scale(0.98);
+  cursor: default;
+}
+
+/* leaving / exit state helper (used by motion) */
+.tm-card.tm-leaving {
+  pointer-events: none;
+}
+
+/* -------------------------
+   PREV/NEXT PREVIEWS
+   ------------------------- */
+.preview-wrap {
+  display: none; /* shown on md+ */
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+}
+@media (min-width: 768px) {
+  .preview-wrap { display: flex; }
+  .preview-wrap .tm-card.small { display: block; }
+}
+
+/* -------------------------
+   DOTS / CONTROLS
+   ------------------------- */
+.tm-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 0.9rem;
+  justify-content: center;
+  align-items: center;
+}
+.tm-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--dot-inactive);
+  border: none;
+  padding: 0;
+  display: inline-block;
+  transition: width var(--transition-fast) ease, background var(--transition-fast);
+  cursor: pointer;
+}
+.tm-dot:focus { outline: 2px solid rgba(255,255,255,0.08); outline-offset: 3px; }
+.tm-dot.active {
+  width: 36px;
+  background: var(--dot-active);
+  border-radius: 10px;
+}
+
+/* prev/next small buttons on the main card */
+.tm-controls {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+}
+.tm-controls button {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-1);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  transition: transform var(--transition-fast) ease;
+}
+.light-mode .testimonial-container,
+.light-mode .review-container,
+.light-mode .testimonial-avatar,
+.light-mode .next-preview,
+.light-mode .prev-preview,
+.light-mode .prev-preview-avatar,
+.light-mode .next-preview-avatar {
+  background: linear-gradient(135deg, #ffffff, #d1fff7a0);
+}
+
+.tm-controls button:focus { box-shadow: 0 6px 18px rgba(2,6,23,0.12); outline: none; }
+.tm-controls button:hover { transform: translateY(-2px); }
+
+/* -------------------------
+   RESPONSIVE ADJUSTMENTS
+   ------------------------- */
+@media (max-width: 1024px) {
+  .tm-title { font-size: 1.5rem; }
+  .tm-container { padding: 0.75rem; }
+}
+
+@media (max-width: 768px) {
+  .tm-carousel { padding: 2rem 0.75rem; }
+  .tm-title { font-size: 1.25rem; }
+  .tm-container { min-height: 180px; gap: 0.5rem; }
+  .tm-card { width: 92%; padding: 1rem; }
+  .tm-controls { right: 8px; }
+}
+
+/* compact phones */
+@media (max-width: 420px) {
+  .tm-quote { font-size: 0.98rem; }
+  .tm-author { font-size: 0.82rem; }
+  .tm-dot.active { width: 28px; }
+  .testimonial-container{
+    padding: 6px;
+  }
+  .testimonial-avatar{
+    display: none!important;
+  }
+}
+
+/* very small screens */
+@media (max-width: 320px) {
+  .tm-card { padding: 0.8rem; border-radius: 10px; }
+  .tm-title { font-size: 1.05rem; }
+}
+
+/* -------------------------
+   MOTION / ACCESSIBILITY
+   ------------------------- */
+/* entry animation helpers (used by framer-motion or CSS fallback) */
+.tm-enter {
+  opacity: 0;
+  transform: translateY(10px) scale(0.995);
+}
+.tm-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: transform var(--transition-med) ease, opacity var(--transition-med) ease;
+}
+.tm-exit {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+.tm-exit-active {
+  opacity: 0;
+  transform: translateX(-120%) rotate(-6deg);
+  transition: transform var(--transition-med) ease, opacity var(--transition-med) ease;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .tm-card,
+  .tm-rotate-btn,
+  .tm-controls button,
+  .tm-dot {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* -------------------------
+   UTILITY / TOUCH HINT
+   ------------------------- */
+/* subtle hint for draggable top card (only visible on supported devices) */
+.tm-drag-hint {
+  display: inline-block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-left: 0.5rem;
+  opacity: 0.9;
+}
+
+/* focus ring for interactive elements */
+.tm-rotate-btn:focus,
+.tm-controls button:focus,
+.tm-dot:focus {
+  box-shadow: 0 6px 20px rgba(2,6,23,0.12);
+}
+
+/* -------------------------
+   CLEAN UP: prevent text selection during drag on touch devices
+   ------------------------- */
+.tm-card,
+.tm-container,
+.tm-rotate-btn {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.mobile-footer-note{
+
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}

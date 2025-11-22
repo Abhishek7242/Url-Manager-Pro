@@ -7,9 +7,12 @@ import {
   FiBell,
   FiLogIn,
   FiUserPlus,
+  FiUsers,
+  FiHelpCircle,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import "../CSS/ProfileDropdown.css";
+import { Link } from "react-router-dom";
 
 // Example: Replace this with your actual AuthContext import
 // import { AuthContext } from "../context/AuthContext";
@@ -38,6 +41,8 @@ export default function ProfileDropdown({
   mobileOpen,
   setWebNotifications,
   closeMobile = () => {},
+  setFriendsModalOpen = () => {},
+  setMobileOpen ,
   isLoggedIn = () => false, // 👈 Pass this directly or from context
 }) {
   // const { isLoggedIn } = useContext(AuthContext); // optional if using context
@@ -221,7 +226,6 @@ export default function ProfileDropdown({
                     <FiUser className="pd-icon" />
                     <span className="pd-menu-item-label">Profile</span>
                   </button>
-
                   {/* <button
                     onClick={() => {
                       setOpen(false);
@@ -232,18 +236,18 @@ export default function ProfileDropdown({
                     <FiSettings className="pd-icon" />
                     <span className="pd-menu-item-label">Settings</span>
                   </button> */}
-
                   <button
                     onClick={() => {
+                      setWebNotifications(true);
                       setOpen(false);
-                      // onNotifications();
-                      setWebNotifications(true)
+                      setMobileOpen(false);
                     }}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-notifications-btn"
                   >
                     <FiBell className="pd-icon" />
                     <span className="pd-menu-item-label">Notifications</span>
                   </button>
+              
                   <div
                     className="profile-settings w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-settings-btn"
                     onClick={() => {
@@ -258,8 +262,20 @@ export default function ProfileDropdown({
 
                     <span className="pd-menu-item-label">Settings</span>
                   </div>
-                  <div className="h-px bg-white/6 my-1 rounded pd-divider" />
+                  <Link
+                    to="/contact"
+                    className="profile-settings w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-100 hover:bg-white/10 focus:bg-white/6 focus:outline-none pd-menu-item pd-settings-btn"
+                    title="Support"
+                    onClick={() => {
+                      if (mobileOpen) closeMobile();
+                    }}
+                  >
+                    <FiHelpCircle />
 
+                    <span className="pd-menu-item-label">Support</span>
+                  </Link>
+
+                  <div className="h-px bg-white/6 my-1 rounded pd-divider" />
                   <button
                     onClick={() => {
                       setOpen(false);

@@ -16,7 +16,7 @@
 
 /* Page full-bleed glass with blurred backdrop */
 .signup-page{
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   display: flex;
@@ -43,7 +43,7 @@
   border: 1px solid var(--glass-strong);
   border-radius: var(--card-radius);
   padding: 18px var(--card-padding);
-  box-shadow: var(--shadow);
+  /* box-shadow: var(--shadow); */
   overflow: hidden;
   backdrop-filter: blur(8px) saturate(110%);
   -webkit-backdrop-filter: blur(8px) saturate(110%);
@@ -57,7 +57,7 @@
 @media (hover: hover) and (pointer: fine) {
   .signup-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 30px 90px rgba(2,6,23,0.72);
+    /* box-shadow: 0 30px 90px rgba(2,6,23,0.72); */
     border-color: rgba(255,255,255,0.06);
   }
 }

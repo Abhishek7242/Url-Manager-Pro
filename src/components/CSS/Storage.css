@@ -87,7 +87,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
+.btn.cloud-btn{
+  box-shadow: none;
+}
 .btn.outline {
   border: 2px solid var(--secondary-color);
   background: transparent;

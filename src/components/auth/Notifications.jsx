@@ -1,14 +1,29 @@
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import "../CSS/Notifications.css";
 import { FiBell } from "react-icons/fi";
 
 export default function Notifications({
   notifications = [],
+  onGetNotifications,
   onClear,
   onClose,
 }) {
+  const [loading, setLoading] = useState(true);
+
   const hasNotifications =
     Array.isArray(notifications) && notifications.length > 0;
+
+  useEffect(() => {
+    // Fetch notifications when component mounts
+    const fetchData = async () => {
+      if (onGetNotifications) {
+        await onGetNotifications();
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [onGetNotifications]);
 
   return (
     <aside className="notif-root" role="region" aria-label="Notifications">
@@ -42,53 +57,62 @@ export default function Notifications({
             </svg>
             <h3>Notifications</h3>
           </div>
-
-          {/* {hasNotifications ? (
-            <button className="notif-clear" onClick={onClear}>
-              Clear
-            </button>
-          ) : null} */}
         </header>
 
         <div className="notif-body">
-          {!hasNotifications ? (
-            <div className="notif-empty">
-              <div className="notif-empty-illustration" aria-hidden>
-                <span className="ring r1" />
-                <span className="ring r2" />
-              </div>
-              <p className="empty-main">No notifications</p>
-              <p className="empty-sub">You're all caught up — no new alerts.</p>
+          {/* ---- LOADER ---- */}
+          {loading && (
+            <div className="notif-loading">
+              <div className="spinner"></div>
+              <p>Loading...</p>
             </div>
-          ) : (
-            <ul className="notif-list w-full">
-              {notifications.map((n) => (
-                <li
-                  key={n.id}
-                  className="notif-card-item border p-2 rounded-md"
-                >
-                  <div className="notif-card-header">
-                    <div className="notif-icon">
-                      <FiBell />
-                    </div>
-                    <div className="notif-card-title">{n.title}</div>
-                  </div>
+          )}
 
-                  {n.description && (
-                    <p className="notif-card-desc">{n.description}</p>
-                  )}
-
-                  <div className="notif-card-footer">
-                    <span className="notif-admin">
-                      {n.admin_name || "Admin"}
-                    </span>
-                    <span className="notif-time">
-                      {n.time_ago || n.created_at}
-                    </span>
+          {/* Existing content (unchanged) */}
+          {!loading && (
+            <>
+              {!hasNotifications ? (
+                <div className="notif-empty">
+                  <div className="notif-empty-illustration" aria-hidden>
+                    <span className="ring r1" />
+                    <span className="ring r2" />
                   </div>
-                </li>
-              ))}
-            </ul>
+                  <p className="empty-main">No notifications</p>
+                  <p className="empty-sub">
+                    You're all caught up — no new alerts.
+                  </p>
+                </div>
+              ) : (
+                <ul className="notif-list w-full">
+                  {notifications.map((n) => (
+                    <li
+                      key={n.id}
+                      className="notif-card-item border p-2 rounded-md"
+                    >
+                      <div className="notif-card-header">
+                        <div className="notif-icon">
+                          <FiBell />
+                        </div>
+                        <div className="notif-card-title">{n.title}</div>
+                      </div>
+
+                      {n.description && (
+                        <p className="notif-card-desc">{n.description}</p>
+                      )}
+
+                      <div className="notif-card-footer">
+                        <span className="notif-admin">
+                          {n.admin_name || "Admin"}
+                        </span>
+                        <span className="notif-time">
+                          {n.time_ago || n.created_at}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
         </div>
       </div>

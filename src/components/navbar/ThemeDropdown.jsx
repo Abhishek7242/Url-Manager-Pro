@@ -63,11 +63,20 @@ export default function ThemeDropdown() {
     // if stored exists we keep the current `theme` state value (set in useState)
   }, []);
 
-  // applyTheme: enforce `.light-mode` on body only for light; remove for dark.
+  // applyTheme: enforce `.light-mode` on landing_page only for light; remove for dark.
   // Note: When theme === "system" we follow prefersDark but DON'T overwrite localStorage.
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const body = document.getElementById("landing_page");
+
+    // Try to find the landing_page element
+    let body = document.getElementById("landing_page");
+
+    // Fallback: if landing_page doesn't exist, try document.body
+    if (!body) {
+      body = document.body;
+    }
+
+    if (!body) return;
 
     const apply = (t) => {
       if (t === "light") {
@@ -87,7 +96,7 @@ export default function ThemeDropdown() {
     if (theme === "light" || theme === "dark") {
       try {
         localStorage.setItem("site-theme", theme);
-      } catch (e) {
+      } catch {
         // ignore quota errors
       }
     }
